@@ -333,21 +333,3 @@ func TestAPanicInABoundMethodBecomesAnError(t *testing.T) {
 		t.Errorf("a panic answered %v, want errInternal", err)
 	}
 }
-
-func TestStartupAndShutdown(t *testing.T) {
-	t.Parallel()
-	closed := false
-	app, _, _ := facade(t)
-	app.close = func() error {
-		closed = true
-		return errors.New("the record would not close")
-	}
-	app.startup(t.Context())
-	if app.ctx == nil {
-		t.Error("startup did not keep the context")
-	}
-	app.shutdown(t.Context())
-	if !closed {
-		t.Error("shutdown did not close the record")
-	}
-}

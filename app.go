@@ -24,6 +24,16 @@ type fileChooser interface {
 	OpenPath() (string, error)
 }
 
+// windowFocuser hands the window's keyboard to the page.
+//
+// WebView2 keeps DOM focus and keyboard focus apart: the page can hold the
+// first while the webview holds none of the second; a key pressed then reaches
+// no listener at all. Measured 2026-09-22 in the built window, where
+// no Tab ever stepped the ring until the page had been clicked once.
+type windowFocuser interface {
+	Focus()
+}
+
 // browserOpener hands an address to whatever the desktop opens links with.
 // Wails' own opener answers nothing, so neither does this: a desktop that
 // declines to open a browser tells the application nothing it could report.
@@ -50,6 +60,7 @@ type App struct {
 	services Services
 	chooser  fileChooser
 	opener   browserOpener
+	focuser  windowFocuser
 	close    func() error
 }
 
@@ -65,6 +76,21 @@ func newApp(services Services, clock application.Clock, zone *time.Location,
 
 // startup keeps the window's context for the dialogs.
 func (a *App) startup(ctx context.Context) { a.ctx = ctx }
+
+// ready is called once the page exists. It asks the window for the keyboard,
+// which the page cannot ask for itself: a DOM focus call sets which element
+// would receive a key without making the webview the thing keys are sent to
+// (NFR-USE-002).
+//
+// A window with no focuser keeps running and says so in the log. The keyboard
+// is not worth ending a run over; the record is still readable with a mouse.
+func (a *App) ready(context.Context) {
+	if a.focuser == nil {
+		fmt.Fprintln(os.Stderr, "the window has no focuser, so the page starts without the keyboard")
+		return
+	}
+	a.focuser.Focus()
+}
 
 // shutdown closes the record.
 func (a *App) shutdown(context.Context) {

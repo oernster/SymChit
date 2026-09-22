@@ -61,6 +61,26 @@ func (o windowOpener) Open(address string) {
 	runtime.BrowserOpenURL(o.app.ctx, address)
 }
 
+// windowFocus hands the keyboard to the page through the window's own runtime.
+type windowFocus struct{ app *App }
+
+// Focus asks the window to show itself, which is what reaches the webview.
+//
+// Wails' Windows frontend answers Show with SetForegroundWindow plus SetFocus
+// on the main window; the WM_SETFOCUS that follows is where it calls Focus on
+// the webview, which is the step never taken when the window first opens.
+// Read from the Wails 2.12.0 source rather than inferred.
+//
+// The context is checked because the runtime ENDS THE PROCESS on a nil one
+// (`log.Fatalf`); a window that dies rather than opening is the worst outcome
+// available here.
+func (f windowFocus) Focus() {
+	if f.app.ctx == nil {
+		return
+	}
+	runtime.Show(f.app.ctx)
+}
+
 // instanceID names SymChit's single-instance lock, per user (FR-064).
 const instanceID = "uk.codecrafter.symchit"
 

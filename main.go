@@ -78,6 +78,7 @@ func main() {
 	app := newApp(services, clock, zone, appVersion, problem, nil, closeRecord)
 	app.chooser = windowChooser{app: app}
 	app.opener = windowOpener{app: app}
+	app.focuser = windowFocus{app: app}
 
 	err = wails.Run(&options.App{
 		Title:              product.Name,
@@ -87,6 +88,7 @@ func main() {
 		MinHeight:          windowMinHeight,
 		AssetServer:        &assetserver.Options{Assets: assets},
 		OnStartup:          app.startup,
+		OnDomReady:         app.ready,
 		OnShutdown:         app.shutdown,
 		SingleInstanceLock: singleInstance(app),
 		Bind:               []interface{}{app},
