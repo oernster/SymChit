@@ -77,6 +77,30 @@ describe('the shell', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   })
 
+  it('draws the band in reading order, with the separators taking no turn', async () => {
+    installBridge()
+    render(<App />)
+    await screen.findByRole('heading', { name: 'Record a symptom' })
+
+    // The ring follows the page, so this is the order a Tab press walks as well
+    // as the order the eye reads. The rules between the groups are chrome: they
+    // are not buttons, so they cannot appear here.
+    const band = screen.getByRole('navigation')
+    const labels = Array.from(band.querySelectorAll('button')).map((b) => b.textContent)
+    expect(labels).toEqual([
+      'Record',
+      'History',
+      'Receipt',
+      'Symptoms',
+      'Import',
+      'Export',
+      'Guide',
+      'About',
+      'Donate',
+    ])
+    expect(band.querySelectorAll('.band-separator')).toHaveLength(2)
+  })
+
   it('opens every dialog on its first stop, never on the page of words', async () => {
     installBridge()
     render(<App />)

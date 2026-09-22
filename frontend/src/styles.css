@@ -131,6 +131,18 @@ textarea:enabled:focus-visible {
   gap: 4px;
 }
 
+/*
+  The rule between groups of band buttons. It is inset from the band's own edges
+  rather than running its full height, so it reads as a division between the
+  buttons rather than as a second border beside the one under the band.
+*/
+.band-separator {
+  width: 1px;
+  align-self: stretch;
+  margin: 6px 6px;
+  background: var(--border);
+}
+
 .band-button {
   display: flex;
   flex-direction: column;

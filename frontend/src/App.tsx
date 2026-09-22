@@ -65,6 +65,14 @@ function BandButton({ label, icon, hint, className, pressed, onClick }: BandButt
 // application, so the tooltip does.
 const donateHint = 'Buy the author a drink (opens your browser)'
 
+// A rule between groups of band buttons: what belongs together is drawn
+// together. It is chrome rather than a control, so it takes no focus, paints no
+// ring and is hidden from anything reading the page aloud, where the grouping
+// it draws carries no meaning.
+function Separator() {
+  return <span className="band-separator" aria-hidden="true" />
+}
+
 export function App() {
   const [state, setState] = useState<State | null>(null)
   const [pane, setPane] = useState<Pane>('record')
@@ -115,11 +123,13 @@ export function App() {
           ))}
         </div>
         <div className="band-group">
-          <BandButton label="Export" icon={exportIcon} onClick={exportRecord} />
           <BandButton label="Import" icon={importIcon} onClick={importRecord} />
+          <BandButton label="Export" icon={exportIcon} onClick={exportRecord} />
+          <Separator />
           <BandButton label="Guide" icon={guideIcon} onClick={() => setGuide(true)} />
           <BandButton label="About" icon={aboutIcon}
             onClick={() => void api.about(refused).then((found) => found && setAbout(found))} />
+          <Separator />
           <BandButton label="Donate" icon={donateIcon} hint={donateHint} className="donate"
             onClick={() => void api.donate(refused)} />
         </div>
