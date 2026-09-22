@@ -9,10 +9,16 @@ interface Props {
   onClose: () => void
   /** Whether the first button inside should take the focus when it opens. */
   focusAction?: boolean
+  /**
+   * Whether the dialog holds a scrolling body. Its action row is then pinned
+   * beneath that body, so Close stays where the reader expects it however tall
+   * the content grows and never drifts as the body reads itself.
+   */
+  pinnedActions?: boolean
   children: ReactNode
 }
 
-export function Modal({ labelId, role, onClose, focusAction, children }: Props) {
+export function Modal({ labelId, role, onClose, focusAction, pinnedActions, children }: Props) {
   const box = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -26,7 +32,13 @@ export function Modal({ labelId, role, onClose, focusAction, children }: Props) 
   }, [focusAction])
   return (
     <div className="backdrop">
-      <div className="dialog" role={role} aria-modal="true" aria-labelledby={labelId} ref={box}>
+      <div
+        className={pinnedActions ? 'dialog pinned-actions' : 'dialog'}
+        role={role}
+        aria-modal="true"
+        aria-labelledby={labelId}
+        ref={box}
+      >
         {children}
       </div>
     </div>

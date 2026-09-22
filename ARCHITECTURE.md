@@ -19,6 +19,8 @@ planting a violation and reading the exit code.
 | 7 | The wire is stated twice, in Go and in TypeScript; the two agree field for field. | `tests/structural/wire_test.go` |
 | 8 | Every colour lives in `frontend/src/theme.css`; every text pairing meets WCAG 2.2 AA in both modes. | `tests/structural/colours_test.go` |
 | 9 | Every exported type carries a doc comment. | `TestEveryExportedTypeIsDocumented` |
+| 10 | The ring belongs to a control: no container carries a ring rule or a tabindex; a surface made to scroll turns the engine's own ring off. | `tests/structural/focus_test.go::TestNoRingRuleNamesAContainer`, `TestNoContainerTakesFocus`, `TestEveryScrollingSurfaceSuppressesTheNativeRing` |
+| 11 | A dialog body that scrolls pins its action row beneath it and wears the self-reading cycle. | `TestEveryScrollingDialogPinsItsActionsAndReadsItself` |
 
 ## The layers
 
@@ -101,6 +103,8 @@ toggle, as the application does.
 | Times are stored as RFC 3339 with their offset. | The instant reads back as the same instant; an export carries the offset it was written in. | Ordering happens in Go rather than in SQL. |
 | No encryption at rest. | A passphrase is a thing to lose; the Windows account already guards the file. Stated in the README rather than assumed. | Anyone who can sign in as the user can read the record. |
 | Light and dark follow Windows, with no switch. | One fewer setting; the palette is held to AA in both modes by a test. | No preference for a user who wants the other one. |
+| The Guide and About read themselves down, gently, until the reader takes over. | Long help holds still on open, descends a pixel every second tick, holds at the tail and rewinds; any wheel, press, key or focus arrival suspends it for 2.5 seconds and it then resumes from wherever the reader left it. The pace belongs to the application rather than to either dialog. | A timer per open dialog, plus a pure state machine to keep the pacing testable without waiting. |
+| A scrolling dialog body stays a keyboard stop and paints nothing. | It carries no controls of its own, so a reader who never touches the mouse must be able to reach it and scroll it; a ring round a whole page of words marks nothing to act on. Measured in Chromium: an overflowing container is focusable with no tabindex and drew the engine's own ring, so the ring is turned off explicitly. | One suppression rule, held by a test, rather than the absence of a rule. |
 
 ## Execution
 

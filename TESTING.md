@@ -72,7 +72,7 @@ Not gated at all: `internal/product` holds two constants; `tests/structural` is 
 | root package | The facade end to end over a real record: every conversion, every refusal, plus a panic in a bound method becoming an error rather than a dead window. |
 | `internal/infrastructure/setup` | The install policy: the payload fence refusing an entry that climbs out of the install folder, the paths, the version comparison that picks the route, plus real shortcuts written into temporary folders with plain paths rather than doubled separators. |
 | `tests/structural` | The invariants in ARCHITECTURE.md. |
-| `frontend` | The page over a fake facade: the keyboard path to a recorded event, the form keeping everything when a save is refused, an edit sending no time unless it changed, the confirmation naming what will go, plus the receipt showing exactly the lines it was given. |
+| `frontend` | The page over a fake facade: the keyboard path to a recorded event, the form keeping everything when a save is refused, an edit sending no time unless it changed, the confirmation naming what will go, plus the receipt showing exactly the lines it was given. The self-reading cycle is covered twice: the pure machine tick by tick, then the hook under jsdom for what suspends it and what freezes it. |
 
 ## What the tests never do
 
@@ -96,6 +96,8 @@ changes.
 | The printed page carries the receipt alone. | It does: no band, no status line, no controls. |
 | Recording, editing, deleting, exporting and importing through the real window. | All worked; the import skipped the event already held. |
 | The Guide and About open, scroll and close. | They do. |
+| The Guide and About hold still for five seconds, then read themselves down; they step aside the moment the reader scrolls. | Not yet run in the real window. The cycle is covered by the suite and the pane's ring was measured in Chromium against the built stylesheet; neither is a reading of the running application. |
+| Tab reaches the Guide's text without drawing a ring round it; Close rings when it is reached. | Measured in Chromium against the built stylesheet: the pane draws nothing at rest, hovered, clicked or Tab-focused, while Close draws the 2px accent ring. Not yet confirmed in the real window. |
 | Setup installs, with the options opening on what the machine already holds. | It does: files, registry entry, shortcuts, plus the application launched from the install folder. |
 | Setup reopens on the manage screen when the versions match; a shortcut box applies immediately. | It does. |
 | Setup started with `-uninstall`, as the Apps list starts it, opens on the removal screen. | It does. |

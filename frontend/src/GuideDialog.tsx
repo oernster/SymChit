@@ -4,16 +4,22 @@
 
 import { guideSections } from './guideContent'
 import { Modal } from './Modal'
+import { useAutoScroll } from './useAutoScroll'
 
 interface Props {
   onClose: () => void
 }
 
 export function GuideDialog({ onClose }: Props) {
+  // The Guide is longer than anything else the window shows, so the body reads
+  // itself down gently and steps aside the moment the reader takes over. The
+  // scroller is the body rather than the dialog, so Close never drifts away
+  // with the words.
+  const autoScroll = useAutoScroll()
   return (
-    <Modal labelId="guide-title" role="dialog" onClose={onClose} focusAction>
+    <Modal labelId="guide-title" role="dialog" onClose={onClose} focusAction pinnedActions>
       <h2 id="guide-title">How SymChit works</h2>
-      <div className="guide-body">
+      <div className="dialog-body" ref={autoScroll}>
         {guideSections.map((section) => (
           <section className="guide-section" key={section.heading}>
             <h3>{section.heading}</h3>

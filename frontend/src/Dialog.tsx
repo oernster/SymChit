@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'react'
 import type { About } from './api'
 import { Modal } from './Modal'
+import { useAutoScroll } from './useAutoScroll'
 import crest from './assets/icons/application-icon.png'
 
 interface ConfirmProps {
@@ -38,22 +39,27 @@ interface AboutProps {
 }
 
 export function AboutDialog({ about, onClose }: AboutProps) {
+  // The credits run past the dialog's height on a short window, so the body is
+  // the scroller and reads itself down gently, with Close pinned beneath it.
+  const autoScroll = useAutoScroll()
   return (
-    <Modal labelId="about-title" role="dialog" onClose={onClose} focusAction>
-      <img className="crest" src={crest} alt="" />
-      <h2 id="about-title">
-        {about.name} {about.version}
-      </h2>
-      <p>By {about.author}</p>
-      <p className="statement">{about.statement}</p>
-      <h3>Built with</h3>
-      <ul className="credits">
-        {about.credits.map((credit) => (
-          <li key={credit.work}>
-            {credit.work}: {credit.licence}, {credit.holder}
-          </li>
-        ))}
-      </ul>
+    <Modal labelId="about-title" role="dialog" onClose={onClose} focusAction pinnedActions>
+      <div className="dialog-body" ref={autoScroll}>
+        <img className="crest" src={crest} alt="" />
+        <h2 id="about-title">
+          {about.name} {about.version}
+        </h2>
+        <p>By {about.author}</p>
+        <p className="statement">{about.statement}</p>
+        <h3>Built with</h3>
+        <ul className="credits">
+          {about.credits.map((credit) => (
+            <li key={credit.work}>
+              {credit.work}: {credit.licence}, {credit.holder}
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="actions">
         <button type="button" onClick={onClose}>
           Close
