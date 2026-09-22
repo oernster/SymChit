@@ -135,6 +135,21 @@ elif [ -n "${APPLE_ID}" ] && [ -n "${APPLE_APP_PASSWORD}" ]; then
     fi
     echo "Notarizing as ${APPLE_ID} (team ${APPLE_TEAM_ID})"
 else
+    # The profile is checked here rather than assumed. notarytool stores it in the
+    # data-protection keychain, where `security find-generic-password` cannot see it, so
+    # asking notarytool itself is the only reliable probe; a history query is a couple of
+    # seconds against a full wails build; it also proves the credential authenticates rather
+    # than merely existing. Exit 69 is the missing-profile case.
+    if ! xcrun notarytool history --keychain-profile "${NOTARY_PROFILE}" > /dev/null 2>&1; then
+        echo "error: keychain profile ${NOTARY_PROFILE} is missing or its credential is rejected." >&2
+        echo "Create it once with:" >&2
+        echo "  xcrun notarytool store-credentials ${NOTARY_PROFILE} \\" >&2
+        echo "    --apple-id <apple-id> --team-id ${APPLE_TEAM_ID} --password <app-specific>" >&2
+        echo "The password is an app-specific one from https://appleid.apple.com" >&2
+        echo "(Sign-In and Security, App-Specific Passwords), shaped abcd-efgh-ijkl-mnop." >&2
+        echo "Set APPLE_ID and APPLE_APP_PASSWORD instead to pass it on the command line." >&2
+        exit 1
+    fi
     echo "Notarizing with keychain profile ${NOTARY_PROFILE}"
 fi
 

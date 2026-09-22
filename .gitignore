@@ -41,6 +41,8 @@ frontend/package.json.md5
 installer/build/bin/
 installer/frontend/wailsjs/
 dist-installer/
+build/darwin/
+SymChit.dmg
 
 # installer/payload.zip is deliberately NOT ignored: it is committed as an
 # empty-zip placeholder so `go build ./...` works in a fresh clone. build.ps1
