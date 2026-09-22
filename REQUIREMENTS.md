@@ -390,6 +390,12 @@ that does not resolve is a requirement nobody can check.
   and when, printed for a healthcare professional to read.` and its last line
   repeats the first.
 - The wording avoids saying the record is guidance for a professional to use.
+- The application's own icon shall be drawn beside the first of those lines
+  and beside that one only, so a sheet lying on a desk says what produced it
+  at a glance (Amendment 13). It identifies the producer; it adds nothing to
+  what the notes say and nothing that reads as a finding.
+- Verified by `ReceiptPane.test.tsx`, which asserts exactly one mark, in the
+  first line, carrying no alt text.
   MHRA guidance v1.10f treats software that provides information to help a
   healthcare professional reach a clinical decision as a separate category
   (page 12); a printed sheet that calls itself an input to that decision is
@@ -575,7 +581,46 @@ that does not resolve is a requirement nobody can check.
   the user ticks a box naming the record file.
 - Rationale: The record is the user's (source 12); losing it by removing the
   program would be accidental loss (source 13).
-- Verified by: manual; folders inspected afterwards.
+- Verified by `setup.TestTheRecordIsNeverClearedWithTheLeftovers`, which fails
+  if the record's folder is among the folders an uninstall clears unasked or
+  inside one of them; also by
+  `setup.TestTheRecordGoesOnlyWhenItIsAskedFor`. The tick reaching the flag,
+  plus the folders afterwards, stay a manual check.
+
+**FR-074 The licence is explained, not just named** (Amendment 13)
+- Priority: Should
+- Requirement: The setup program shall carry a licence screen, reachable from
+  its header on every screen but progress, stating in ordinary words what the
+  licence permits and requires, followed by the published licence text in full.
+  Every word of it shall come from the application rather than being written
+  into the page.
+- Rationale: Naming a licence explains nothing. "GNU General Public Licence,
+  version 3" tells most people nothing at all; somebody about to install a
+  program deserves to know what they are being given in words they already
+  use. The full text follows for anyone who wants the thing itself.
+- Acceptance: The screen names the product and the licence in one sentence,
+  lists what the reader may do and what they must do in turn, then shows the
+  licence text in a pane that scrolls.
+- The text shown shall be the text the repository publishes, which
+  `tests/structural/licence_test.go` holds byte for byte.
+- The pane shall read itself down at the house pace and step aside the moment
+  the reader touches it (FR-075).
+
+**FR-075 The licence reads itself** (Amendment 13)
+- Priority: Should
+- Requirement: The licence pane shall hold still when the screen opens, read
+  itself down slowly, hold at the end, rewind and repeat. Any manual reading
+  input shall suspend the cycle, which shall then resume from where the reader
+  left it rather than restarting.
+- Rationale: A licence is long and most people will not scroll it. A pane that
+  reads itself lets somebody watch it go by; one that stops the moment they
+  touch it never fights them for the scrollbar.
+- Acceptance: The pace is the application's own, stated once: still for five
+  seconds, then one pixel every two ticks of forty milliseconds, five seconds
+  at the foot, fifteen pixels a tick back up, two seconds at the top. A manual
+  input holds it for two and a half seconds of stillness.
+- The pane is a text view, so it draws no focus ring in any state, Tab
+  included (NFR-USE-002).
 
 ### 3.8 Non-functional requirements
 
@@ -822,6 +867,7 @@ named beside it.
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 13 | 2026-09-23 | FR-045, FR-072, new FR-074, new FR-075 | The printed sheet carries the application's icon beside the first provenance line. The setup program's licence screen explains the licence in ordinary words before showing its text in full, in a pane that reads itself down. The licence text gets one home in `internal/licence`, guarded against the published LICENSE byte for byte. FR-072's promise is covered by tests rather than by a manual check alone. | Owner's request on all three. The licence screen named GPL-3.0 and left it there, which tells somebody installing a program nothing about what they may do with it. The mark on the sheet identifies the producer and presents no data, so it stays inside the reading Q-8 closed against. Measured: the pane's descent was timed at 4007ms of travel against the 50px the house pace owes; the pane drew no ring at rest, after Tab focus or after a click. |
 | 12 | 2026-09-22 | New FR-073, Q-9, 3.9, NFR-USE-003 | SymChit opens dark and carries a light or dark button in the bar, left of Guide between two rules; the setup program carries the same in its header. Neither reads the Windows app mode any more, so the Windows theme read and the `prefersDark` field on setup's state are gone. | Owner's request, superseding the Q-9 answer of the same day. The window following the desktop means it changes under the reader at dusk; a button is one press away and what it chooses is remembered. Dark is what it opens in because that is what the owner wants to see first. Measured: the setup package's coverage rose from 56.9% to 59.2% once the registry read no test could exercise was gone; the floor moved with it. |
 | 11 | 2026-09-22 | NFR-USE-002 | The window hands the page the keyboard as it opens, through a focuser seam wired at the composition root and called on DOM ready. | A defect the owner found in the built window: no Tab ever stepped the ring, while a single click on the page fixed it for the rest of the run. WebView2 keeps DOM focus and keyboard focus apart, so the sink held the first while the webview held none of the second and no keydown reached the listener at all. Asking the Wails runtime to show the window is NOT enough, which is how the first attempt missed: that focuses the MAIN window, while WebView2 hosts the page in a child window of class `Chrome_WidgetWin_1` and the keys follow the child. The answer is ported from PigeonPost, where it is measured and works: find this process's visible window by its title, enumerate its children for that class, attach to that window's input thread, bring the window to the foreground and set focus on the child. The page cannot fix this from its own side, since a DOM focus call cannot make the webview the thing keys are sent to. |
 | 10 | 2026-09-22 | FR-041, FR-042, new FR-045 | The printed record is framed: the program and its address above the title and below the last event, then a statement under the date range saying it is not a diagnosis but the person's own notes for a healthcare professional. | Owner's request. It also answers the surface Amendment 9 identified as the one a regulator reads: a sheet that leaves the recording program's hand carries what it is and what it is not, rather than relying on a reader who has seen the application. The sheet says notes rather than guidance, since guidance names a purpose SymChit does not have (FR-045). |

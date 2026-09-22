@@ -128,6 +128,7 @@ is never cut that way.
 - [TESTING.md](TESTING.md): the gate, the floors and what only a person can
   check.
 - [DEVELOPMENT.md](DEVELOPMENT.md): building from source.
+- [TECH_DEBT.md](TECH_DEBT.md): what is still open, what is deliberately left and what only looks like debt.
 
 ## Supporting the project
 

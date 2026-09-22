@@ -56,6 +56,11 @@ writes it where it belongs, while the facade fills that struct from `product`.
 The domain stays pure, the words keep one home and the sheet still carries
 nothing the domain did not write.
 
+The application's mark is drawn beside the first of those framing lines and
+nowhere else on the sheet (FR-045). It is the page's own decision, not the
+domain's: a picture is presentation, so the receipt stays a list of lines with
+a kind and the pane decides that the first provenance line is a letterhead.
+
 ### Application: `internal/application`
 
 One service per user-visible action, over the ports in `ports.go`.
@@ -96,7 +101,26 @@ A second Wails application in the same module, carrying the built application
 as an embedded zip, so one file is the whole distribution. `installer/main.go`
 is its composition root and `installer/app.go` a facade over
 `internal/infrastructure/setup`; its page is hand-written and holds no product
-name of its own, because a page has no build step to catch a stale one.
+name of its own, because a page has no build step to catch a stale one. Its
+licence screen is filled the same way, sentence for sentence, from
+`internal/licence`.
+
+That package is the one home for the licence: the published text plus a plain
+reading of what it permits and requires (FR-074). The text sits there as well
+as at the repository root because Go's embedding cannot reach above its own
+package and the setup program is a separate main, so neither binary could
+embed the root LICENSE. The second copy is held to the first byte for byte by
+`tests/structural/licence_test.go`, which is what makes a second copy of a
+legal text safe to keep.
+
+The licence pane reads itself down at the house pace (FR-075). The cycle is a
+copy of the application's own `frontend/src/autoScroll.ts` in plain JavaScript,
+because the setup page has no build step and cannot reach a TypeScript module;
+Fulcrum's installer carries its own copy for the same reason. What must never
+differ is the pace, so the constants are stated in both and are the
+application's. Nothing watches for the screen changing, since a screen stack
+has no unmount: the one place that routes away is the one place that stops the
+timer.
 
 It follows the house setup model: work moves to a progress screen rather than
 greying the options in place, the footer is rebuilt per screen, the progress
@@ -126,6 +150,7 @@ its own storage.
 | The donate address lives in Go and the page never names one. | The page asks for the donation page; Go holds the only copy of the address and hands it to the desktop. Nothing arrives from the page, so there is no address to validate before opening; the no-network guarantee is untouched because SymChit fetches nothing. | One more bound method, plus a seam over Wails' opener so no test opens a browser. |
 | The Donate button takes a seat in the bar rather than a band of its own. | The window already has a tray of icon buttons and no footer, so a second strip carrying one control costs more than it buys. It is drawn at its neighbours' height: a member sized smaller than the row it sits in reads as a mistake. | The mark keeps its own width, so one rule sits beside the band's square icons. |
 | The window hands the page the keyboard as it opens. | DOM focus and keyboard focus are two different things in a hosted webview. The page can hold the first while the webview holds none of the second; no key then reaches any listener: measured in the built window, where no Tab stepped the ring until the page had been clicked once. Showing the main window does not fix it either: WebView2 hosts the page in a child window of its own and the keys follow the child. The page cannot fix this from its own side, so the facade asks the window on DOM ready. | A `windowFocuser` seam wired at the composition root, over `internal/infrastructure/windowfocus`, which focuses the WebView2 child window through Win32 and does nothing off Windows. It runs on a goroutine of its own, with a recover behind it, so neither the wait nor a panic there can touch the opening window. |
+| The licence is explained before it is shown. | Naming a licence explains nothing to the person installing the program; a setup screen that says "GNU General Public Licence, version 3" and stops has told them only that there is one. So the screen says what they may do and what they must do, in ordinary words, then shows the text in full for anyone who wants it. | A plain reading and the published text, both from `internal/licence`, in a pane that reads itself down and steps aside when touched. The pane is a text view, so it draws no ring in any state. |
 | A scrolling dialog body stays a keyboard stop and paints nothing. | It carries no controls of its own, so a reader who never touches the mouse must be able to reach it and scroll it; a ring round a whole page of words marks nothing to act on. Measured in Chromium: an overflowing container is focusable with no tabindex and drew the engine's own ring, so the ring is turned off explicitly. | One suppression rule, held by a test, rather than the absence of a rule. |
 
 ## The export format
@@ -175,3 +200,4 @@ sample fails naming the file to commit.
 - [REQUIREMENTS.md](REQUIREMENTS.md): the requirements these invariants serve.
 - [TESTING.md](TESTING.md): how it is verified.
 - [DEVELOPMENT.md](DEVELOPMENT.md): how it is built.
+- [TECH_DEBT.md](TECH_DEBT.md): what is still open, what is deliberately left and what only looks like debt.

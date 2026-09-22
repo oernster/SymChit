@@ -164,3 +164,4 @@ which its own uninstall removes again.
 - [ARCHITECTURE.md](ARCHITECTURE.md): the invariants.
 - [TESTING.md](TESTING.md): the gate and the floors.
 - [REQUIREMENTS.md](REQUIREMENTS.md): what it must do.
+- [TECH_DEBT.md](TECH_DEBT.md): what is still open, what is deliberately left and what only looks like debt.
