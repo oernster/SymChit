@@ -62,10 +62,10 @@ HICOLOR_SIZES = [16, 24, 32, 48, 64, 128, 256, 512]
 # megabyte behind one badge.
 HEADER_SIZE = 256
 
-# TOGGLE_SIZE is the setup header's theme toggle, drawn at 30 pixels. The same
+# TOGGLE_SIZE is the setup header's theme toggle, drawn at 60 pixels. The same
 # doubling as the mark keeps it crisp, for the same reason: the setup
 # page has no bundler, so it loads whatever file it finds.
-TOGGLE_SIZE = 64
+TOGGLE_SIZE = 128
 
 # TOGGLE_MASTERS are the two faces of that toggle, which the application's band
 # carries as well. They are named here rather than globbed, because the setup

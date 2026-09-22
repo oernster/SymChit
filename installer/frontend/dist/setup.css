@@ -99,12 +99,30 @@ body {
 
 .head .sub { font-size: 18px; color: var(--muted); }
 
-/* The header's control: a picture rather than a word, where the licence button
-   beside it is the opposite. It needs a ring rule of its own, because an
-   object-name or class rule setting a border beats the generic one by
-   specificity and would otherwise leave it with no ring at all. */
-.head .toggle {
+/* The header's controls: the licence as a word, the theme as a picture. Each
+   needs a ring rule of its own, because a class rule setting a border beats the
+   generic one by specificity and would otherwise leave it with no ring at all. */
+.head .controls {
     flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.head .controls[hidden] { display: none; }
+
+.head .licence {
+    border: 2px solid transparent;
+    background: var(--raised);
+    color: var(--text);
+    border-radius: 9px;
+    padding: 9px 18px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.head .toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -115,17 +133,23 @@ body {
     cursor: pointer;
 }
 
+/* Drawn at the height of the words beside it plus its own breathing room, so
+   the two controls read as a pair rather than as a button and a stray dot. */
 .head .toggle img {
     display: block;
-    height: 30px;
-    width: 30px;
+    height: 60px;
+    width: 60px;
 }
 
+.head .licence:enabled:hover,
+.head .licence:enabled:focus-visible,
 .head .toggle:enabled:hover,
 .head .toggle:enabled:focus-visible {
     border-color: var(--ring);
     outline: none;
 }
+
+.credits-lead { margin-top: 16px; }
 
 /* -------------------------------------------------------------- body */
 

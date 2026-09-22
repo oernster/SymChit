@@ -87,6 +87,20 @@ function routeManage(state) {
     ])
 }
 
+// routeLicence is reachable from every screen that offers the header's
+// controls, which is every screen but progress. Closing it re-derives the
+// screen behind it from the same reading of the machine, exactly as cancelling
+// a removal does, so no second copy of "where was I" has to be kept in step.
+function routeLicence(state) {
+    showScreen('licence')
+    setFooter([
+        {
+            label: 'Close', kind: 'primary',
+            onClick: () => (state ? route(state) : backend().Quit()),
+        },
+    ])
+}
+
 // routeUninstall is reachable from every other screen. The record is kept
 // unless the box is ticked; the box names the file it would delete.
 function routeUninstall(state) {
@@ -130,6 +144,7 @@ function route(state) {
 async function init() {
     applyTheme(storedTheme())
     $('theme-toggle').addEventListener('click', toggleTheme)
+    $('licence-open').addEventListener('click', () => routeLicence(currentState))
     let tries = 0
     while (!backend() && tries < 100) {
         await new Promise((resolve) => setTimeout(resolve, 50))

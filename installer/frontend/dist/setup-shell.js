@@ -65,6 +65,13 @@ function toggleTheme() {
 function showScreen(name) {
     document.querySelectorAll('.screen').forEach((el) => el.classList.remove('active'))
     $('screen-' + name).classList.add('active')
+    // The header's controls go with the footer's while work runs: a screen with
+    // nothing safe to offer offers nothing; leaving the progress screen to
+    // read a licence would hide the one thing worth watching.
+    const controls = $('head-controls')
+    if (controls) {
+        controls.hidden = name === 'progress'
+    }
 }
 
 // setFooter rebuilds the footer for the screen now showing. It is never one

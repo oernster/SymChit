@@ -16,13 +16,18 @@
             <div class="title" id="brand">Setup</div>
             <div class="sub">A record of your symptoms, kept on this computer</div>
         </div>
-        <!-- The toggle wears the application's own sun and moon and shows the
-             appearance it would switch TO, so the sun appears while you are in
-             the dark. Its picture and its words are set in one place, so a
-             repaint cannot leave it offering the mode just departed. -->
-        <button type="button" class="toggle" id="theme-toggle">
-            <img id="theme-face" src="light-mode.png" alt=""/>
-        </button>
+        <!-- The header's controls: the licence as a word, then the theme as a
+             picture. The asymmetry is deliberate. The toggle wears the
+             application's own sun and moon and shows the appearance it would
+             switch TO, so the sun appears while you are in the dark; its
+             picture and its words are set in one place, so a repaint cannot
+             leave it offering the mode just departed. -->
+        <div class="controls" id="head-controls">
+            <button type="button" class="licence" id="licence-open">Licence</button>
+            <button type="button" class="toggle" id="theme-toggle">
+                <img id="theme-face" src="light-mode.png" alt=""/>
+            </button>
+        </div>
     </div>
 
     <div class="body">
@@ -59,6 +64,26 @@
                 Your symptom record is kept unless you say otherwise below.</p>
             <div class="infobox">Your record<br/><span class="path" id="record-path"></span></div>
             <div class="options" id="uninstall-options"></div>
+        </section>
+
+        <!-- The setup program carries ONE licence, the one it is itself covered
+             by. SymChit's own licensing is the application's business and is
+             shown in its About dialog, not here. -->
+        <section class="screen" id="screen-licence">
+            <h1>Licence</h1>
+            <p class="lead" id="licence-lead">This setup program is free software
+                under the GNU General Public Licence, version 3.</p>
+            <div class="infobox">
+                <span class="path">&#169; Oliver Ernster</span><br/>
+                It comes with no warranty, to the extent the law allows. You may
+                redistribute it under the terms of that licence, whose full text
+                is in the LICENSE file beside the program it installs.
+            </div>
+            <p class="lead credits-lead">Built with:</p>
+            <div class="infobox">
+                Go and golang.org/x/sys, BSD 3-Clause, &#169; The Go Authors<br/>
+                Wails, MIT, &#169; Lea Anthony
+            </div>
         </section>
 
         <section class="screen" id="screen-running">
