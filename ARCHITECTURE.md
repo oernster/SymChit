@@ -114,6 +114,35 @@ toggle, as the application does.
 | The Donate button takes a seat in the bar rather than a band of its own. | The window already has a tray of icon buttons and no footer, so a second strip carrying one control costs more than it buys. It is drawn at its neighbours' height: a member sized smaller than the row it sits in reads as a mistake. | The mark keeps its own width, so one rule sits beside the band's square icons. |
 | A scrolling dialog body stays a keyboard stop and paints nothing. | It carries no controls of its own, so a reader who never touches the mouse must be able to reach it and scroll it; a ring round a whole page of words marks nothing to act on. Measured in Chromium: an overflowing container is focusable with no tabindex and drew the engine's own ring, so the ring is turned off explicitly. | One suppression rule, held by a test, rather than the absence of a rule. |
 
+## The export format
+
+The file a user exports is their own copy of their record, so SymChit has to go
+on reading it after the format has moved on. That is a promise about every
+version ever written, not only the current one.
+
+Every file carries an envelope that never changes shape: `format`, always
+`symchit-record`, then `version`, an integer. The envelope is read on its own
+first; the version chooses which reader reads the rest. Reading the whole
+file into one struct and hoping it fits is the thing a versioned format exists
+to avoid.
+
+| The file says | What happens |
+|---|---|
+| A different `format` (or nothing that parses as JSON) | Refused: not a SymChit export |
+| No `version` (or one below 1) | Refused. An unversioned file is not one SymChit wrote; a record is not the thing to be generous about |
+| A version SymChit knows | Read by that version's own reader |
+| A version above the current one | Refused, naming the version, so the user knows a newer SymChit wrote it |
+
+Adding a version is three things, all of which the suite refuses the change
+until you have done: raise `formatVersion`, add a reader to the table in
+`versions.go`, then commit a sample of the **old** version under `testdata`. The
+sample is the bytes that version really wrote, frozen and never edited again: a
+reader tested against the current struct is only tested against itself.
+
+Both halves of that guard were proved by planting. Raising the version alone
+fails with "format 2 can be written but not read"; adding the reader without the
+sample fails naming the file to commit.
+
 ## Execution
 
 1. `main` points the error output at the log, so a crash leaves a record.

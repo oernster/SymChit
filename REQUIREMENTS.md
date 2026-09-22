@@ -610,9 +610,24 @@ hand-written TypeScript interfaces, field for field.
 
 GPL-3.0. SymChit makes no medical claim and performs no clinical function; the
 design keeps it outside what UK MHRA guidance treats as software as a medical
-device, which turns on intended medical purpose such as diagnosis or treatment.
-HYPOTHESIS: this reading of the guidance has not been checked against the
-current text; it is Q-8.
+device, which turns on intended medical purpose such as diagnosis, prevention,
+prediction, prognosis, treatment or alleviation.
+
+Owner's ruling, 2026-09-22 (Q-8): of those purposes only monitoring could be
+argued at all, while SymChit is a note-taking application. It stores what the user
+typed and prints it back. None of the other purposes apply.
+
+The ruling is what the product is built to stay inside, so it is a constraint on
+every later change rather than a note about this version. The line is
+interpretation: the moment SymChit scores, trends, alerts, predicts or says two
+events are related, the argument that it only takes notes is gone. Section 1.3
+already puts every one of those out of scope; FR-042 holds the receipt to the
+record alone.
+
+OPEN: the ruling has not been checked against the published guidance text, whose
+wording is what a regulator would read rather than this document. Before any public release, confirm it against the Medical Devices
+Regulations 2002 (SI 2002/618) and the MHRA guidance on stand-alone software
+and apps.
 
 ### 4.2 Internationalisation
 
@@ -654,7 +669,7 @@ Still open:
 
 | ID | Question | Proposal | Owner | Gates |
 |---|---|---|---|---|
-| Q-8 | Does the MHRA reading in 4.1 hold? | Check the current guidance text before any public release. | Oliver | Release |
+| Q-8 | Does the MHRA reading in 4.1 hold? | Ruled 2026-09-22: only monitoring could be argued, while SymChit is a note-taking application; none of the other purposes apply. Still to be confirmed against the published text before any public release. | Oliver | Release |
 | Q-9 | Light, dark or following Windows? | Follow the Windows app mode. | Oliver | Build step 4 |
 
 ### Appendix C: Build order

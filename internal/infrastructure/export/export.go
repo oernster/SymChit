@@ -19,7 +19,9 @@ import (
 // formatName marks a file as a SymChit export.
 const formatName = "symchit-record"
 
-// formatVersion is the version this code writes; it reads this one and older.
+// formatVersion is the version this code writes. It reads this one and every
+// older one, which versions.go states as a table and a test enforces: raising
+// this constant without adding a reader and a sample fails the suite.
 const formatVersion = 1
 
 // maxFileBytes caps what a read will take in. An export of the 20,000 events
@@ -39,6 +41,11 @@ var (
 	ErrNotAnExport = errors.New("not a SymChit export")
 	ErrNewerFormat = errors.New("written by a newer SymChit")
 	ErrTooLarge    = errors.New("larger than any SymChit export")
+	// ErrNoVersion refuses a file that claims to be an export but names no
+	// version SymChit ever wrote. Reading one as though it were the current
+	// format is how a hand-edited or third-party file gets to decide what a
+	// medical record says.
+	ErrNoVersion = errors.New("names no SymChit export version")
 )
 
 // fileShape is the file's JSON form.
@@ -129,14 +136,31 @@ func (File) Read(path string) (application.Record, error) {
 	if len(raw) > maxFileBytes {
 		return application.Record{}, ErrTooLarge
 	}
-	var shape fileShape
-	if err := json.Unmarshal(raw, &shape); err != nil || shape.Format != formatName {
+	return readVersioned(raw)
+}
+
+// readVersioned reads the envelope, then hands the file to the reader for the
+// version it declares. Every refusal names the version it read, so a user told
+// their export cannot be opened can see why.
+func readVersioned(raw []byte) (application.Record, error) {
+	var declared envelope
+	if err := json.Unmarshal(raw, &declared); err != nil || declared.Format != formatName {
 		return application.Record{}, ErrNotAnExport
 	}
-	if shape.Version > formatVersion {
-		return application.Record{}, fmt.Errorf("%w (format %d)", ErrNewerFormat, shape.Version)
+	if declared.Version < firstVersion {
+		return application.Record{}, fmt.Errorf("%w (format %d)", ErrNoVersion, declared.Version)
 	}
-	return shape.record()
+	if declared.Version > formatVersion {
+		return application.Record{}, fmt.Errorf("%w (format %d)", ErrNewerFormat, declared.Version)
+	}
+	read, known := readers[declared.Version]
+	if !known {
+		// Unreachable while the guard in versions_test.go holds. It is answered
+		// rather than assumed: a gap in the table must refuse the file, never
+		// read it as some other version.
+		return application.Record{}, fmt.Errorf("%w (format %d)", ErrNoVersion, declared.Version)
+	}
+	return read(raw)
 }
 
 // record converts the file's shape to a record, refusing any unreadable field.
