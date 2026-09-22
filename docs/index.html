@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SymChit: a symptom diary you keep on your own computer</title>
+<meta name="description" content="SymChit is a symptom diary for Windows, Linux and macOS. Write down what you noticed and when, then print it for your next appointment. It stays on your computer."/>
+<link rel="icon" href="application-icon.png"/>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<header class="bar">
+    <div class="wrap">
+        <a class="mark" href="./"><img src="application-icon.png" alt=""/>SymChit</a>
+        <nav>
+            <a href="#how">How it works</a>
+            <a href="#sheet" class="hide-small">What it prints</a>
+            <a href="#private">Your computer</a>
+            <a href="#get">Get it</a>
+            <button type="button" class="toggle" id="theme-toggle" title="Change the appearance">
+                <img id="theme-face" src="light-mode.png" alt="Switch to light mode"/>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<div class="wrap hero">
+    <img class="icon" src="application-icon.png" alt="The SymChit icon: a clipboard with a heart and a pencil."/>
+    <div class="pill" id="version-pill"></div>
+    <h1>Write it down when it happens.</h1>
+    <p class="lead">SymChit is a symptom diary that lives on your own computer. Note
+        what you felt and when you felt it, then print the whole lot to take to your
+        next appointment.</p>
+    <div class="actions">
+        <a class="button primary" href="#get">Get SymChit</a>
+        <a class="button plain" href="#sheet">See what it prints</a>
+    </div>
+    <p class="under">Free, open source, with no network connection opened at all.</p>
+
+    <figure class="shot wide">
+        <img src="screenshots/record.png" alt="The SymChit window showing the recording form: a symptom, a severity, a note and the time."/>
+    </figure>
+</div>
+
+<section id="why">
+    <div class="wrap">
+        <h2>Ten minutes is not long enough to remember.</h2>
+        <p class="intro">By the time the appointment comes round, the details have
+            gone soft. Was it three mornings last week or five? Did it start before
+            the new tablets or after them? You end up saying "quite often, I think",
+            which is the least useful sentence in the room.</p>
+        <p class="intro">A notebook solves this. SymChit is that notebook, kept
+            somewhere you will not leave it on a train, with the times filled in for
+            you and a tidy printout at the end.</p>
+    </div>
+</section>
+
+<section id="how">
+    <div class="wrap">
+        <h2>How it works</h2>
+        <p class="intro">Three things; the middle one takes care of itself.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="number">1</div>
+                <h3>Notice it, write it down</h3>
+                <p>Type what you felt in your own words. Add a note if you want one
+                    and say how bad it was; leave both out if you would rather, since
+                    only the symptom is asked for. It stamps the time for you; set a
+                    different one when you are writing up something from earlier.</p>
+            </div>
+            <div class="step">
+                <div class="number">2</div>
+                <h3>It builds up</h3>
+                <p>Every entry stays, newest first. Weeks later you have the thing
+                    memory cannot give you: what happened, in order, with the times
+                    beside it.</p>
+            </div>
+            <div class="step">
+                <div class="number">3</div>
+                <h3>Print it for the appointment</h3>
+                <p>Choose the dates you want and press Print. Your printer will offer
+                    to save it as a PDF if you would rather email it or keep a copy.
+                    Take the sheet in and hand it over.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="history">
+    <div class="wrap">
+        <h2>Everything you have written, in one list</h2>
+        <div class="split">
+            <div>
+                <p class="intro">Narrow it to a stretch of dates, to one symptom or
+                    to one severity when you want to look something up. Correct an
+                    entry that came out wrong; remove one you did not mean to keep.</p>
+                <ul class="plain-list">
+                    <li><strong>It asks before it deletes</strong> and names exactly
+                        what will go.</li>
+                    <li><strong>Nothing is hidden from you.</strong> The list is the
+                        record; there is no other copy of it anywhere.</li>
+                </ul>
+            </div>
+            <figure class="shot">
+                <img src="screenshots/history.png" alt="The history list with two recorded events, above filters for dates, symptoms and severity."/>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<section id="sheet">
+    <div class="wrap">
+        <h2>What your doctor actually sees</h2>
+        <p class="intro">Your own words, grouped by symptom, with the times you wrote
+            them down. Nothing else.</p>
+        <div class="split">
+            <figure class="shot">
+                <img src="screenshots/receipt.png" alt="The printable symptom record, listing each symptom with its events, severities and notes."/>
+            </figure>
+            <div>
+                <ul class="plain-list">
+                    <li><strong>No scores and no charts.</strong> Counting your
+                        entries is the only arithmetic it does.</li>
+                    <li><strong>No opinion.</strong> It never suggests what any of it
+                        might mean; it never says one thing led to another.</li>
+                    <li><strong>Your wording, untouched.</strong> "I took a couple of
+                        paracetamol" goes on the sheet as you typed it, not
+                        translated into medical language.</li>
+                    <li><strong>It says what it is.</strong> Above the first entry the
+                        sheet states that this is not a diagnosis; it is one person's
+                        own notes, printed for a healthcare professional to read.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="words">
+    <div class="wrap">
+        <h2>It keeps your words, not its own</h2>
+        <div class="split">
+            <div>
+                <p class="intro">The first time you write "Tiredness" it remembers
+                    the word and offers it back the next time, so the same thing is
+                    not filed under four spellings by December. If you would rather
+                    call it something else, rename it and every entry follows.</p>
+            </div>
+            <figure class="shot">
+                <img src="screenshots/symptoms.png" alt="The symptoms screen, listing Headache and Tiredness with a Rename button beside each."/>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<section id="private">
+    <div class="wrap">
+        <h2>It stays on your computer</h2>
+        <p class="intro">Health notes are about as personal as writing gets, so
+            SymChit does not send them anywhere. It cannot: the program opens no
+            network connection at all; a test in the source forbids the
+            networking code outright.</p>
+        <ul class="plain-list">
+            <li><strong>No account.</strong> Nothing to sign up for, nothing to sign
+                in to, no email address wanted.</li>
+            <li><strong>No cloud and no syncing.</strong> The record is one file on
+                your machine, where your documents are.</li>
+            <li><strong>No adverts and no tracking.</strong> Nobody is counting what
+                you write or how often you open it.</li>
+            <li><strong>Yours to take away.</strong> Export the whole record to a
+                plain file whenever you like, then read it back in.</li>
+        </ul>
+        <p class="note">Said plainly, because it matters: SymChit does not encrypt
+            the file. It is protected the way the rest of your documents are, by the
+            account you sign in to on your own computer. If other people use that
+            account, they can read it.</p>
+    </div>
+</section>
+
+<section id="not">
+    <div class="wrap">
+        <h2>What it will not do</h2>
+        <p class="intro">A program about symptoms is usually assumed to do a few of
+            these. SymChit does none of them, on purpose.</p>
+        <ul class="plain-list">
+            <li>It does not diagnose, suggest conditions or recommend treatment.</li>
+            <li>It does not interpret your notes, score them or rank them.</li>
+            <li>It does not rewrite what you wrote into medical terminology.</li>
+            <li>It does not remind you or nag you to record anything.</li>
+            <li>It is not a substitute for talking to a healthcare professional; it
+                is something to bring with you when you do.</li>
+        </ul>
+        <p class="note">It opens dark and there is a Light mode button in the bar;
+            press it once and it opens that way from then on. It will not change
+            under you because the desktop reached dusk.</p>
+    </div>
+</section>
+
+<section id="get">
+    <div class="wrap">
+        <h2>Get SymChit</h2>
+        <p class="intro">Free on all three, with no licence key and no paid tier.</p>
+        <div class="cards">
+            <div class="card">
+                <h3>Windows</h3>
+                <p class="platform">A setup program that installs for you alone, so
+                    Windows never asks for an administrator.</p>
+                <a class="button primary" href="https://github.com/oernster/SymChit/releases/latest">Download</a>
+            </div>
+            <div class="card">
+                <h3>Linux</h3>
+                <p class="platform">A Flatpak bundle. Install it once and it runs
+                    from your applications menu like anything else.</p>
+                <a class="button plain" href="https://github.com/oernster/SymChit/releases/latest">Download</a>
+            </div>
+            <div class="card">
+                <h3>macOS</h3>
+                <p class="platform">A disk image for Apple Silicon, signed and
+                    notarized with Apple, so it opens without a fight.</p>
+                <a class="button plain" href="https://github.com/oernster/SymChit/releases/latest">Download</a>
+            </div>
+        </div>
+        <p class="note">Prefer to build it yourself? The whole source is on
+            <a href="https://github.com/oernster/SymChit">GitHub</a>, with the build
+            steps written out.</p>
+    </div>
+</section>
+
+<section id="support">
+    <div class="wrap">
+        <h2>Supporting it</h2>
+        <div class="donate">
+            <img src="donate.png" alt=""/>
+            <div>
+                <p class="intro donate-words">SymChit is free and stays free. Nothing
+                    is held back behind a donation. If it has saved you an afternoon
+                    or made an appointment go better, there is a button in the bar;
+                    there is also one here.</p>
+                <a class="button plain" href="https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC">Buy me a coffee</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <div class="wrap">
+        <div class="links">
+            <a href="https://github.com/oernster/SymChit">Source on GitHub</a>
+            <a href="https://github.com/oernster/SymChit/blob/main/LICENSE">Licence</a>
+            <a href="https://ernster.dev/commercial-licensing.html">Commercial licensing</a>
+            <a href="https://ernster.dev">More of my work</a>
+        </div>
+        <p>SymChit is free software under the GNU General Public Licence, version 3.
+            You may use it, study it, share it and change it; anything you pass on
+            carries the same freedoms.</p>
+        <p>SymChit records what you type and prints it back to you. It does not
+            diagnose and it makes no claim about what your notes mean.</p>
+        <p>&#169; Oliver Ernster</p>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>
