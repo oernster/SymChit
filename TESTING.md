@@ -22,8 +22,11 @@ It runs these in order, stopping at the first failure:
 8. The front end: `eslint`, `tsc --noEmit` and `vite build`.
 9. The front-end suite: Vitest over jsdom.
 
-`./test.ps1 -SkipFrontend` runs the Go half alone while working on it. There is
-no switch that skips the gate inside `build.ps1`.
+`./test.ps1 -SkipFrontend` runs the Go half alone while working on it.
+
+`build.ps1` runs the whole gate first and stops on a failure. Its one escape is
+`-Fast`, which skips the gate for a working loop and prints that it has done so;
+a release is never cut with it.
 
 ## How to read a result
 
@@ -76,7 +79,7 @@ two that reach paper are asserted word for word from the facade's own tests;
 | `internal/infrastructure/store` | Real SQLite in a temporary folder: notes and symptoms read back byte for byte, a deletion is all or nothing, a garbage file is never overwritten, a newer schema is refused, the durability pragmas are set, plus a planted trigger proving a failed write leaves nothing behind. |
 | `internal/infrastructure/export` | The format against a committed sample, a refusal for anything that is not a SymChit export, plus a size cap read before the file is. The version contract as well: every version ever written still reads its own frozen sample, no reader claims a version nothing wrote, a file naming no version is refused rather than read as the current one, plus a gap in the table refusing rather than guessing. |
 | `internal/infrastructure/runlog` | Crash reporting, by starting this test binary again as a child and making it panic, plus each platform's rule for where the log lives, all three exercised wherever the suite runs. |
-| root package | The facade end to end over a real record: every conversion, every refusal, plus a panic in a bound method becoming an error rather than a dead window. `receipt_test.go` holds the sheet on its own, with the framing's exact words written out a second time, so an edit to the line saying the record is not a diagnosis fails rather than ships. |
+| root package | The facade end to end over a real record: every conversion, every refusal, plus a panic in a bound method becoming an error rather than a dead window. `window_test.go` holds the window's own seams: the Downloads folder both dialogs open in, plus the keyboard being asked for once on DOM ready, including the guard that keeps a focus asked for too early from ending the process. `receipt_test.go` holds the sheet on its own, with the framing's exact words written out a second time, so an edit to the line saying the record is not a diagnosis fails rather than ships. |
 | `internal/infrastructure/setup` | The install policy: the payload fence refusing an entry that climbs out of the install folder, the paths, the version comparison that picks the route, plus real shortcuts written into temporary folders with plain paths rather than doubled separators. |
 | `tests/structural` | The invariants in ARCHITECTURE.md. |
 | `frontend` | The page over a fake facade: the keyboard path to a recorded event, the form keeping everything when a save is refused, an edit sending no time unless it changed, the confirmation naming what will go, plus the receipt showing exactly the lines it was given. The self-reading cycle is covered twice: the pure machine tick by tick, then the hook under jsdom for what suspends it and what freezes it. The focus ring is covered the same way: the rules alone, then the ring against a real page, where Tab and Right agree, Shift+Tab and Left agree, both wrap, a disabled control is passed over and a text field keeps its arrows. |
@@ -112,7 +115,7 @@ changes.
 | The Guide and About hold still for five seconds, then read themselves down; they step aside the moment the reader scrolls. | Not yet run in the real window. The cycle is covered by the suite and the pane's ring was measured in Chromium against the built stylesheet; neither is a reading of the running application. |
 | Tab reaches the Guide's text without drawing a ring round it; Close rings when it is reached. | Measured in Chromium against the built stylesheet: the pane draws nothing at rest, hovered, clicked or Tab-focused, while Close draws the 2px ring. Not yet confirmed in the real window. |
 | The three-state ring: nothing at rest, green on hover or focus, permanent red while disabled. | Measured in Chromium against the built stylesheet, both modes, with `:hover` and `:focus-visible` confirmed each time. Dark: at rest `3px none` on the band, Show and an enabled Print; hovered or Tab-focused `2px solid rgb(52,211,153)`; disabled Print and Delete `2px solid rgb(255,138,128)` on a `rgb(42,48,58)` fill. Light: hovered `2px solid rgb(4,120,87)`, disabled `2px solid rgb(168,35,26)` on `rgb(228,232,237)`. The disabled Print is skipped by Tab. Not yet confirmed in the real window. |
-| The window opens with nothing ringed; the first Tab enters the band. | Not yet run in the real window. The sink is measured as holding focus while being no stop; the ring's own stepping is covered by the suite. |
+| The window opens with nothing ringed; the first Tab enters the band. | **Found broken 2026-09-22, cause measured, fix written, UNVERIFIED in the real window.** The owner reported that no Tab ever rang anything on a fresh build and install; one click on the page then made every Tab work. So the page never held the keyboard: WebView2 gives it DOM focus while the webview holds no keyboard focus, so no keydown reaches the listener. Chromium cannot show this and said so misleadingly: against the built page at 1100x760 the first Tab rang Record `rgb(52, 211, 153) solid 2px` correctly, while `document.hasFocus()` read false, which is the same defect wearing a pass. The fix asks the window for the keyboard on DOM ready (`runtime.Show`, which is where Wails' Windows frontend reaches `chromium.Focus()`). **The next build is the measurement: open the window and press Tab without clicking first.** |
 | Setup installs, with the options opening on what the machine already holds. | It does: files, registry entry, shortcuts, plus the application launched from the install folder. |
 | Setup reopens on the manage screen when the versions match; a shortcut box applies immediately. | It does. |
 | Setup started with `-uninstall`, as the Apps list starts it, opens on the removal screen. | It does. |
@@ -120,8 +123,10 @@ changes.
 | The Apps list's Uninstall and Modify point at a path that exists. | They do now. The first install wrote doubled separators; fixed and covered by a test. |
 | The install folder is removed after setup exits. | Measured with a probe: the ported command removed nothing, so it was rewritten. Still to check by hand on a real install. |
 | Uninstall with "also delete my symptom record" ticked. | Not yet run. |
-| The Flatpak builds on a Linux machine, the window opens and the record lands under `~/.var/app/uk.codecrafter.SymChit`. | Not yet run. The manifest was checked by generating it and parsing it: valid YAML, no network permission on the finished application, plus every one of the eight icons it installs present in the tree. That says nothing about whether it builds. |
-| The DMG builds, signs, notarizes and staples on an Apple Silicon Mac. | Not yet run. Nothing about this script has been measured beyond its syntax. |
+| The Flatpak builds on a Linux machine and the window opens. | Built and run by the owner on 2026-09-22: it builds and the application runs. |
+| The record lands under `~/.var/app/uk.codecrafter.SymChit` inside the Flatpak. | Not checked. The run says the window opens, not where the file went. |
+| The DMG builds and notarizes on an Apple Silicon Mac. | Built and run by the owner on 2026-09-22, then notarized. |
+| The notarisation ticket is stapled to the DMG. | Not separately checked. Confirm with `xcrun stapler validate` on the finished image; a notarized build with no ticket stapled still asks the network on a machine that is offline. |
 
 ## Further reading
 

@@ -16,7 +16,7 @@ planting a violation and reading the exit code.
 | 4 | Only `main.go` wires infrastructure to the application. | `TestCompositionRootIsWhitelisted` |
 | 5 | No source file exceeds 400 lines; none sits in the 381 to 399 danger band. | `TestNoFileExceedsLineLimit`, `TestNoFileInDangerBand` |
 | 6 | SymChit opens no network connection: no `net` package anywhere, `connect-src 'none'` on the page. | `TestNoNetworkImports`, `TestThePageOpensNoConnection` |
-| 7 | The wire is stated twice, in Go and in TypeScript; the two agree field for field. | `tests/structural/wire_test.go` |
+| 7 | The wire is stated twice, in Go and in TypeScript; the two agree field for field; the receipt's line kinds agree name for name. | `tests/structural/wire_test.go`, `tests/structural/linekind_test.go` |
 | 8 | Every colour lives in `frontend/src/theme.css`; every text pairing meets WCAG 2.2 AA in both modes. | `tests/structural/colours_test.go` |
 | 9 | Every exported type carries a doc comment. | `TestEveryExportedTypeIsDocumented` |
 | 10 | The ring belongs to a control: no container carries a ring rule or a tabindex; a surface made to scroll turns the engine's own ring off. | `tests/structural/focus_test.go::TestNoRingRuleNamesAContainer`, `TestNoContainerTakesFocus`, `TestEveryScrollingSurfaceSuppressesTheNativeRing` |
@@ -83,7 +83,8 @@ One service per user-visible action, over the ports in `ports.go`.
 
 `app.go` and `actions.go` are the facade: one bound method per action, each
 converting shapes, calling one service and converting back. `dto.go` holds the
-wire shapes. `window.go` holds the file dialogs and the single-instance lock.
+wire shapes. `window.go` holds the file dialogs, the browser opener, the keyboard handover
+and the single-instance lock.
 `main.go` is the composition root.
 
 The page in `frontend/src` is a client of the facade through `api.ts` and
@@ -122,6 +123,7 @@ toggle, as the application does.
 | The Flatpak is given no network permission. | SymChit opens no connection; the sandbox is where that claim stops being a claim: an application that started talking to something would fail at run time rather than quietly working. The build gets the network, because it fetches Go modules and npm packages. | The manifest has two permission lists that must not be confused for each other. |
 | The donate address lives in Go and the page never names one. | The page asks for the donation page; Go holds the only copy of the address and hands it to the desktop. Nothing arrives from the page, so there is no address to validate before opening; the no-network guarantee is untouched because SymChit fetches nothing. | One more bound method, plus a seam over Wails' opener so no test opens a browser. |
 | The Donate button takes a seat in the bar rather than a band of its own. | The window already has a tray of icon buttons and no footer, so a second strip carrying one control costs more than it buys. It is drawn at its neighbours' height: a member sized smaller than the row it sits in reads as a mistake. | The mark keeps its own width, so one rule sits beside the band's square icons. |
+| The window hands the page the keyboard as it opens. | DOM focus and keyboard focus are two different things in a hosted webview. The page can hold the first while the webview holds none of the second; no key then reaches any listener: measured in the built window, where no Tab stepped the ring until the page had been clicked once. The page cannot fix this from its own side, so the facade asks the window on DOM ready. | A seam over the Wails runtime, plus a guard against a nil context, which that runtime answers by ending the process. |
 | A scrolling dialog body stays a keyboard stop and paints nothing. | It carries no controls of its own, so a reader who never touches the mouse must be able to reach it and scroll it; a ring round a whole page of words marks nothing to act on. Measured in Chromium: an overflowing container is focusable with no tabindex and drew the engine's own ring, so the ring is turned off explicitly. | One suppression rule, held by a test, rather than the absence of a rule. |
 
 ## The export format
@@ -159,10 +161,12 @@ sample fails naming the file to commit.
 2. It opens the record, else carries the failure as a problem the window shows.
 3. It builds the four services over the store, the export format and the clock.
 4. It hands the facade to Wails, with the single-instance lock.
-5. Every page action is one bound method: convert, call one service, convert
+5. Once the page exists, the facade asks the window for the keyboard, so the
+   first key pressed reaches the ring rather than nothing.
+6. Every page action is one bound method: convert, call one service, convert
    back. A panic inside one becomes an error the page shows, with the stack in
    the log.
-6. On shutdown the record is closed.
+7. On shutdown the record is closed.
 
 ## Further reading
 

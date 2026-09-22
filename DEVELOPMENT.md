@@ -24,7 +24,7 @@ v2.12.0, Node 24.11.1.
 In order, it:
 
 1. Reads `VERSION`.
-2. Runs `test.ps1` and stops on failure. There is no switch to skip it.
+2. Runs `test.ps1` and stops on failure, unless `-Fast` was given.
 3. Runs `wails build -ldflags "-X main.appVersion=<version>"`, which installs
    the front-end dependencies, builds the page and compiles the application.
 4. Checks the executable is there and prints its path and size.
@@ -78,9 +78,10 @@ optional: since macOS 10.15 a signed but unnotarized app is refused on every
 machine but the one that signed it; the failure is invisible at build time.
 `ALLOW_UNNOTARIZED=1` exists for a local test build and for nothing else.
 
-Neither script has been run on its own platform yet. What is measured is that
-the module compiles and vets for both on every test run, which says nothing
-Windows-only has been written and says nothing about how either build behaves.
+Both have now been run on their own platform: the Flatpak builds and its window
+opens; the DMG builds and is notarized. What the gate adds on every run is
+that the module compiles and vets for both, so nothing Windows-only can be
+written without the next test run saying so.
 
 ## Running from source
 

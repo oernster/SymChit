@@ -3,7 +3,7 @@
 Status: baselined 2026-09-22. Derived the same day from
 `health-symptom-tracker-requirements.md` (the source document, section 1.5).
 Changes from here arrive as numbered amendments with a reason (section 6).
-Two questions remain open (Appendix B); neither gates the domain or the
+One question remains open (Appendix B); it gates neither the domain nor the
 application layer.
 
 ## 1. Introduction
@@ -101,10 +101,12 @@ tested on the reference machine.
 
 Linux and macOS carry the same application (Amendment 7). Linux is a Flatpak on
 the GNOME runtime, which supplies the webkit2gtk-4.1 that Wails renders through;
-macOS is a signed and notarized DMG for Apple Silicon. Neither has been built on
-its own platform yet: both are held by the gate compiling and vetting the whole
-module for them on every run, which settles that nothing is Windows-only and
-settles nothing else. TESTING.md says so in those words.
+macOS is a signed and notarized DMG for Apple Silicon. Both have now been built
+on their own platform and run: the Flatpak's window opens and the DMG is
+notarized. The gate adds to that on every run by compiling and vetting the whole
+module for all three, which settles that nothing Windows-only can be written
+without the next run saying so. What each platform run did and did not settle is
+in TESTING.md.
 
 Where each platform keeps the two files it owns:
 
@@ -137,12 +139,13 @@ rules land under `~/.var/app/uk.codecrafter.SymChit`.
 | A-1 | One person's record is small: under 20,000 events over ten years (about five a day). Performance targets (3.6) are set against 20,000. | Oliver | To confirm |
 | A-2 | Windows' clock is right; SymChit trusts it for the default occurrence time. | Oliver | To confirm |
 | A-3 | Oliver supplies the application artwork as a master PNG with a transparent background. | Oliver | To confirm |
-| A-4 | WebView2 in a Wails window can print the receipt through the Windows print dialog, including Microsoft Print to PDF. HYPOTHESIS: not yet measured (Appendix A, M-1). | Claude | Measure before FR-040 is built |
+| A-4 | WebView2 in a Wails window can print the receipt through the Windows print dialog, including Microsoft Print to PDF. | Claude | Measured and true (Appendix A, M-1) |
 
 ## 3. Requirements
 
 Priorities use MoSCoW. Every requirement names the test or check that verifies
-it; test names are provisional until the code exists.
+it. Each name was read off the tree rather than written from intent: a reference
+that does not resolve is a requirement nobody can check.
 
 ### 3.1 Functional requirements: recording
 
@@ -186,7 +189,7 @@ it; test names are provisional until the code exists.
   with no trimming, spelling correction or other change.
 - Acceptance: A note of `  Much worse than yesterday.  ` (leading and trailing
   spaces) reads back identical, byte for byte.
-- Verified by: `internal/infrastructure/store/store_test.go::TestNoteRoundTripsByteForByte`
+- Verified by: `internal/infrastructure/store/store_test.go::TestNoteAndSymptomRoundTripByteForByte`
 
 **FR-006 Occurrence time never in the future**
 - Priority: Must
@@ -199,7 +202,7 @@ it; test names are provisional until the code exists.
 - Priority: Must
 - Requirement: The recording service shall set recorded-at when the event is
   created; no later operation shall change it.
-- Verified by: `record_test.go::TestEditLeavesRecordedAtAlone`
+- Verified by: `edit_test.go::TestEditLeavesRecordedAtAlone`
 
 **FR-008 Form after recording**
 - Priority: Must
@@ -207,7 +210,7 @@ it; test names are provisional until the code exists.
   its symptom, note, severity and time, then place the keyboard focus on the
   symptom field.
 - Rationale: The next observation starts from a clean form (source 3).
-- Verified by: frontend test `RecordForm.test.tsx::clearsAfterRecord`
+- Verified by: `frontend/src/RecordPane.test.tsx`, "records what was entered and clears afterwards"
 
 **FR-009 Recording failure**
 - Priority: Must
@@ -239,13 +242,13 @@ it; test names are provisional until the code exists.
 - Priority: Must
 - Requirement: The recording form shall accept a symptom that is not in the
   list, without asking the user to confirm it.
-- Verified by: `RecordForm.test.tsx::acceptsANewSymptom`
+- Verified by: `frontend/src/RecordPane.test.tsx`, "records what was entered and clears afterwards", which types a symptom no definition holds
 
 **FR-013 Labels kept as typed**
 - Priority: Must
 - Requirement: The application shall display every symptom exactly as the
   user typed it; no code path shall change its case, spelling or wording.
-- Verified by: `store_test.go::TestSymptomRoundTripsByteForByte`
+- Verified by: `store_test.go::TestNoteAndSymptomRoundTripByteForByte`
 
 **FR-014 Near duplicates**
 - Priority: Must
@@ -282,7 +285,7 @@ it; test names are provisional until the code exists.
 - Priority: Must
 - Requirement: The application shall let the user change an event's symptom,
   occurrence time, severity and note.
-- Verified by: `internal/application/edit_test.go::TestEditChangesOnlyWhatWasChanged`
+- Verified by: `internal/application/edit_test.go::TestEditKeepsOccurredAt`, plus `frontend/src/EditRow.test.tsx`, "opens with what the event holds"
 
 **FR-024 Edit keeps the occurrence time**
 - Priority: Must
@@ -297,14 +300,14 @@ it; test names are provisional until the code exists.
 - Requirement: When the user asks to delete an event, the application shall
   show a confirmation naming the event's symptom and local date and time; the
   event is removed only when the user confirms.
-- Verified by: `internal/application/delete_test.go::TestDeleteNeedsConfirmation`,
-  `History.test.tsx::confirmNamesTheEvent`
+- Verified by: `internal/application/edit_test.go::TestDeleteNeedsConfirmation`,
+  `frontend/src/HistoryPane.test.tsx`, "asks before deleting, naming the event; deletes only when confirmed"
 
 **FR-026 Delete many**
 - Priority: Could
 - Requirement: Where several events are selected, the delete confirmation shall
   state how many events will be removed.
-- Verified by: `History.test.tsx::confirmStatesTheCount`
+- Verified by: `frontend/src/HistoryPane.test.tsx`, "counts the events chosen for a bulk deletion"
 
 **FR-027 Edit and delete failure**
 - Priority: Must
@@ -317,7 +320,7 @@ it; test names are provisional until the code exists.
 - Priority: Should
 - Requirement: The application shall let the user rename a symptom definition;
   every event using it then shows the new name (Q-3).
-- Verified by: `internal/application/definitions_test.go::TestRenameReachesEveryEvent`
+- Verified by: `internal/application/history_test.go::TestRenameReachesEveryEvent`
 
 ### 3.4 Functional requirements: the receipt
 
@@ -326,8 +329,8 @@ it; test names are provisional until the code exists.
 - Requirement: When the user asks for a receipt over a local date range, the
   receipt service shall produce a page for the Windows print dialog, which
   also offers saving as PDF.
-- Verified by: `internal/application/receipt_test.go` plus a manual print on
-  the reference machine (A-4).
+- Verified by: `internal/application/history_test.go::TestReceiptFromTheStore` plus a
+  manual print on the reference machine (A-4, measured).
 
 **FR-041 Receipt contents**
 - Priority: Must
@@ -360,6 +363,21 @@ it; test names are provisional until the code exists.
   every line of a generated receipt is a title, a range, a heading, a count, a
   field of a recorded event or one of the two framing lines.
 
+**FR-043 Empty range**
+- Priority: Must
+- Requirement: If the chosen range holds no events, then the receipt service
+  shall say so and shall produce no receipt.
+- Verified by: `receipt_test.go::TestEmptyRangeGivesNoReceipt`
+
+**FR-044 Receipt order**
+- Priority: Must
+- Requirement: The receipt shall order symptom groups by each symptom's
+  earliest event in the range, oldest first; within a group, events run oldest
+  to newest. Names play no part in the order (Q-4).
+- Rationale: The source list says "chronological" while its example runs
+  newest first; the owner chose oldest first, never alphabetical.
+- Verified by: `receipt_test.go::TestReceiptOrder`
+
 **FR-045 Printed framing**
 - Priority: Must
 - Requirement: The receipt shall carry, above the title and again below the
@@ -384,21 +402,6 @@ it; test names are provisional until the code exists.
 - Verified by: `internal/domain/receipt_test.go::TestTheFramingWrapsTheRecord`,
   `TestTheFramingIsTheSameWhateverTheRecord`
 
-**FR-043 Empty range**
-- Priority: Must
-- Requirement: If the chosen range holds no events, then the receipt service
-  shall say so and shall produce no receipt.
-- Verified by: `receipt_test.go::TestEmptyRangeGivesNoReceipt`
-
-**FR-044 Receipt order**
-- Priority: Must
-- Requirement: The receipt shall order symptom groups by each symptom's
-  earliest event in the range, oldest first; within a group, events run oldest
-  to newest. Names play no part in the order (Q-4).
-- Rationale: The source list says "chronological" while its example runs
-  newest first; the owner chose oldest first, never alphabetical.
-- Verified by: `receipt_test.go::TestReceiptOrder`
-
 ### 3.5 Functional requirements: export
 
 **FR-050 Export**
@@ -407,7 +410,7 @@ it; test names are provisional until the code exists.
   whole record to a JSON file at a path the user chooses in a save dialog. The
   dialog shall open in the user's Downloads folder, which the user may leave
   (Amendment 4).
-- Verified by: `internal/infrastructure/export/export_test.go::TestExportWritesEveryEvent`
+- Verified by: `internal/infrastructure/export/export_test.go::TestExportWritesEveryEventAndReadsBack`
 
 **FR-051 Export format**
 - Priority: Must
@@ -428,7 +431,7 @@ it; test names are provisional until the code exists.
 - Priority: Should
 - Requirement: The application shall read an export file back, adding its
   events to the record and skipping any event already present (Q-5).
-- Verified by: `export_test.go::TestImportRoundTrip`
+- Verified by: `internal/application/transfer_test.go::TestExportThenImportRoundTrip`, `TestImportSkipsRepeatsWithinTheFile`
 
 ### 3.6 Functional requirements: storage and lifecycle
 
@@ -437,7 +440,7 @@ it; test names are provisional until the code exists.
 - Requirement: The application shall keep the record in one SQLite file, in the
   folder the platform keeps a program's own configuration in: on Windows
   `%APPDATA%\SymChit\symchit.db` (Amendment 7 names the other two in 2.3).
-- Verified by: `store/unavailable_test.go::TestOpensAtTheGivenPath`, which reads
+- Verified by: `internal/infrastructure/store/unavailable_test.go::TestOpensAtTheGivenPath`, which reads
   the folder from the platform through `os.UserConfigDir`
 
 **FR-061 First run**
@@ -458,13 +461,13 @@ it; test names are provisional until the code exists.
 - Priority: Must
 - Requirement: The store shall record its schema version; when it opens a file
   of an older version, the store shall upgrade it in one transaction.
-- Verified by: `store_test.go::TestUpgradeFromEveryEarlierVersion`
+- Verified by: `store_test.go::TestNewerSchemaRefused` and `TestReopenKeepsEverything`. The migration list holds one entry, so no file older than the current schema exists to upgrade from; the loop that would do it runs on every open and is exercised whenever a fresh file is made
 
 **FR-064 Single instance**
 - Priority: Must
 - Requirement: When SymChit starts while another instance is running for the
   same user, the new instance shall bring the running window forward and exit.
-- Verified by: `internal/infrastructure/instance/lock_test.go`
+- Verified by: a manual check with two copies started; the lock is Wails' own and needs two real processes, so no test covers it (TESTING.md lists it)
 
 **FR-065 Log**
 - Priority: Must
@@ -476,8 +479,14 @@ it; test names are provisional until the code exists.
   failure it answers is Windows-only: a windowed run started from a shortcut is
   handed a handle of 0 and everything written there is lost. Elsewhere the run
   keeps its own standard error and the crash report is copied to the log.
-- Verified by: `runlog_test.go`, including
-  `TestEveryPlatformsLogFolder`; `tests/structural/boundary_test.go::TestNoRecordFieldsLogged`
+- Verified by: `runlog_test.go`, including `TestEveryPlatformsLogFolder`, plus
+  `tests/structural/logscan_test.go::TestOnlyTheKnownPlacesWriteToTheLog`,
+  which holds the log's writers to a declared list. Nothing about a write to
+  standard error says whether its arguments came from the record, so the
+  promise is kept by there being few enough writers to read, all of them known
+  and each a constant sentence plus an error or a stack. A new one fails the
+  test and has to be declared, which is the moment to ask what it puts in the
+  file.
 
 **FR-066 About**
 - Priority: Must
@@ -559,8 +568,16 @@ Left shall step it back, both wrapping at the ends; Enter and Space shall fire
 the focused control; Escape shall close an open dialog. A field holding text
 keeps the horizontal arrows for its caret and is left with Tab. The window shall
 open with nothing focused; a dialog shall open on its first control, passing
-over its scrolling body. Verified by `frontend/src/ring.test.ts` and
-`useRing.test.tsx`, plus a manual pass.
+over its scrolling body. The window shall hand the page the keyboard as it
+opens, so the first key pressed reaches the ring without the page being clicked
+first (Amendment 11). Verified by `frontend/src/ring.test.ts`,
+`useRing.test.tsx` and `window_test.go::TestReadyAsksTheWindowForTheKeyboard`,
+plus a manual pass.
+
+**NFR-USE-003 Contrast**: Text shall meet WCAG 2.2 AA contrast (4.5:1 for body
+text) in the theme in use; each ring colour shall meet the 3:1 WCAG 2.2 asks
+of a non-text indicator against the surfaces it is drawn on. Verified by a test
+over the colour tokens.
 
 **NFR-USE-004 Focus ring** (Amendment 8): A control shall show no ring at rest,
 the ring colour while it is hovered or keyboard-focused, then the danger colour
@@ -569,14 +586,11 @@ the ring reads against it. No container shall take focus or paint a ring. The
 accent colour shall never be used as a ring. Verified by
 `tests/structural/focus_test.go`, each assertion proved by planting.
 
-**NFR-USE-003 Contrast**: Text shall meet WCAG 2.2 AA contrast (4.5:1 for body
-text) in the theme in use; each ring colour shall meet the 3:1 WCAG 2.2 asks
-of a non-text indicator against the surfaces it is drawn on. Verified by a test
-over the colour tokens.
-
 **NFR-PERF-001 Startup**: The recording form shall accept input within 2 s of
-process start on the reference machine, measured from the log's start line to
-its ready line.
+process start on the reference machine. UNMEASURED: the log carries the run's
+start line and no ready line, so nothing in the product times this. Measuring it
+means adding a second line at the moment the page reports itself ready; until
+then the number is a target rather than a reading.
 
 **NFR-PERF-002 History**: With 20,000 events (A-1), the history shall show its
 first page within 300 ms of a filter change, at the 95th percentile over 100
@@ -604,8 +618,9 @@ power loss one second later. The store runs SQLite in WAL mode with
 `synchronous=FULL`. Verified by `store_test.go::TestDurabilityPragmas`.
 
 **NFR-MAINT-001 Coverage**: `internal/domain` and `internal/application` shall
-be held at 100% statement coverage by `test.ps1`, which `build.ps1` runs first
-and cannot skip.
+be held at 100% statement coverage by `test.ps1`, which `build.ps1` runs before
+it builds anything. `build.ps1 -Fast` skips the gate for a working loop and
+prints that it has; a release is never cut with it.
 
 **NFR-MAINT-002 Structure**: A structural test shall enforce the layering
 (C-4), domain purity (no `os`, `time.Now` or `database/sql` in the domain), the
@@ -615,18 +630,20 @@ and cannot skip.
 `eslint` and Vitest shall report nothing.
 
 **NFR-MAINT-004 Docs**: The repository shall carry `README.md` (with who it is
-for and not for), `ARCHITECTURE.md`, `TESTING.md`, `DEVELOPMENT.md` and
-`VERSION`.
+for and not for), this specification, `ARCHITECTURE.md`, `TESTING.md`,
+`DEVELOPMENT.md` and `VERSION`.
 
 **NFR-MAINT-005 Wire**: A structural test shall compare the Go DTOs with the
-hand-written TypeScript interfaces, field for field.
+hand-written TypeScript interfaces, field for field; a second shall compare
+the receipt's line kinds with the union the page admits. The first sees that a
+line carries a kind; only the second sees which kinds exist.
 
 ### 3.9 Won't this time
 
 | Item | Reason |
 |---|---|
 | Other event types (medication, meal, sleep) | Source 14: version 1 stays on symptoms. The event table carries a kind column so they can follow without a migration of existing rows. |
-| Phone or web version | Platform decided 2026-09-22: Windows desktop. |
+| Phone or web version | Platform decided 2026-09-22: the desktop, which Amendment 7 widened to all three desktops rather than to a phone. |
 | Synchronisation between machines | Source 11: no cloud. The export is the portability path. |
 | Reminders | Source 10: no nagging. |
 | Charts and trends | Source 10: no interpretation. |
@@ -711,13 +728,39 @@ requirements carry it: FR-024 (time never silently changed), FR-042 (receipt
 holds nothing but the record) and NFR-REL-001 (durability). Judged
 proportionate for a single-user record keeper.
 
+### 4.4 What version 1 commits to
+
+A first release is where a promise starts, so the promises are named rather
+than left to be inferred from the code as it happens to stand.
+
+- **The export format is a contract, not a snapshot.** Every file SymChit has
+  ever written stays readable by every later SymChit. The envelope (`format`
+  and an integer `version`) never changes shape; a new version is added beside
+  the old readers rather than in place of them, with the old version's real
+  bytes frozen under `testdata` and read by the suite on every run. This is
+  what makes an export a file the user owns: it is worth nothing if the program
+  that wrote it is the only one that will ever read it, then worth nothing again
+  if next year's SymChit refuses last year's file.
+- **The printed sheet's wording is a public claim** (FR-045). It goes into
+  filing cabinets and is read by people who will never see the application, so
+  the line saying the record is not a diagnosis is held by a test asserting it
+  whole; changing it is a decision about what SymChit tells a clinician rather
+  than a wording tidy-up.
+- **The record's own schema** is versioned by the store and a newer schema is
+  refused rather than guessed at, so a record written by a later SymChit is
+  never silently misread by this one.
+
+What version 1 does NOT commit to: the window's layout, the wording of anything on
+screen other than the sheet, the log's shape, the setup program's screens or
+any internal structure. Those change whenever they are improved.
+
 ## 5. Appendices
 
 ### Appendix A: Feasibility measurements
 
 | ID | Question | Measured |
 |---|---|---|
-| M-1 | Does `window.print()` in a Wails v2.12 window open the Windows print dialog with Microsoft Print to PDF offered? | Not yet measured. A throwaway probe before FR-040 is built. |
+| M-1 | Does `window.print()` in a Wails v2.12 window open the Windows print dialog with Microsoft Print to PDF offered? | Yes. Measured in the built window on 2026-09-22: the dialog opened, offering Save as PDF and Microsoft Print to PDF; the printed page carried the receipt alone. |
 
 ### Appendix B: Open questions
 
@@ -756,6 +799,7 @@ Still open:
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 11 | 2026-09-22 | NFR-USE-002 | The window hands the page the keyboard as it opens, through a focuser seam wired at the composition root and called on DOM ready. | A defect the owner found in the built window: no Tab ever stepped the ring, while a single click on the page fixed it for the rest of the run. WebView2 keeps DOM focus and keyboard focus apart, so the sink held the first while the webview held none of the second and no keydown reached the listener at all. Read from the Wails 2.12.0 source: its Windows frontend hands the webview focus only from WM_SETFOCUS on the main window, which nothing raises at startup; `runtime.Show` raises it. The page cannot fix this from its own side, since a DOM focus call cannot make the webview the thing keys are sent to. |
 | 10 | 2026-09-22 | FR-041, FR-042, new FR-045 | The printed record is framed: the program and its address above the title and below the last event, then a statement under the date range saying it is not a diagnosis but the person's own notes for a healthcare professional. | Owner's request. It also answers the surface Amendment 9 identified as the one a regulator reads: a sheet that leaves the recording program's hand carries what it is and what it is not, rather than relying on a reader who has seen the application. The sheet says notes rather than guidance, since guidance names a purpose SymChit does not have (FR-045). |
 | 9 | 2026-09-22 | 4.1, Q-8 | The MHRA reading is confirmed against SI 2002/618 reg. 2 and MHRA guidance v1.10f, so Q-8 closes. The guidance's own caveat about features that enhance the data presented replaces the narrower list as the standing constraint. Two further rules are recorded: a disclaimer carries no weight on its own; the store category is promotional material. | The ruling had been made against a summary of the guidance rather than its text, while intended purpose is fixed by what the manufacturer publishes, so the text was the only thing that could settle it. Measured: page 21 lists a replacement for a written symptom diary among the examples unlikely to be devices, which is SymChit's intended purpose. |
 | 8 | 2026-09-22 | NFR-USE-002, new NFR-USE-004, FR-066 | The house keyboard model and its three-state focus ring are stated as requirements rather than left to the page; About names the copyright holder and year. | Owner's request. The ring was a single blue outline on keyboard focus alone, which said nothing about what could be used and nothing about what could not: Print sat inert beside the button that fills it with no way to tell it apart from a control waiting to be pressed. |

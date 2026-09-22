@@ -2,6 +2,12 @@
 
 A health tracker.  It doesn't diagnose.  It's just a little record of symptoms.
 
+> **Commercial licences available.** SymChit is free and open source under the
+> GPL-3.0. If those terms do not suit what you are building, such as a
+> closed-source product, a commercial licence can be bought from me separately.
+> It covers my own code; third-party libraries keep their own licences. See
+> [commercial licensing](https://ernster.dev/commercial-licensing.html).
+
 When you notice a symptom, record it. When you see your doctor, take the record
 with you.
 
@@ -89,11 +95,10 @@ Your record and the run log go wherever the platform keeps such things:
 
 Inside the Flatpak both land under `~/.var/app/uk.codecrafter.SymChit`.
 
-Windows is the platform SymChit has been run on. The Linux and macOS builds
-compile and are vetted on every test run, which says nothing has been written
-that only Windows can compile; neither has yet been built on its own machine.
-The bespoke setup program stays Windows-only: a Flatpak and a DMG are how those
-platforms install things.
+All three have been built and run. Windows is the platform SymChit has been used
+on; the Flatpak and the DMG have each been built on their own machine and the
+window opened, with the DMG notarized. The bespoke setup program stays
+Windows-only: a Flatpak and a DMG are how those platforms install things.
 
 ## Testing
 
@@ -109,7 +114,8 @@ What it runs and what each floor means is in [TESTING.md](TESTING.md).
 ./build.ps1
 ```
 
-The gate runs first and cannot be skipped.
+The gate runs first. `-Fast` skips it for a working loop and says so; a release
+is never cut that way.
 
 ## Documentation
 
@@ -129,8 +135,27 @@ appointment go better, the Donate button at the right of the bar opens a
 contribution page in your browser. SymChit sends nothing itself: it hands the
 address to Windows and your browser does the rest.
 
+<a href="https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC"><img src="frontend/src/assets/icons/donate.png" alt="Donate to SymChit" width="120"></a>
+
+## What version 1 promises
+
+A first release is where a promise starts, so here is what this one is.
+
+Your exported file stays readable. Every export SymChit has ever written will
+be read by every later SymChit: the format carries its own version and old
+readers are kept beside new ones, with each old version's real bytes frozen in
+the test suite. A file you own is worth nothing if next year's version refuses
+it.
+
+The printed sheet's wording is a public claim, not decoration. The line saying
+the record is not a diagnosis is held by a test that asserts it whole.
+
+What is not promised: the window's layout, the wording on screen, the log or
+the setup program's screens. Those improve whenever they can.
+
 ## Licence
 
-GPL-3.0. See [LICENSE](LICENSE).
+GPL-3.0. See [LICENSE](LICENSE). For terms that suit a closed-source product,
+see [commercial licensing](https://ernster.dev/commercial-licensing.html).
 
 SymChit is not a medical device and gives no medical advice.
