@@ -23,18 +23,16 @@ type App struct {
 	payload       []byte
 	version       string
 	uninstallMode bool
-	prefersDark   bool
 }
 
 // NewApp builds the facade. Started with -uninstall, as the Apps list starts
 // it, setup opens on the removal screen rather than on the manage one.
-func NewApp(payload []byte, version string, prefersDark bool) *App {
+func NewApp(payload []byte, version string) *App {
 	uninstall := len(os.Args) > 1 && os.Args[1] == setup.UninstallFlag
 	return &App{
 		payload:       payload,
 		version:       version,
 		uninstallMode: uninstall,
-		prefersDark:   prefersDark,
 	}
 }
 
@@ -56,7 +54,6 @@ type StateDTO struct {
 	RecordFile       string `json:"recordFile"`
 	StartMenu        bool   `json:"startMenu"`
 	Desktop          bool   `json:"desktop"`
-	PrefersDark      bool   `json:"prefersDark"`
 }
 
 // OptionsDTO carries the choices made on the install or reinstall screen.
@@ -109,7 +106,6 @@ func (a *App) DetectState() StateDTO {
 		RecordFile:       record,
 		StartMenu:        shortcuts.StartMenu,
 		Desktop:          shortcuts.Desktop,
-		PrefersDark:      a.prefersDark,
 	}
 }
 

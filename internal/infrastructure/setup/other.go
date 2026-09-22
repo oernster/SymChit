@@ -42,10 +42,6 @@ func RemoveUninstallEntry() error { return ErrUnsupported }
 // InstalledVersion reports nothing installed off Windows.
 func InstalledVersion() (string, bool) { return "", false }
 
-// SystemPrefersDark reports light off Windows, so the setup window has a
-// definite starting theme everywhere.
-func SystemPrefersDark() bool { return false }
-
 // ApplyShortcuts places nothing off Windows.
 func ApplyShortcuts(string, string, Shortcuts) {}
 

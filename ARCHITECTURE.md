@@ -100,8 +100,10 @@ name of its own, because a page has no build step to catch a stale one.
 
 It follows the house setup model: work moves to a progress screen rather than
 greying the options in place, the footer is rebuilt per screen, the progress
-screen offers nothing, one reading of the machine decides the route; every path ends in a verdict. Setup follows the Windows light or dark setting with no
-toggle, as the application does.
+screen offers nothing, one reading of the machine decides the route; every path
+ends in a verdict. Setup opens dark and carries the light or dark toggle in its
+header, as the application carries one in its bar, remembering the choice in
+its own storage.
 
 ## Decisions and why
 
@@ -115,7 +117,7 @@ toggle, as the application does.
 | A record that will not open becomes `store.Unavailable`. | The window opens and says what is wrong, instead of a program that never appears. Every action answers with the same reason. | Eleven one-line methods that refuse. |
 | Times are stored as RFC 3339 with their offset. | The instant reads back as the same instant; an export carries the offset it was written in. | Ordering happens in Go rather than in SQL. |
 | No encryption at rest. | A passphrase is a thing to lose; the Windows account already guards the file. Stated in the README rather than assumed. | Anyone who can sign in as the user can read the record. |
-| Light and dark follow Windows, with no switch. | One fewer setting; the palette is held to AA in both modes by a test. | No preference for a user who wants the other one. |
+| SymChit opens dark and carries its own switch, rather than following Windows. | A window that changes under the reader because the desktop reached dusk is a surprise; a button in the bar is one press away and what it chooses is remembered. The palette is held to AA in both modes by a test either way. | The page owns a preference, so the tokens hang off an attribute rather than a media query; the setup program carries the same button so the two cannot disagree. |
 | The Guide and About read themselves down, gently, until the reader takes over. | Long help holds still on open, descends a pixel every second tick, holds at the tail and rewinds; any wheel, press, key or focus arrival suspends it for 2.5 seconds and it then resumes from wherever the reader left it. The pace belongs to the application rather than to either dialog. | A timer per open dialog, plus a pure state machine to keep the pacing testable without waiting. |
 | The focus ring is answered by the page, not left to the browser. | The browser has an opinion about Tab and none about the arrows, so the house model (Tab and Right forward, Shift+Tab and Left back, wrapping at both ends) has to be stated. It is split in two: the rules are a pure module under test; one listener drives them against the page. | One key listener at the shell, plus a text field that has to be asked for its arrows back rather than assumed. |
 | Three ring states and no more. | Nothing at rest, so the window is quiet until it is used; green while a control is hovered or focused, because both say "you can use this" and a reader should not have to learn two colours for one fact; permanently red while disabled, because the red IS the state and a ring that waited for the mouse would leave Print looking like a button nobody had pressed yet. The accent is data meaning and never a ring. | A disabled control has to give up its fill as well; otherwise the ring it is meant to show disappears into it. |

@@ -1,7 +1,13 @@
 /*
-  Every colour SymChit uses, in one place. Light and dark follow the Windows app
-  mode through prefers-color-scheme (Q-9). The page names tokens only; a test
+  Every colour SymChit uses, in one place. The page names tokens only; a test
   holds every text pairing to WCAG 2.2 AA (NFR-USE-003).
+
+  SymChit opens DARK and wears light only when the reader asks for it, through
+  `data-theme` on the root element (FR-073, Amendment 12). It does not follow
+  the Windows app mode: the window changing under the reader because the desktop
+  reached dusk is a surprise, while the button in the bar is one press away. That
+  is why the dark tokens are the plain ones here and light is the override:
+  what the window opens in should be what the file states first.
 
   The ring is the three-state focus model: nothing at rest, --ring while a
   control is hovered or keyboard-focused, --danger permanently while it is
@@ -15,7 +21,24 @@
 */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
+
+  --bg: #14171c;
+  --surface: #1e2229;
+  --text: #e6e9ed;
+  --muted: #a3adb9;
+  --border: #3a414c;
+  --accent: #6aa6ff;
+  --on-accent: #0b1320;
+  --danger: #ff8a80;
+  --on-danger: #1a0605;
+  --ring: #34d399;
+  --muted-fill: #2a303a;
+  --selected: #243349;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 
   --bg: #f4f6f8;
   --surface: #ffffff;
@@ -29,21 +52,4 @@
   --ring: #047857;
   --muted-fill: #e4e8ed;
   --selected: #dce8fb;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #14171c;
-    --surface: #1e2229;
-    --text: #e6e9ed;
-    --muted: #a3adb9;
-    --border: #3a414c;
-    --accent: #6aa6ff;
-    --on-accent: #0b1320;
-    --danger: #ff8a80;
-    --on-danger: #1a0605;
-    --ring: #34d399;
-    --muted-fill: #2a303a;
-    --selected: #243349;
-  }
 }

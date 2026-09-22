@@ -15,7 +15,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/oernster/symchit/internal/infrastructure/setup"
 	"github.com/oernster/symchit/internal/product"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -48,20 +47,14 @@ const (
 	webviewFolder = product.Name + "Setup"
 )
 
-// dark and light are the surface colours from the application's own palette, so
-// setup never flashes a ground the application would not draw.
-var (
-	dark  = options.RGBA{R: 0x14, G: 0x17, B: 0x1c, A: 1}
-	light = options.RGBA{R: 0xf4, G: 0xf6, B: 0xf8, A: 1}
-)
+// background is the dark surface from the application's own palette. Setup
+// opens dark, as the application does, so this is the ground it never flashes
+// anything else over; a reader who moves it to light moves the page, which
+// fills the window.
+var background = options.RGBA{R: 0x14, G: 0x17, B: 0x1c, A: 1}
 
 func main() {
-	prefersDark := setup.SystemPrefersDark()
-	background := light
-	if prefersDark {
-		background = dark
-	}
-	app := NewApp(payload, appVersion, prefersDark)
+	app := NewApp(payload, appVersion)
 	_ = wails.Run(&options.App{
 		Title:            windowTitle,
 		Width:            windowWidth,

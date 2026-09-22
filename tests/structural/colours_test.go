@@ -52,9 +52,10 @@ var indicators = [][2]string{
 // hexColour matches a token declaration such as `--text: #1b1f24;`.
 var hexColour = regexp.MustCompile(`--([a-z-]+):\s*(#[0-9a-fA-F]{6})`)
 
-// modes splits the theme into the light block and the dark one. The dark
-// block opens at the media query, so everything before it is light.
-const darkMarker = "@media (prefers-color-scheme: dark)"
+// lightMarker splits the theme into its two blocks. SymChit opens dark, so the
+// dark tokens are the plain `:root` ones and everything from this selector on
+// is the light override (FR-073).
+const lightMarker = ":root[data-theme='light']"
 
 // channel converts one 8-bit component to its linear value.
 func channel(value float64) float64 {
@@ -110,13 +111,13 @@ func themeModes(t *testing.T) map[string]map[string]string {
 		t.Fatalf("reading %s: %v", filepath.ToSlash(themeFile), err)
 	}
 	theme := string(raw)
-	split := strings.Index(theme, darkMarker)
+	split := strings.Index(theme, lightMarker)
 	if split < 0 {
-		t.Fatalf("%s carries no dark mode", filepath.ToSlash(themeFile))
+		t.Fatalf("%s carries no light mode", filepath.ToSlash(themeFile))
 	}
 	return map[string]map[string]string{
-		"light": tokensIn(theme[:split]),
-		"dark":  tokensIn(theme[split:]),
+		"dark":  tokensIn(theme[:split]),
+		"light": tokensIn(theme[split:]),
 	}
 }
 

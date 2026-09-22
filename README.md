@@ -69,6 +69,8 @@ these:
   first entry, that it is not a diagnosis: it is your own notes, printed for a
   healthcare professional to read.
 - Exports the whole record to a JSON file you own; reads one back too.
+- Opens dark, with a button in the bar that moves it to light and remembers
+  which you chose.
 
 ## Built with
 

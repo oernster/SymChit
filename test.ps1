@@ -108,13 +108,16 @@ try {
 # its crash tests start a child; what remains uncovered there is the Win32
 # handle work. The store and the export file reach everything but a handful of
 # operating-system write failures that cannot be forced without breaking the
-# disk. TESTING.md names each shortfall.
+# disk. The setup package moved 56 to 59 when the Windows theme read went: setup
+# opens dark and carries its own toggle, so the registry lookup nothing could
+# exercise is gone rather than sitting there lowering the number.
+# TESTING.md names each shortfall.
 $measured = [ordered]@{
     '.'                                      = 76
     './internal/infrastructure/store'        = 92
     './internal/infrastructure/export'       = 91
     './internal/infrastructure/runlog'       = 81
-    './internal/infrastructure/setup'        = 56
+    './internal/infrastructure/setup'        = 59
 }
 
 Write-Host 'Measuring the rest of the tree...'

@@ -62,6 +62,17 @@ HICOLOR_SIZES = [16, 24, 32, 48, 64, 128, 256, 512]
 # megabyte behind one badge.
 HEADER_SIZE = 256
 
+# TOGGLE_SIZE is the setup header's theme toggle, drawn at 30 pixels. The same
+# doubling as the mark keeps it crisp, for the same reason: the setup
+# page has no bundler, so it loads whatever file it finds.
+TOGGLE_SIZE = 64
+
+# TOGGLE_MASTERS are the two faces of that toggle, which the application's band
+# carries as well. They are named here rather than globbed, because the setup
+# page names each file it loads and a master added to assets/ later must not
+# silently appear in its header.
+TOGGLE_MASTERS = ["light-mode.png", "dark-mode.png"]
+
 REPO = pathlib.Path(__file__).resolve().parent.parent
 MASTERS = REPO / "assets"
 OUTPUT = REPO / "frontend" / "src" / "assets" / "icons"
@@ -75,6 +86,7 @@ SETUP_BUILD = REPO / "installer" / "build"
 SETUP_ICO = SETUP_BUILD / "windows" / "icon.ico"
 SETUP_APPICON = SETUP_BUILD / "appicon.png"
 SETUP_HEADER = REPO / "installer" / "frontend" / "dist" / "icon.png"
+SETUP_DIST = REPO / "installer" / "frontend" / "dist"
 
 # The Linux desktop takes its icon from the hicolor theme rather than from the
 # executable, so the sizes are written out as files and committed with the rest.
@@ -166,6 +178,15 @@ def main() -> int:
     print(f"{'':<22} -> {SETUP_HEADER.relative_to(REPO)} ({SETUP_HEADER.stat().st_size:,} bytes)")
     written = render(app, OUTPUT / APP_MASTER)
     print(f"{'':<22} -> About crest ({written:,} bytes)")
+
+    for name in TOGGLE_MASTERS:
+        master = MASTERS / name
+        if not master.exists():
+            sys.exit(f"\nno toggle artwork at {master}")
+        target = SETUP_DIST / name
+        art = squared(trimmed(master)).resize((TOGGLE_SIZE, TOGGLE_SIZE), Image.LANCZOS)
+        art.save(target, "PNG", optimize=True)
+        print(f"{name:<22} -> {target.relative_to(REPO)} ({target.stat().st_size:,} bytes)")
     return 0
 
 

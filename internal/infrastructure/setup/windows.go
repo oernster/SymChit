@@ -16,8 +16,6 @@ import (
 
 const (
 	uninstallKeyPath = `Software\Microsoft\Windows\CurrentVersion\Uninstall\` + InstallFolder
-	themeKeyPath     = `Software\Microsoft\Windows\CurrentVersion\Themes\Personalize`
-	themeValueName   = "AppsUseLightTheme"
 	shortcutName     = AppName + ".lnk"
 )
 
@@ -92,23 +90,6 @@ func InstalledVersion() (string, bool) {
 		return "", false
 	}
 	return value, true
-}
-
-// SystemPrefersDark reports whether Windows is set to a dark app theme, which
-// is what the setup window opens in. SymChit itself follows the same setting
-// and offers no switch, so setup offers none either. A missing or unreadable
-// value reads as light, matching a fresh Windows install.
-func SystemPrefersDark() bool {
-	key, err := registry.OpenKey(registry.CURRENT_USER, themeKeyPath, registry.QUERY_VALUE)
-	if err != nil {
-		return false
-	}
-	defer key.Close()
-	value, _, err := key.GetIntegerValue(themeValueName)
-	if err != nil {
-		return false
-	}
-	return value == 0
 }
 
 // literal writes a path as a PowerShell single-quoted string, which takes every

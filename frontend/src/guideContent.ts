@@ -13,6 +13,7 @@ import receiptIcon from './assets/icons/receipt.png'
 import symptomsIcon from './assets/icons/symptoms.png'
 import exportIcon from './assets/icons/export.png'
 import importIcon from './assets/icons/import.png'
+import lightModeIcon from './assets/icons/light-mode.png'
 import guideIcon from './assets/icons/help-info.png'
 import crest from './assets/icons/application-icon.png'
 
@@ -71,14 +72,19 @@ export const guideSections: GuideSection[] = [
         text: 'the symptoms you have used so far. Rename one here and every entry using it follows.',
       },
       {
+        icon: importIcon,
+        name: 'Import',
+        text: 'reads an exported file back in. Anything already in your record is skipped, so importing the same file twice changes nothing.',
+      },
+      {
         icon: exportIcon,
         name: 'Export',
         text: 'writes your whole record to a file you choose, in the Downloads folder unless you pick another. The file is plain JSON: it is yours.',
       },
       {
-        icon: importIcon,
-        name: 'Import',
-        text: 'reads an exported file back in. Anything already in your record is skipped, so importing the same file twice changes nothing.',
+        icon: lightModeIcon,
+        name: 'Light mode',
+        text: 'moves the window between dark and light. The picture is the one you would move to, so the sun means light is a press away; SymChit opens in whichever you left it in.',
       },
       {
         icon: guideIcon,

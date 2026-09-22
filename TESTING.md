@@ -63,7 +63,7 @@ told.
 | `internal/infrastructure/store` | 92 | The rest is SQLite write failures that cannot be forced without breaking the disk. |
 | `internal/infrastructure/export` | 91 | The rest is operating-system write failures on a temporary file. |
 | `internal/infrastructure/runlog` | 81 | The rest is Win32 standard-handle work, reachable only in a windowed process with no error output. It was 74 until the folder rule became a pure function taking the platform as an argument: all three platforms' answers are now exercised on whichever platform the suite runs on, rather than two of them waiting for a user to report the answer. |
-| `internal/infrastructure/setup` | 56 | The portable half and the shortcut writing are tested. The registry writes, the process work and the scheduled deletion change the machine, so a real install exercises them instead. |
+| `internal/infrastructure/setup` | 59 | The portable half and the shortcut writing are tested. The registry writes, the process work and the scheduled deletion change the machine, so a real install exercises them instead. It was 56 until the Windows theme read went: setup opens dark and carries its own toggle, so a registry lookup no test could exercise is gone rather than sitting there lowering the number. |
 | root package (the facade) | 76 | The facade itself is covered. `main`, the log handover, the file dialogs, the browser opener and the single-instance lock need a real window. The floor was 77 until the donate button landed: the opener is one more line of Wails runtime no test can reach, so the blend fell by half a point and the floor was re-measured rather than the facade going untested. |
 
 Not gated at all: `internal/product` holds constants and no behaviour, though the
@@ -105,7 +105,8 @@ changes.
 
 | Check | Last result |
 |---|---|
-| The window opens and follows the Windows light or dark mode. | Dark, matching Windows. |
+| The window opens dark and the bar's button moves it to light and back, remembered across a restart. | Measured in Chromium against the built page on 2026-09-22: it opens dark with the sun and the words "Light mode", one press gives light with the moon and "Dark mode", then the choice is written to the window's storage. Not yet confirmed in the real window. |
+| The setup program opens dark and its header toggle moves it to light and back. | Measured in Chromium against the setup page on 2026-09-22: dark with the sun, one press to light with the moon, the face and the words changing together and the choice stored. Not yet confirmed in the real setup window. |
 | Wails' IPC works under the page's Content-Security-Policy. | Works: the severities shown came from Go. |
 | `window.print()` opens the Windows print dialog. | It does, offering Save as PDF and Microsoft Print to PDF. |
 | The printed page carries the receipt alone. | It does: no band, no status line, no controls. |

@@ -15,10 +15,49 @@ function backend() {
 
 /* ------------------------------------------------------------------ theme */
 
-// applyTheme follows the Windows light or dark setting, read once by setup.
-// There is no toggle, because SymChit itself has none.
+// Setup opens dark and wears light only when asked, as the application does.
+// The choice is kept in this window's own storage, which can refuse both
+// reading and writing; a theme is not worth a dead setup program, so a refusal
+// leaves the default showing.
+const THEME_KEY = 'symchit.setup.theme'
+const DEFAULT_THEME = 'dark'
+
+function storedTheme() {
+    try {
+        const held = window.localStorage.getItem(THEME_KEY)
+        return held === 'light' || held === 'dark' ? held : DEFAULT_THEME
+    } catch (e) {
+        return DEFAULT_THEME
+    }
+}
+
+// applyTheme dresses the window AND re-faces the toggle, in one place: a
+// repaint that left the toggle showing the mode just departed invites a second
+// press. The picture is the mode it would move TO, so the sun shows in the dark.
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme)
+    const face = $('theme-face')
+    const button = $('theme-toggle')
+    if (!face || !button) {
+        return
+    }
+    const offers = theme === 'dark' ? 'Light mode' : 'Dark mode'
+    face.src = theme === 'dark' ? 'light-mode.png' : 'dark-mode.png'
+    button.title = offers
+    button.setAttribute('aria-label', offers)
+}
+
+// toggleTheme moves to the other one and remembers it where it can.
+function toggleTheme() {
+    const wanted = document.documentElement.getAttribute('data-theme') === 'dark'
+        ? 'light'
+        : 'dark'
+    applyTheme(wanted)
+    try {
+        window.localStorage.setItem(THEME_KEY, wanted)
+    } catch (e) {
+        // The window is already wearing it; only the remembering was lost.
+    }
 }
 
 /* ---------------------------------------------------------------- screens */

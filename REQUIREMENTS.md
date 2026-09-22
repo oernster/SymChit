@@ -3,8 +3,7 @@
 Status: baselined 2026-09-22. Derived the same day from
 `health-symptom-tracker-requirements.md` (the source document, section 1.5).
 Changes from here arrive as numbered amendments with a reason (section 6).
-One question remains open (Appendix B); it gates neither the domain nor the
-application layer.
+No questions remain open (Appendix B).
 
 ## 1. Introduction
 
@@ -525,6 +524,29 @@ that does not resolve is a requirement nobody can check.
   `frontend/src/App.test.tsx::offers the donation page last in the band`;
   `tests/structural/boundary_test.go::TestNoNetworkImports`
 
+**FR-073 Light and dark** (Amendment 12)
+- Priority: Should
+- Requirement: The application shall open dark and shall offer a button in the
+  bar that moves it between dark and light. The choice shall be remembered for
+  the next opening. The button shall show the mode it would move to, in its
+  picture and in its words. The setup program shall behave the same way.
+- Rationale: The owner's decision, superseding Q-9. SymChit no longer reads the
+  Windows app mode: the window changing under the reader because the desktop
+  reached dusk is a surprise, while the button is one press away.
+- The button stands between two rules, to the left of Guide: it belongs to
+  neither the transfer group before it nor the help group after it.
+- Acceptance: A window opened for the first time is dark and its button reads
+  `Light mode` over the sun. Pressing it makes the window light and the button
+  read `Dark mode` over the moon. Closing and reopening keeps light.
+- The choice lives in the window's own storage rather than in the record or in
+  a file of its own: it is a preference about this machine's window, not part
+  of what the user recorded. Storage that refuses to be read or written leaves
+  the default showing rather than ending the page: a theme is not worth a dead
+  window, while the cost of a refusal is one press next time.
+- Verified by: `frontend/src/theme.test.ts`, `useTheme.test.tsx`,
+  `App.test.tsx`, "dresses the window from the bar and keeps the choice", plus
+  a manual pass over the setup program.
+
 **FR-067 Not medical advice**
 - Priority: Must
 - Requirement: The About dialog shall state that SymChit records observations
@@ -586,11 +608,13 @@ the ring reads against it. No container shall take focus or paint a ring. The
 accent colour shall never be used as a ring. Verified by
 `tests/structural/focus_test.go`, each assertion proved by planting.
 
-**NFR-PERF-001 Startup**: The recording form shall accept input within 2 s of
-process start on the reference machine. UNMEASURED: the log carries the run's
-start line and no ready line, so nothing in the product times this. Measuring it
-means adding a second line at the moment the page reports itself ready; until
-then the number is a target rather than a reading.
+**NFR-PERF-001 Startup**: The window shall be usable promptly after it is
+started. Not instrumented, by the owner's decision on 2026-09-22: startup is
+quick enough in use, so nothing times it. The earlier form of this requirement
+named a 2 second budget measured between two lines in the run log; only one of
+those lines was ever written, so the budget was never a reading. Timing it would
+mean the page reporting itself ready and the log carrying that second line,
+which is worth doing only if startup ever stops feeling quick.
 
 **NFR-PERF-002 History**: With 20,000 events (A-1), the history shall show its
 first page within 300 ms of a filter change, at the 95th percentile over 100
@@ -775,14 +799,13 @@ Decided by the owner on 2026-09-22:
 | Q-5 | Import in version 1 | Yes, Should. | FR-053 |
 | Q-6 | Encryption at rest | No; the non-claim is stated. | NFR-PRIV-003 |
 | Q-7 | Edit history | Not in version 1. | 3.9 |
+| Q-9 | Light, dark or following Windows? | Neither: SymChit opens dark and carries a button that moves it to light, remembered for next time. Answered first as "follow the Windows app mode", then superseded the same day by Amendment 12. | FR-073 |
 | Q-8 | Does the MHRA reading in 4.1 hold? | Yes. Ruled 2026-09-22, then confirmed the same day against SI 2002/618 reg. 2 and MHRA guidance v1.10f, page 21, which lists a replacement for a written symptom diary among the examples unlikely to be devices. | 4.1 |
 | Q-10 | Identifying details on the receipt | None. | FR-041 |
 
-Still open:
-
-| ID | Question | Proposal | Owner | Gates |
-|---|---|---|---|---|
-| Q-9 | Light, dark or following Windows? | Follow the Windows app mode. | Oliver | Build step 4 |
+Nothing is still open. Every question raised while this specification was
+written has been answered; each answer lives in the requirement or the file
+named beside it.
 
 ### Appendix C: Build order
 
@@ -799,6 +822,7 @@ Still open:
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 12 | 2026-09-22 | New FR-073, Q-9, 3.9, NFR-USE-003 | SymChit opens dark and carries a light or dark button in the bar, left of Guide between two rules; the setup program carries the same in its header. Neither reads the Windows app mode any more, so the Windows theme read and the `prefersDark` field on setup's state are gone. | Owner's request, superseding the Q-9 answer of the same day. The window following the desktop means it changes under the reader at dusk; a button is one press away and what it chooses is remembered. Dark is what it opens in because that is what the owner wants to see first. Measured: the setup package's coverage rose from 56.9% to 59.2% once the registry read no test could exercise was gone; the floor moved with it. |
 | 11 | 2026-09-22 | NFR-USE-002 | The window hands the page the keyboard as it opens, through a focuser seam wired at the composition root and called on DOM ready. | A defect the owner found in the built window: no Tab ever stepped the ring, while a single click on the page fixed it for the rest of the run. WebView2 keeps DOM focus and keyboard focus apart, so the sink held the first while the webview held none of the second and no keydown reached the listener at all. Read from the Wails 2.12.0 source: its Windows frontend hands the webview focus only from WM_SETFOCUS on the main window, which nothing raises at startup; `runtime.Show` raises it. The page cannot fix this from its own side, since a DOM focus call cannot make the webview the thing keys are sent to. |
 | 10 | 2026-09-22 | FR-041, FR-042, new FR-045 | The printed record is framed: the program and its address above the title and below the last event, then a statement under the date range saying it is not a diagnosis but the person's own notes for a healthcare professional. | Owner's request. It also answers the surface Amendment 9 identified as the one a regulator reads: a sheet that leaves the recording program's hand carries what it is and what it is not, rather than relying on a reader who has seen the application. The sheet says notes rather than guidance, since guidance names a purpose SymChit does not have (FR-045). |
 | 9 | 2026-09-22 | 4.1, Q-8 | The MHRA reading is confirmed against SI 2002/618 reg. 2 and MHRA guidance v1.10f, so Q-8 closes. The guidance's own caveat about features that enhance the data presented replaces the narrower list as the standing constraint. Two further rules are recorded: a disclaimer carries no weight on its own; the store category is promotional material. | The ruling had been made against a summary of the guidance rather than its text, while intended purpose is fixed by what the manufacturer publishes, so the text was the only thing that could settle it. Measured: page 21 lists a replacement for a written symptom diary among the examples unlikely to be devices, which is SymChit's intended purpose. |

@@ -3,6 +3,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRing } from './useRing'
+import { useTheme } from './useTheme'
+import { themeLabel } from './theme'
 import { api, type About, type State } from './api'
 import { AboutDialog } from './Dialog'
 import { GuideDialog } from './GuideDialog'
@@ -18,6 +20,8 @@ import symptomsIcon from './assets/icons/symptoms.png'
 import exportIcon from './assets/icons/export.png'
 import importIcon from './assets/icons/import.png'
 import guideIcon from './assets/icons/help-info.png'
+import lightModeIcon from './assets/icons/light-mode.png'
+import darkModeIcon from './assets/icons/dark-mode.png'
 import aboutIcon from './assets/icons/application-icon.png'
 import donateIcon from './assets/icons/donate.png'
 
@@ -84,6 +88,7 @@ export function App() {
   const tell = useCallback((text: string) => setMessage({ tone: 'info', text }), [])
 
   useRing()
+  const [theme, toggleTheme] = useTheme()
 
   // The window opens neutral: nothing focused, nothing ringed, no control
   // lit up unasked. A window is looked at before it is acted in. The sink
@@ -125,6 +130,11 @@ export function App() {
         <div className="band-group">
           <BandButton label="Import" icon={importIcon} onClick={importRecord} />
           <BandButton label="Export" icon={exportIcon} onClick={exportRecord} />
+          <Separator />
+          <BandButton label={themeLabel(theme)}
+            icon={theme === 'dark' ? lightModeIcon : darkModeIcon}
+            hint={`${themeLabel(theme)} (the picture is the one you would move to)`}
+            onClick={toggleTheme} />
           <Separator />
           <BandButton label="Guide" icon={guideIcon} onClick={() => setGuide(true)} />
           <BandButton label="About" icon={aboutIcon}

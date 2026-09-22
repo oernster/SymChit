@@ -128,7 +128,8 @@ function route(state) {
 }
 
 async function init() {
-    applyTheme('light')
+    applyTheme(storedTheme())
+    $('theme-toggle').addEventListener('click', toggleTheme)
     let tries = 0
     while (!backend() && tries < 100) {
         await new Promise((resolve) => setTimeout(resolve, 50))
@@ -146,7 +147,6 @@ async function init() {
     $('brand').textContent = `${appName} Setup`
     $('uninstall-title').textContent = `Remove ${appName}?`
     $('running-title').textContent = `${appName} is open`
-    applyTheme(state.prefersDark ? 'dark' : 'light')
     route(state)
     window.focus()
     focusFooter()

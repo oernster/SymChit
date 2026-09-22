@@ -94,11 +94,28 @@ describe('the shell', () => {
       'Symptoms',
       'Import',
       'Export',
+      // The window opens dark, so the theme button offers the light it would
+      // move to (FR-073). It stands alone between two rules.
+      'Light mode',
       'Guide',
       'About',
       'Donate',
     ])
-    expect(band.querySelectorAll('.band-separator')).toHaveLength(2)
+    expect(band.querySelectorAll('.band-separator')).toHaveLength(3)
+  })
+
+  it('dresses the window from the bar and keeps the choice', async () => {
+    installBridge()
+    render(<App />)
+    await screen.findByRole('heading', { name: 'Record a symptom' })
+
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    fireEvent.click(screen.getByRole('button', { name: /Light mode/ }))
+
+    await waitFor(() => expect(document.documentElement.dataset.theme).toBe('light'))
+    // The button now offers the way back, by its words and by its picture.
+    expect(screen.getByRole('button', { name: /Dark mode/ })).toBeInTheDocument()
+    expect(window.localStorage.getItem('symchit.theme')).toBe('light')
   })
 
   it('opens every dialog on its first stop, never on the page of words', async () => {
