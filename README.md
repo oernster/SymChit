@@ -1,5 +1,6 @@
-# SymChit
-A health tracker.  It doesn't contain diagnose.  It's just a little record of symptoms.
+# <img width="128" height="128" alt="application-icon" src="https://github.com/user-attachments/assets/6558296b-5218-4165-8a3a-0ca71ea7f0e7" /> SymChit
+
+A health tracker.  It doesn't diagnose.  It's just a little record of symptoms.
 
 When you notice a symptom, record it. When you see your doctor, take the record
 with you.
