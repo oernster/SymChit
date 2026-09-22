@@ -41,7 +41,7 @@ PAD = 2
 # APP_MASTER is the application's identity rather than a band icon.
 APP_MASTER = "application-icon.png"
 
-# DONATE_MASTER lives at the repository root.
+# DONATE_MASTER lives at the repository root, where the donate skill expects it.
 DONATE_MASTER = "donate.png"
 
 # ICO_SIZES are the sizes Windows chooses between, from the menu size to the
@@ -102,17 +102,35 @@ def render(master: pathlib.Path, target: pathlib.Path) -> int:
     return target.stat().st_size
 
 
+def mark(master: pathlib.Path, target: pathlib.Path) -> int:
+    """Write the donate mark, scaled by height alone; return its byte size.
+
+    It is a picture rather than an icon, so it does not take the squaring path
+    above: a square canvas would spend the difference between its width and its
+    height on nothing; the band draws it at the band's own icon height with its
+    own width. SIZE is reused rather than restated, so the mark and the
+    icons beside it cannot drift apart.
+    """
+    art = trimmed(master)
+    width = max(1, round(art.width * SIZE / art.height))
+    art.resize((width, SIZE), Image.LANCZOS).save(target, "PNG", optimize=True)
+    return target.stat().st_size
+
+
 def main() -> int:
     masters = sorted(p for p in MASTERS.glob("*.png") if p.name != APP_MASTER)
-    donate = REPO / DONATE_MASTER
-    if donate.exists():
-        masters.append(donate)
     if not masters:
         sys.exit(f"no master artwork found in {MASTERS}")
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for master in masters:
         written = render(master, OUTPUT / master.name)
         print(f"{master.name:<22} {master.stat().st_size:>9,} -> {written:>7,} bytes")
+
+    donate = REPO / DONATE_MASTER
+    if not donate.exists():
+        sys.exit(f"\nno donate artwork at {donate}")
+    written = mark(donate, OUTPUT / DONATE_MASTER)
+    print(f"{DONATE_MASTER:<22} {donate.stat().st_size:>9,} -> {written:>7,} bytes")
 
     app = MASTERS / APP_MASTER
     if not app.exists():

@@ -73,14 +73,17 @@ try {
 # The rest of the tree, each package at the number it actually reaches.
 #
 # The root package holds the facade, which is tested, plus main, the log
-# handover, the file dialogs and the single-instance lock, which need a window
-# and a platform. The run log needs a windowed process with no error output, so
+# handover, the file dialogs, the browser opener and the single-instance lock,
+# which need a window and a platform. Its floor moved from 77 to 76 when the
+# donate button landed: the opener is one more line of Wails runtime that no
+# test can reach, of exactly the same kind as the file dialogs beside it, so the
+# blend fell rather than the facade going untested. Re-measured, not estimated. The run log needs a windowed process with no error output, so
 # its crash tests start a child; what remains uncovered there is the Win32
 # handle work. The store and the export file reach everything but a handful of
 # operating-system write failures that cannot be forced without breaking the
 # disk. TESTING.md names each shortfall.
 $measured = [ordered]@{
-    '.'                                      = 77
+    '.'                                      = 76
     './internal/infrastructure/store'        = 92
     './internal/infrastructure/export'       = 91
     './internal/infrastructure/runlog'       = 74

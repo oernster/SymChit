@@ -75,6 +75,36 @@ describe('the shell', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   })
 
+  it('offers the donation page last in the band, saying that the browser opens', async () => {
+    const bridge = installBridge({ Donate: vi.fn(() => Promise.resolve()) })
+    render(<App />)
+    await screen.findByRole('heading', { name: 'Record a symptom' })
+
+    const donate = screen.getByRole('button', { name: /Donate/ })
+    // The picture says nothing on its own about leaving the application.
+    expect(donate).toHaveAttribute('title', 'Buy the author a drink (opens your browser)')
+    // Last in the band: it belongs to nothing on screen, so nothing else is
+    // reached by accident on the way to it.
+    const band = screen.getByRole('navigation')
+    const buttons = Array.from(band.querySelectorAll('button'))
+    expect(buttons[buttons.length - 1]).toBe(donate)
+
+    fireEvent.click(donate)
+    // The page asks for the donation page and names no address: the one home
+    // for that address is Go's product package.
+    await waitFor(() => expect(bridge.Donate).toHaveBeenCalledTimes(1))
+    expect(bridge.Donate).toHaveBeenCalledWith()
+  })
+
+  it('says so when the donation page could not be opened', async () => {
+    installBridge({ Donate: vi.fn(() => Promise.reject(new Error('the desktop refused'))) })
+    render(<App />)
+    await screen.findByRole('heading', { name: 'Record a symptom' })
+
+    fireEvent.click(screen.getByRole('button', { name: /Donate/ }))
+    expect(await screen.findByText('The desktop refused')).toBeInTheDocument()
+  })
+
   it('shows a refusal and lets it be dismissed', async () => {
     render(<App />)
     expect(await screen.findByText(noWindowShown)).toBeInTheDocument()

@@ -51,6 +51,16 @@ func (c windowChooser) OpenPath() (string, error) {
 	})
 }
 
+// windowOpener asks the desktop to open an address, through the window's own
+// runtime. Wails answers nothing, so a refusal by the desktop is invisible
+// here; there is no outcome to report and none is invented.
+type windowOpener struct{ app *App }
+
+// Open hands the address to whatever opens links on this machine.
+func (o windowOpener) Open(address string) {
+	runtime.BrowserOpenURL(o.app.ctx, address)
+}
+
 // instanceID names SymChit's single-instance lock, per user (FR-064).
 const instanceID = "uk.codecrafter.symchit"
 

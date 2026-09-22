@@ -97,6 +97,7 @@ interface Bridge {
   Receipt(from: string, to: string): Promise<ReceiptLine[] | null>
   Export(): Promise<string>
   Import(): Promise<ImportResult>
+  Donate(): Promise<void>
 }
 
 interface WailsWindow {
@@ -158,4 +159,8 @@ export const api = {
     ask(async (b) => (await b.Receipt(from, to)) ?? [], refused),
   exportRecord: (refused: Refused) => ask((b) => b.Export(), refused),
   importRecord: (refused: Refused) => ask((b) => b.Import(), refused),
+  // The page asks for the donation page; it never names an address. The one
+  // home for that address is Go's product package, so there is nothing here to
+  // keep in step with it.
+  donate: (refused: Refused) => act((b) => b.Donate(), refused),
 }

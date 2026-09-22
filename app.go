@@ -24,6 +24,13 @@ type fileChooser interface {
 	OpenPath() (string, error)
 }
 
+// browserOpener hands an address to whatever the desktop opens links with.
+// Wails' own opener answers nothing, so neither does this: a desktop that
+// declines to open a browser tells the application nothing it could report.
+type browserOpener interface {
+	Open(address string)
+}
+
 // Services is what the facade drives: one application service per concern.
 type Services struct {
 	Recorder application.Recorder
@@ -42,6 +49,7 @@ type App struct {
 	problem  string
 	services Services
 	chooser  fileChooser
+	opener   browserOpener
 	close    func() error
 }
 

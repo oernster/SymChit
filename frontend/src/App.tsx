@@ -18,6 +18,7 @@ import exportIcon from './assets/icons/export.png'
 import importIcon from './assets/icons/import.png'
 import guideIcon from './assets/icons/help-info.png'
 import aboutIcon from './assets/icons/application-icon.png'
+import donateIcon from './assets/icons/donate.png'
 
 type Pane = 'record' | 'history' | 'receipt' | 'symptoms'
 
@@ -36,18 +37,32 @@ interface Message {
 interface BandButtonProps {
   label: string
   icon: string
+  /** What the button does, where the picture cannot say it for itself. */
+  hint?: string
+  /** An extra class, for a button whose picture is not a square glyph. */
+  className?: string
   pressed?: boolean
   onClick: () => void
 }
 
-function BandButton({ label, icon, pressed, onClick }: BandButtonProps) {
+function BandButton({ label, icon, hint, className, pressed, onClick }: BandButtonProps) {
   return (
-    <button type="button" className="band-button" aria-pressed={pressed} onClick={onClick}>
+    <button
+      type="button"
+      className={className ? `band-button ${className}` : 'band-button'}
+      title={hint}
+      aria-pressed={pressed}
+      onClick={onClick}
+    >
       <img src={icon} alt="" />
       <span>{label}</span>
     </button>
   )
 }
+
+// A beer and a coffee do not say on their own that pressing them leaves the
+// application, so the tooltip does.
+const donateHint = 'Buy the author a drink (opens your browser)'
 
 export function App() {
   const [state, setState] = useState<State | null>(null)
@@ -93,6 +108,8 @@ export function App() {
           <BandButton label="Guide" icon={guideIcon} onClick={() => setGuide(true)} />
           <BandButton label="About" icon={aboutIcon}
             onClick={() => void api.about(refused).then((found) => found && setAbout(found))} />
+          <BandButton label="Donate" icon={donateIcon} hint={donateHint} className="donate"
+            onClick={() => void api.donate(refused)} />
         </div>
       </nav>
 

@@ -437,6 +437,22 @@ it; test names are provisional until the code exists.
 - Rationale: The house guide, as PigeonPost and ClearBudget carry one.
 - Verified by: `frontend/src/App.test.tsx::opens the Guide and About`
 
+**FR-069 Donation** (Amendment 6)
+- Priority: Should
+- Requirement: The application shall offer a button in the bar that hands a
+  donation address to the desktop for the user's browser to open. The
+  application shall not itself fetch that page; the address shall be stated in
+  one place in the application.
+- Rationale: The house donate button. SymChit is free and stays free: nothing
+  is withheld behind a donation, so the ask is a postscript rather than a
+  prompt.
+- Acceptance: Pressing Donate asks the desktop for exactly one address, that
+  address is `https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC`; no connection
+  is opened by SymChit itself.
+- Verified by: `donate_test.go`;
+  `frontend/src/App.test.tsx::offers the donation page last in the band`;
+  `tests/structural/boundary_test.go::TestNoNetworkImports`
+
 **FR-067 Not medical advice**
 - Priority: Must
 - Requirement: The About dialog shall state that SymChit records observations
@@ -607,6 +623,7 @@ Still open:
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 6 | 2026-09-22 | New FR-069 | The bar carries a Donate button, last in its right-hand group. | Owner's request. It takes a seat in the bar the window already has rather than a band of its own, as AudioDeck's does, since a whole new strip of chrome carrying one control costs more than it buys. The address lives once, in Go's product package; the page asks for the donation page rather than naming one, so nothing arriving from the page has to be checked before it is opened. |
 | 5 | 2026-09-22 | New FR-068 | The application carries a Guide, reached from the bar. | Owner's request, in line with PigeonPost and ClearBudget. Its words are one document (`frontend/src/guideContent.ts`) and the dialog only draws them, as PigeonPost's does. |
 | 4 | 2026-09-22 | FR-050, FR-053 | Both file dialogs open in the user's Downloads folder, which the user may leave. | Owner's request: it is where a person already looks for files they have saved. Measured: Wails' dialog options carry a default directory; the folder is checked before it is named, so a machine without one falls back to the dialog's own choice. |
 | 3 | 2026-09-22 | 1.3 scope | Linux and macOS leave the permanent out-of-scope list and become planned for a later version: a Flatpak and a DMG builder, following PigeonPost's. | Owner's decision. Version 1 stays Windows only; nothing in the domain, application or page is Windows-specific, so the work is packaging plus the run log's standard-handle code. |

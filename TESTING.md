@@ -56,7 +56,7 @@ told.
 | `internal/infrastructure/export` | 91 | The rest is operating-system write failures on a temporary file. |
 | `internal/infrastructure/runlog` | 74 | The rest is Win32 standard-handle work, reachable only in a windowed process with no error output. |
 | `internal/infrastructure/setup` | 56 | The portable half and the shortcut writing are tested. The registry writes, the process work and the scheduled deletion change the machine, so a real install exercises them instead. |
-| root package (the facade) | 77 | The facade itself is covered. `main`, the log handover, the file dialogs and the single-instance lock need a real window. |
+| root package (the facade) | 76 | The facade itself is covered. `main`, the log handover, the file dialogs, the browser opener and the single-instance lock need a real window. The floor was 77 until the donate button landed: the opener is one more line of Wails runtime no test can reach, so the blend fell by half a point and the floor was re-measured rather than the facade going untested. |
 
 Not gated at all: `internal/product` holds two constants; `tests/structural` is itself the guard.
 

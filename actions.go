@@ -157,6 +157,19 @@ func (a *App) Export() (path string, err error) {
 	return path, nil
 }
 
+// Donate opens the donation page in the user's browser (FR-069).
+//
+// SymChit does not fetch that page: it hands the address to the desktop and the
+// browser does the asking, so the button leaves the no-network guarantee
+// untouched. The address does not cross the wire either. The page asks for the
+// donation page rather than naming one, so there is nothing arriving from
+// outside that would have to be checked before it was opened.
+func (a *App) Donate() (err error) {
+	defer guard(&err)
+	a.opener.Open(product.DonateURL)
+	return nil
+}
+
 // Import asks for an export file, then adds what the record lacks (FR-053).
 func (a *App) Import() (result ImportResultDTO, err error) {
 	defer guard(&err)

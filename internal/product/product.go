@@ -14,6 +14,11 @@ const Author = "Oliver Ernster"
 // two cannot disagree about which file that is.
 const RecordFileName = "symchit.db"
 
+// DonateURL is where the donate button sends a browser (FR-069). It is the
+// only address SymChit knows; it is handed to the desktop rather than fetched,
+// so nothing here ever opens a connection of its own.
+const DonateURL = "https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC"
+
 // Statement is what SymChit is and is not, shown in About (FR-067).
 const Statement = "SymChit records what you observed and when. " +
 	"It gives no medical advice and does not interpret your symptoms; " +

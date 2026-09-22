@@ -45,7 +45,8 @@ these:
 - It opens no network connection at all. There is no account, no cloud service,
   no advertising and no telemetry. A test forbids the networking packages
   outright and the page carries a Content-Security-Policy of `connect-src
-  'none'`.
+  'none'`. The Donate button is not an exception: it hands an address to
+  Windows and your browser does the asking, so SymChit still fetches nothing.
 - It does not encrypt your record. The file is protected by your Windows
   account, as your documents are.
 
@@ -103,6 +104,14 @@ The gate runs first and cannot be skipped.
 - [TESTING.md](TESTING.md): the gate, the floors and what only a person can
   check.
 - [DEVELOPMENT.md](DEVELOPMENT.md): building from source.
+
+## Supporting the project
+
+SymChit is free and stays free. There is no paid tier, no licence key and no
+feature held back behind a donation. If it has saved you an afternoon or made an
+appointment go better, the Donate button at the right of the bar opens a
+contribution page in your browser. SymChit sends nothing itself: it hands the
+address to Windows and your browser does the rest.
 
 ## Licence
 

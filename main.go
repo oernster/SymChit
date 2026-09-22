@@ -77,6 +77,7 @@ func main() {
 	}
 	app := newApp(services, clock, zone, appVersion, problem, nil, closeRecord)
 	app.chooser = windowChooser{app: app}
+	app.opener = windowOpener{app: app}
 
 	err = wails.Run(&options.App{
 		Title:              product.Name,

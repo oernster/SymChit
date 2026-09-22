@@ -73,6 +73,12 @@ It writes the band icons into `frontend/src/assets/icons`, the multi-size
 `build/windows/icon.ico` that Wails puts on the executable, plus `build/appicon.png`, which Wails fills with its own logo when the file is
 absent. The output is committed, so a clone needs neither Python nor Pillow.
 
+The donate mark takes a path of its own. It is a picture rather than an icon, so
+it is cropped to its artwork and scaled by height alone, keeping its width; the
+square canvas every band icon is centred on would spend the difference on
+nothing. It shares the icons' size constant, so the mark and the pictures beside
+it in the bar cannot drift apart.
+
 Run it whenever a master changes.
 
 ## Versioning

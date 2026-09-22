@@ -105,6 +105,16 @@ textarea:focus-visible {
   font-size: 13px;
 }
 
+/*
+  The donate mark is a detailed picture rather than a square glyph, so it takes
+  the band's own icon height and keeps its own width. It joins the tray rather
+  than getting a band of its own, so it is sized exactly like its neighbours: a
+  member drawn smaller than the row it sits in reads as a mistake.
+*/
+.band-button.donate img {
+  width: auto;
+}
+
 .band-button[aria-pressed='true'] {
   background: var(--selected);
   border-color: var(--border);
