@@ -38,6 +38,14 @@ build/bin/
 frontend/dist/
 frontend/node_modules/
 frontend/package.json.md5
+installer/build/bin/
+installer/frontend/wailsjs/
+dist-installer/
+
+# installer/payload.zip is deliberately NOT ignored: it is committed as an
+# empty-zip placeholder so `go build ./...` works in a fresh clone. build.ps1
+# stages the real payload into it and puts the placeholder back afterwards, so
+# a payload of megabytes never reaches a commit.
 
 # Wails writes its generated bindings here. They are not the wire contract:
 # frontend/src/api.ts is, and tests/structural/wire_test.go compares it with

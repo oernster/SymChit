@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"/>
+    <title>Setup</title>
+    <link rel="stylesheet" href="setup.css"/>
+</head>
+<body>
+<div class="shell">
+    <div class="head">
+        <img class="mark" id="markimg" src="icon.png" alt=""/>
+        <div class="who">
+            <div class="title" id="brand">Setup</div>
+            <div class="sub">A record of your symptoms, kept on this computer</div>
+        </div>
+    </div>
+
+    <div class="body">
+        <section class="screen" id="screen-install">
+            <h1 id="install-title">Install</h1>
+            <p class="lead">This installs for your account only, so Windows will not
+                ask for administrator rights.</p>
+            <div class="infobox">Install location<br/><span class="path" id="install-path"></span></div>
+            <div class="options" id="install-options"></div>
+        </section>
+
+        <section class="screen" id="screen-update">
+            <h1 id="update-title">Update available</h1>
+            <p class="lead" id="update-lead">A newer version is ready to install. Your
+                symptom record is untouched.</p>
+            <div class="flow">
+                <span class="from" id="update-from"></span>
+                <span class="arrow">&rarr;</span>
+                <span class="to" id="update-to"></span>
+            </div>
+            <div class="options" id="update-options"></div>
+        </section>
+
+        <section class="screen" id="screen-manage">
+            <h1 id="manage-title">Installed</h1>
+            <p class="lead">Repair puts the files back and leaves everything else
+                alone. Reinstall writes them again with the choices on screen.</p>
+            <div class="options" id="manage-options"></div>
+        </section>
+
+        <section class="screen" id="screen-uninstall">
+            <h1 id="uninstall-title">Remove it?</h1>
+            <p class="lead">This removes the application, its shortcuts and its log.
+                Your symptom record is kept unless you say otherwise below.</p>
+            <div class="infobox">Your record<br/><span class="path" id="record-path"></span></div>
+            <div class="options" id="uninstall-options"></div>
+        </section>
+
+        <section class="screen" id="screen-running">
+            <h1 id="running-title">It is open</h1>
+            <p class="lead">It has to close before setup can continue. Anything you
+                have recorded is already saved.</p>
+        </section>
+
+        <section class="screen" id="screen-progress">
+            <h1 id="progress-title">Working...</h1>
+            <div class="track"><div class="fill" id="progress-fill"></div></div>
+            <div class="status" id="progress-status">Starting...</div>
+        </section>
+
+        <section class="screen centred" id="screen-done">
+            <div class="verdict ok">&#10003;</div>
+            <h1 id="done-title">All done</h1>
+            <p class="lead" id="done-msg"></p>
+        </section>
+
+        <section class="screen centred" id="screen-error">
+            <div class="verdict bad">&#9888;</div>
+            <h1>Something went wrong</h1>
+            <p class="lead" id="error-msg"></p>
+        </section>
+    </div>
+
+    <div class="footer" id="footer"></div>
+</div>
+
+<script src="setup-shell.js"></script>
+<script src="setup-routes.js"></script>
+</body>
+</html>

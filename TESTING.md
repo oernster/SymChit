@@ -55,6 +55,7 @@ told.
 | `internal/infrastructure/store` | 92 | The rest is SQLite write failures that cannot be forced without breaking the disk. |
 | `internal/infrastructure/export` | 91 | The rest is operating-system write failures on a temporary file. |
 | `internal/infrastructure/runlog` | 74 | The rest is Win32 standard-handle work, reachable only in a windowed process with no error output. |
+| `internal/infrastructure/setup` | 56 | The portable half and the shortcut writing are tested. The registry writes, the process work and the scheduled deletion change the machine, so a real install exercises them instead. |
 | root package (the facade) | 77 | The facade itself is covered. `main`, the log handover, the file dialogs and the single-instance lock need a real window. |
 
 Not gated at all: `internal/product` holds two constants; `tests/structural` is itself the guard.
@@ -69,6 +70,7 @@ Not gated at all: `internal/product` holds two constants; `tests/structural` is 
 | `internal/infrastructure/export` | The format against a committed sample, a refusal for anything that is not a SymChit export, plus a size cap read before the file is. |
 | `internal/infrastructure/runlog` | Crash reporting, by starting this test binary again as a child and making it panic. |
 | root package | The facade end to end over a real record: every conversion, every refusal, plus a panic in a bound method becoming an error rather than a dead window. |
+| `internal/infrastructure/setup` | The install policy: the payload fence refusing an entry that climbs out of the install folder, the paths, the version comparison that picks the route, plus real shortcuts written into temporary folders with plain paths rather than doubled separators. |
 | `tests/structural` | The invariants in ARCHITECTURE.md. |
 | `frontend` | The page over a fake facade: the keyboard path to a recorded event, the form keeping everything when a save is refused, an edit sending no time unless it changed, the confirmation naming what will go, plus the receipt showing exactly the lines it was given. |
 
@@ -94,6 +96,13 @@ changes.
 | The printed page carries the receipt alone. | It does: no band, no status line, no controls. |
 | Recording, editing, deleting, exporting and importing through the real window. | All worked; the import skipped the event already held. |
 | The Guide and About open, scroll and close. | They do. |
+| Setup installs, with the options opening on what the machine already holds. | It does: files, registry entry, shortcuts, plus the application launched from the install folder. |
+| Setup reopens on the manage screen when the versions match; a shortcut box applies immediately. | It does. |
+| Setup started with `-uninstall`, as the Apps list starts it, opens on the removal screen. | It does. |
+| Uninstall removes the program, its shortcuts, its log and the window's WebView2 folder, while keeping the record. | It does; the record was still there afterwards. |
+| The Apps list's Uninstall and Modify point at a path that exists. | They do now. The first install wrote doubled separators; fixed and covered by a test. |
+| The install folder is removed after setup exits. | Measured with a probe: the ported command removed nothing, so it was rewritten. Still to check by hand on a real install. |
+| Uninstall with "also delete my symptom record" ticked. | Not yet run. |
 
 ## Further reading
 

@@ -51,12 +51,25 @@ ICO_SIZES = [(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256,
 # APPICON_SIZE is the square wails build expects build/appicon.png to be.
 APPICON_SIZE = 1024
 
+# HEADER_SIZE is the setup window's header mark, drawn at 126 pixels. Twice
+# that keeps it crisp on a high-density display. The setup page has no bundler,
+# so it loads the file as it finds it: shipping the master there would put a
+# megabyte behind one badge.
+HEADER_SIZE = 256
+
 REPO = pathlib.Path(__file__).resolve().parent.parent
 MASTERS = REPO / "assets"
 OUTPUT = REPO / "frontend" / "src" / "assets" / "icons"
 BUILD = REPO / "build"
 ICO = BUILD / "windows" / "icon.ico"
 APPICON = BUILD / "appicon.png"
+
+# The setup program is a second Wails application, so it takes the same icon on
+# its own executable, plus the header mark its page draws.
+SETUP_BUILD = REPO / "installer" / "build"
+SETUP_ICO = SETUP_BUILD / "windows" / "icon.ico"
+SETUP_APPICON = SETUP_BUILD / "appicon.png"
+SETUP_HEADER = REPO / "installer" / "frontend" / "dist" / "icon.png"
 
 
 def trimmed(master: pathlib.Path) -> Image.Image:
@@ -104,12 +117,19 @@ def main() -> int:
     app = MASTERS / APP_MASTER
     if not app.exists():
         sys.exit(f"\nno application icon at {app}")
-    ICO.parent.mkdir(parents=True, exist_ok=True)
     square = squared(trimmed(app))
-    square.save(ICO, "ICO", sizes=ICO_SIZES)
-    print(f"\n{APP_MASTER:<22} -> {ICO.relative_to(REPO)} ({ICO.stat().st_size:,} bytes)")
-    square.resize((APPICON_SIZE, APPICON_SIZE), Image.LANCZOS).save(APPICON, "PNG", optimize=True)
-    print(f"{'':<22} -> {APPICON.relative_to(REPO)} ({APPICON.stat().st_size:,} bytes)")
+    for target in (ICO, SETUP_ICO):
+        target.parent.mkdir(parents=True, exist_ok=True)
+        square.save(target, "ICO", sizes=ICO_SIZES)
+        print(f"\n{APP_MASTER:<22} -> {target.relative_to(REPO)} ({target.stat().st_size:,} bytes)")
+    large = square.resize((APPICON_SIZE, APPICON_SIZE), Image.LANCZOS)
+    for target in (APPICON, SETUP_APPICON):
+        large.save(target, "PNG", optimize=True)
+        print(f"{'':<22} -> {target.relative_to(REPO)} ({target.stat().st_size:,} bytes)")
+    square.resize((HEADER_SIZE, HEADER_SIZE), Image.LANCZOS).save(
+        SETUP_HEADER, "PNG", optimize=True
+    )
+    print(f"{'':<22} -> {SETUP_HEADER.relative_to(REPO)} ({SETUP_HEADER.stat().st_size:,} bytes)")
     written = render(app, OUTPUT / APP_MASTER)
     print(f"{'':<22} -> About crest ({written:,} bytes)")
     return 0

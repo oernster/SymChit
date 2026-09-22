@@ -10,9 +10,6 @@ import (
 	"github.com/oernster/symchit/internal/product"
 )
 
-// fileName names the record inside the product's folder.
-const fileName = "symchit.db"
-
 // DefaultPath answers where the record lives: %APPDATA%\SymChit\symchit.db
 // (FR-060).
 func DefaultPath() (string, error) {
@@ -20,7 +17,7 @@ func DefaultPath() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("finding the folder for the record: %w", err)
 	}
-	return filepath.Join(base, product.Name, fileName), nil
+	return filepath.Join(base, product.Name, product.RecordFileName), nil
 }
 
 // Unavailable stands in for a record that could not be opened. Every operation

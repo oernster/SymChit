@@ -9,6 +9,11 @@ const Name = "SymChit"
 // Author is the copyright holder.
 const Author = "Oliver Ernster"
 
+// RecordFileName is the file holding the user's symptom record. The store
+// writes it; the setup program names it when it offers to delete it, so the
+// two cannot disagree about which file that is.
+const RecordFileName = "symchit.db"
+
 // Statement is what SymChit is and is not, shown in About (FR-067).
 const Statement = "SymChit records what you observed and when. " +
 	"It gives no medical advice and does not interpret your symptoms; " +

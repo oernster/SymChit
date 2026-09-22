@@ -28,6 +28,13 @@ In order, it:
 3. Runs `wails build -ldflags "-X main.appVersion=<version>"`, which installs
    the front-end dependencies, builds the page and compiles the application.
 4. Checks the executable is there and prints its path and size.
+5. Zips `build/bin` into `installer/payload.zip`.
+6. Builds the setup program from `installer/`, with the same version flag.
+7. Copies it to `dist-installer/SymChitSetup.exe`, then puts the empty-zip
+   placeholder back in `installer/payload.zip`, so a payload of megabytes never
+   reaches a commit.
+
+`./build.ps1 -SkipInstaller` stops after the application.
 
 `./build.ps1 -Fast` skips the gate for a working loop. It says so in its output
 and is never how a release is cut.
@@ -79,7 +86,14 @@ it; nothing else holds one.
 2. Bump `VERSION` if a bump is owed against the newest tag.
 3. `./build.ps1` and check the gate is green.
 4. Launch the built executable and use it: record, print, export, import.
-5. Commit, tag and publish. Those are the owner's to run.
+5. Run `dist-installer/SymChitSetup.exe` and walk each route: install, reopen
+   for manage, repair, then uninstall. The checks only a person can settle are
+   listed in [TESTING.md](TESTING.md).
+6. Commit, tag and publish. Those are the owner's to run.
+
+To try setup without installing onto your own machine, start it with the two
+data folders pointed elsewhere. It still writes the real `HKCU` uninstall entry,
+which its own uninstall removes again.
 
 ## The standing rules a first change has to know
 

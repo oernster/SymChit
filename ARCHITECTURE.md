@@ -65,6 +65,7 @@ One service per user-visible action, over the ports in `ports.go`.
 | `store` | The SQLite record, one transaction per write, plus `Unavailable`, which stands in when the file could not be opened so that every action still answers. |
 | `export` | The JSON export file: a versioned format, an atomic write and a distrustful read. |
 | `runlog` | The run log, plus pointing the process's error output at it before anything can fail. Ported from WhatDay. |
+| `setup` | The per-user install policy: the paths, the fenced payload extraction, the version comparison, the registry entry, the shortcuts and the process work. The setup program is a facade over it and owns no install logic. |
 
 ### UI: the root package and `frontend/`
 
@@ -75,6 +76,19 @@ wire shapes. `window.go` holds the file dialogs and the single-instance lock.
 
 The page in `frontend/src` is a client of the facade through `api.ts` and
 nothing else.
+
+### The setup program: `installer/`
+
+A second Wails application in the same module, carrying the built application
+as an embedded zip, so one file is the whole distribution. `installer/main.go`
+is its composition root and `installer/app.go` a facade over
+`internal/infrastructure/setup`; its page is hand-written and holds no product
+name of its own, because a page has no build step to catch a stale one.
+
+It follows the house setup model: work moves to a progress screen rather than
+greying the options in place, the footer is rebuilt per screen, the progress
+screen offers nothing, one reading of the machine decides the route; every path ends in a verdict. Setup follows the Windows light or dark setting with no
+toggle, as the application does.
 
 ## Decisions and why
 
