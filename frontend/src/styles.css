@@ -24,9 +24,22 @@ button {
   cursor: pointer;
 }
 
-button:disabled {
+/*
+  A disabled control wears a permanent red ring, not one that waits for the
+  mouse: the ring IS the disabled state, readable at a glance as "present but
+  inert". Its fill is muted at the same time, because a control left in its
+  enabled colour either hides the ring or swallows it; that is why opacity is
+  not used here, which would fade the ring along with everything else.
+*/
+button:disabled,
+input:disabled,
+textarea:disabled {
   cursor: default;
-  opacity: 0.55;
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+  background: var(--muted-fill);
+  border-color: var(--border);
+  color: var(--muted);
 }
 
 button.primary {
@@ -42,6 +55,20 @@ button.danger {
   color: var(--on-danger);
 }
 
+/*
+  A filled button keeps its fill through the class rules above, which sit after
+  the disabled rule and match it for specificity. Naming both together raises
+  the specificity so the muted fill wins: Print left in the accent and Delete
+  left in the danger red would each swallow the ring that says they are inert,
+  the danger one completely.
+*/
+button.primary:disabled,
+button.danger:disabled {
+  background: var(--muted-fill);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
 input,
 textarea {
   background: var(--surface);
@@ -55,13 +82,21 @@ textarea {
   a pane marks nothing the reader can act on and costs them a keypress to step
   past, so the rule names the control elements one by one rather than matching
   everything that can take focus. A bare `:focus-visible` stood here and would
-  have rung any container the day one gained a tabindex; focusRules.test.ts now
+  have rung any container the day one gained a tabindex; the structural guard
   refuses both the bare form and a container selector.
+
+  Hover and keyboard focus share the green deliberately: both say "you can use
+  this"; a reader should not have to learn two colours for one fact. The
+  hover half is gated on :enabled, so a disabled control keeps its red ring
+  under the mouse rather than being told it is usable.
 */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--focus);
+button:enabled:hover,
+button:enabled:focus-visible,
+input:enabled:hover,
+input:enabled:focus-visible,
+textarea:enabled:hover,
+textarea:enabled:focus-visible {
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
@@ -69,6 +104,17 @@ textarea:focus-visible {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+/*
+  Where the focus sits when the window opens, so nothing is ringed before the
+  reader has asked for anything. It takes no space, draws nothing and is out of
+  the tab order, so the first step enters the ring at its first stop.
+*/
+.focus-sink {
+  width: 0;
+  height: 0;
+  outline: none;
 }
 
 .band {

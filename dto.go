@@ -84,6 +84,7 @@ type AboutDTO struct {
 	Name      string      `json:"name"`
 	Version   string      `json:"version"`
 	Author    string      `json:"author"`
+	Copyright string      `json:"copyright"`
 	Statement string      `json:"statement"`
 	Credits   []CreditDTO `json:"credits"`
 }
@@ -118,6 +119,6 @@ func aboutDTO(about application.About) AboutDTO {
 	}
 	return AboutDTO{
 		Name: about.Name, Version: about.Version, Author: about.Author,
-		Statement: about.Statement, Credits: credits,
+		Copyright: about.Copyright, Statement: about.Statement, Credits: credits,
 	}
 }

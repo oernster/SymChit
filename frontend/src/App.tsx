@@ -1,7 +1,8 @@
 // The shell: the nav band, the pane it chooses, the status line and the
 // problem banner shown when the record could not be opened (FR-062).
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRing } from './useRing'
 import { api, type About, type State } from './api'
 import { AboutDialog } from './Dialog'
 import { GuideDialog } from './GuideDialog'
@@ -74,6 +75,16 @@ export function App() {
   const refused = useCallback((text: string) => setMessage({ tone: 'error', text }), [])
   const tell = useCallback((text: string) => setMessage({ tone: 'info', text }), [])
 
+  useRing()
+
+  // The window opens neutral: nothing focused, nothing ringed, no control
+  // lit up unasked. A window is looked at before it is acted in. The sink
+  // holds the focus the browser would otherwise leave on the document; it is
+  // out of the tab order itself, so the first step enters the ring at its first
+  // stop rather than beside the sink.
+  const start = useRef<HTMLDivElement>(null)
+  useEffect(() => start.current?.focus(), [])
+
   useEffect(() => {
     void api.state(refused).then((found) => found && setState(found))
   }, [refused])
@@ -95,6 +106,7 @@ export function App() {
 
   return (
     <div className="shell">
+      <div ref={start} className="focus-sink" tabIndex={-1} aria-hidden="true" />
       <nav className="band" aria-label={state?.name ?? 'SymChit'}>
         <div className="band-group">
           {panes.map((entry) => (

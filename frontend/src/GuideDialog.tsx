@@ -17,7 +17,7 @@ export function GuideDialog({ onClose }: Props) {
   // with the words.
   const autoScroll = useAutoScroll()
   return (
-    <Modal labelId="guide-title" role="dialog" onClose={onClose} focusAction pinnedActions>
+    <Modal labelId="guide-title" role="dialog" onClose={onClose} pinnedActions>
       <h2 id="guide-title">How SymChit works</h2>
       <div className="dialog-body" ref={autoScroll}>
         {guideSections.map((section) => (

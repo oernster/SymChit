@@ -2,6 +2,16 @@
   Every colour SymChit uses, in one place. Light and dark follow the Windows app
   mode through prefers-color-scheme (Q-9). The page names tokens only; a test
   holds every text pairing to WCAG 2.2 AA (NFR-USE-003).
+
+  The ring is the three-state focus model: nothing at rest, --ring while a
+  control is hovered or keyboard-focused, --danger permanently while it is
+  disabled. The two greens differ between the modes on purpose: the pastel that
+  reads on near-black is weak on white, so light mode takes a saturated one. A
+  test holds both to the 3:1 that WCAG asks of a non-text indicator.
+
+  --accent is data meaning, never a ring: it fills the primary button and marks
+  the chosen pane. --muted-fill is what a disabled control is filled with, so
+  the red ring reads against it rather than against the window behind.
 */
 
 :root {
@@ -16,7 +26,8 @@
   --on-accent: #ffffff;
   --danger: #a8231a;
   --on-danger: #ffffff;
-  --focus: #1a5fc8;
+  --ring: #047857;
+  --muted-fill: #e4e8ed;
   --selected: #dce8fb;
 }
 
@@ -31,7 +42,8 @@
     --on-accent: #0b1320;
     --danger: #ff8a80;
     --on-danger: #1a0605;
-    --focus: #6aa6ff;
+    --ring: #34d399;
+    --muted-fill: #2a303a;
     --selected: #243349;
   }
 }

@@ -453,9 +453,15 @@ it; test names are provisional until the code exists.
 **FR-066 About**
 - Priority: Must
 - Requirement: The application shall offer an About dialog stating the
-  product name, the version, the author and the open-source works it is built
-  with, each with its licence, plus the statement in FR-067.
-- Verified by: `internal/application/about_test.go`
+  product name, the version, the author, the copyright notice and the
+  open-source works it is built with, each with its licence, plus the statement
+  in FR-067. The notice shall read `Copyright © Oliver Ernster 2026`
+  (Amendment 8).
+- Note: the year is the year of the first release, not the year the program is
+  run in. A notice that follows the clock claims a date nothing was published
+  on.
+- Verified by: `internal/application/about_test.go`;
+  `frontend/src/App.test.tsx::opens the Guide and About`
 
 **FR-068 Guide** (Amendment 5)
 - Priority: Must
@@ -518,11 +524,26 @@ of an existing symptom with no note shall take no more than 4 keystrokes after
 the first letters of the symptom: choose the suggestion, then press Enter to
 record. Verified by a frontend test driving the keys.
 
-**NFR-USE-002 Keyboard**: Every action shall be reachable by keyboard alone.
-Verified by a frontend test walking the focus order, plus a manual pass.
+**NFR-USE-002 Keyboard**: Every action shall be reachable by keyboard alone
+(Amendment 8). Tab and Right shall step the focus ring forward and Shift+Tab and
+Left shall step it back, both wrapping at the ends; Enter and Space shall fire
+the focused control; Escape shall close an open dialog. A field holding text
+keeps the horizontal arrows for its caret and is left with Tab. The window shall
+open with nothing focused; a dialog shall open on its first control, passing
+over its scrolling body. Verified by `frontend/src/ring.test.ts` and
+`useRing.test.tsx`, plus a manual pass.
+
+**NFR-USE-004 Focus ring** (Amendment 8): A control shall show no ring at rest,
+the ring colour while it is hovered or keyboard-focused, then the danger colour
+permanently while it is disabled; a disabled control's fill shall be muted so
+the ring reads against it. No container shall take focus or paint a ring. The
+accent colour shall never be used as a ring. Verified by
+`tests/structural/focus_test.go`, each assertion proved by planting.
 
 **NFR-USE-003 Contrast**: Text shall meet WCAG 2.2 AA contrast (4.5:1 for body
-text) in the theme in use. Verified by a test over the colour tokens.
+text) in the theme in use; each ring colour shall meet the 3:1 WCAG 2.2 asks
+of a non-text indicator against the surfaces it is drawn on. Verified by a test
+over the colour tokens.
 
 **NFR-PERF-001 Startup**: The recording form shall accept input within 2 s of
 process start on the reference machine, measured from the log's start line to
@@ -651,6 +672,7 @@ Still open:
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 8 | 2026-09-22 | NFR-USE-002, new NFR-USE-004, FR-066 | The house keyboard model and its three-state focus ring are stated as requirements rather than left to the page; About names the copyright holder and year. | Owner's request. The ring was a single blue outline on keyboard focus alone, which said nothing about what could be used and nothing about what could not: Print sat inert beside the button that fills it with no way to tell it apart from a control waiting to be pressed. |
 | 7 | 2026-09-22 | 1.3 scope, 2.3 operating environment, FR-060, FR-065 | Linux and macOS leave the deferred list and become part of this version: a Flatpak and a signed DMG, ported from PigeonPost's. Only the bespoke setup program stays Windows-only. | Owner's decision, superseding Amendment 3, which had made them a later version. Measured: one package stopped the module building elsewhere, the run log, whose Windows handle work is now behind a build tag and whose folder rule is a pure function taking the platform as an argument, so all three answers are exercised on every platform. The gate now builds and vets for Linux and macOS on every run, which is what keeps this true; a planted Windows-only import was refused by name. |
 | 6 | 2026-09-22 | New FR-069 | The bar carries a Donate button, last in its right-hand group. | Owner's request. It takes a seat in the bar the window already has rather than a band of its own, as AudioDeck's does, since a whole new strip of chrome carrying one control costs more than it buys. The address lives once, in Go's product package; the page asks for the donation page rather than naming one, so nothing arriving from the page has to be checked before it is opened. |
 | 5 | 2026-09-22 | New FR-068 | The application carries a Guide, reached from the bar. | Owner's request, in line with PigeonPost and ClearBudget. Its words are one document (`frontend/src/guideContent.ts`) and the dialog only draws them, as PigeonPost's does. |

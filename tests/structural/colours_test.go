@@ -30,6 +30,23 @@ var pairs = [][2]string{
 	{"on-danger", "danger"},
 	{"danger", "surface"},
 	{"accent", "surface"},
+	// A disabled control is filled with --muted-fill and labelled in --muted,
+	// so that pairing is read as often as any other.
+	{"muted", "muted-fill"},
+}
+
+// minimumIndicatorContrast is what WCAG 2.2 asks of a non-text indicator
+// (1.4.11). A ring is a border rather than a letter, so it is held to 3:1
+// rather than to the body-text figure above.
+const minimumIndicatorContrast = 3.0
+
+// indicators are the ring colours against the surfaces they are drawn on. The
+// ring says "you can use this" and the danger ring says "you cannot"; either
+// one too faint to see is the same as not being drawn.
+var indicators = [][2]string{
+	{"ring", "surface"},
+	{"ring", "bg"},
+	{"danger", "muted-fill"},
 }
 
 // hexColour matches a token declaration such as `--text: #1b1f24;`.
@@ -84,11 +101,10 @@ func tokensIn(source string) map[string]string {
 	return found
 }
 
-// TestEveryTextPairingMeetsAA holds the palette to WCAG 2.2 AA in both modes.
-//
-// Proved by planting a failing shade: setting --muted to #8d97a3 in the light
-// block takes muted-on-surface to 3.0 and fails this by name.
-func TestEveryTextPairingMeetsAA(t *testing.T) {
+// themeModes reads the theme and answers each mode's tokens. The dark block
+// opens at the media query, so everything before it is light.
+func themeModes(t *testing.T) map[string]map[string]string {
+	t.Helper()
 	raw, err := os.ReadFile(filepath.Join(repoRoot(t), themeFile))
 	if err != nil {
 		t.Fatalf("reading %s: %v", filepath.ToSlash(themeFile), err)
@@ -98,11 +114,18 @@ func TestEveryTextPairingMeetsAA(t *testing.T) {
 	if split < 0 {
 		t.Fatalf("%s carries no dark mode", filepath.ToSlash(themeFile))
 	}
-	modes := map[string]map[string]string{
+	return map[string]map[string]string{
 		"light": tokensIn(theme[:split]),
 		"dark":  tokensIn(theme[split:]),
 	}
-	for mode, tokens := range modes {
+}
+
+// TestEveryTextPairingMeetsAA holds the palette to WCAG 2.2 AA in both modes.
+//
+// Proved by planting a failing shade: setting --muted to #8d97a3 in the light
+// block takes muted-on-surface to 3.0 and fails this by name.
+func TestEveryTextPairingMeetsAA(t *testing.T) {
+	for mode, tokens := range themeModes(t) {
 		for _, pair := range pairs {
 			front, back := tokens[pair[0]], tokens[pair[1]]
 			if front == "" || back == "" {
@@ -112,6 +135,29 @@ func TestEveryTextPairingMeetsAA(t *testing.T) {
 			if ratio := contrast(t, front, back); ratio < minimumContrast {
 				t.Errorf("%s mode: --%s on --%s is %.2f:1, below %.1f:1",
 					mode, pair[0], pair[1], ratio, minimumContrast)
+			}
+		}
+	}
+}
+
+// TestEveryRingIsVisibleAgainstWhatItIsDrawnOn holds the three-state focus
+// model's two ring colours to the contrast WCAG asks of an indicator, in both
+// modes. The greens differ between the modes on purpose: the pastel that reads
+// on near-black is weak on white.
+//
+// Proved by planting: setting the light --ring to #34d399, the dark mode's
+// green, takes ring-on-surface to 1.8 and fails this by name.
+func TestEveryRingIsVisibleAgainstWhatItIsDrawnOn(t *testing.T) {
+	for mode, tokens := range themeModes(t) {
+		for _, pair := range indicators {
+			front, back := tokens[pair[0]], tokens[pair[1]]
+			if front == "" || back == "" {
+				t.Errorf("%s mode names no --%s or no --%s", mode, pair[0], pair[1])
+				continue
+			}
+			if ratio := contrast(t, front, back); ratio < minimumIndicatorContrast {
+				t.Errorf("%s mode: --%s on --%s is %.2f:1, below %.1f:1",
+					mode, pair[0], pair[1], ratio, minimumIndicatorContrast)
 			}
 		}
 	}

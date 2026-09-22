@@ -19,6 +19,11 @@ func TestAboutCarriesTheStatement(t *testing.T) {
 	if len(about.Credits) == 0 {
 		t.Error("no credits")
 	}
+	// The notice is written out here rather than compared against the constant,
+	// which would assert nothing: the symbol and the year are the claim.
+	if about.Copyright != "Copyright © Oliver Ernster 2026" {
+		t.Errorf("the copyright reads %q", about.Copyright)
+	}
 	about.Credits[0].Work = "changed"
 	if NewAbout("1.2.3").Credits[0].Work == "changed" {
 		t.Error("a caller can change the shared credit list")

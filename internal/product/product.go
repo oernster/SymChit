@@ -14,6 +14,11 @@ const Author = "Oliver Ernster"
 // two cannot disagree about which file that is.
 const RecordFileName = "symchit.db"
 
+// Copyright is the notice About shows (FR-066). The year is the year of the
+// first release rather than the year the program is run in: a notice that
+// silently follows the clock claims a date nothing was published on.
+const Copyright = "Copyright © " + Author + " 2026"
+
 // DonateURL is where the donate button sends a browser (FR-069). It is the
 // only address SymChit knows; it is handed to the desktop rather than fetched,
 // so nothing here ever opens a connection of its own.

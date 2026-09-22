@@ -15,6 +15,7 @@ type About struct {
 	Name      string
 	Version   string
 	Author    string
+	Copyright string
 	Statement string
 	Credits   []Credit
 }
@@ -36,6 +37,7 @@ func NewAbout(version string) About {
 		Name:      product.Name,
 		Version:   version,
 		Author:    product.Author,
+		Copyright: product.Copyright,
 		Statement: product.Statement,
 		Credits:   append([]Credit(nil), credits...),
 	}

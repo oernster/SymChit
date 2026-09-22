@@ -71,8 +71,24 @@ describe('the shell', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /About/ }))
     expect(await screen.findByRole('heading', { name: 'SymChit 1.0.0' })).toBeInTheDocument()
+    // The notice carries the symbol and the year, both written out.
+    expect(screen.getByText('Copyright © Oliver Ernster 2026')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
+  it('opens every dialog on its first stop, never on the page of words', async () => {
+    installBridge()
+    render(<App />)
+    await screen.findByRole('heading', { name: 'Record a symptom' })
+
+    // The Guide's body is reachable by Tab and is not a control, so the dialog
+    // opens past it, on Close.
+    fireEvent.click(screen.getByRole('button', { name: /Guide/ }))
+    await screen.findByRole('heading', { name: 'How SymChit works' })
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Close' })),
+    )
   })
 
   it('offers the donation page last in the band, saying that the browser opens', async () => {

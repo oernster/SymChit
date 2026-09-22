@@ -78,6 +78,7 @@ export interface About {
   name: string
   version: string
   author: string
+  copyright: string
   statement: string
   credits: Credit[]
 }

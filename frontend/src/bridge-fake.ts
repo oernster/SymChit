@@ -53,6 +53,7 @@ export const anAbout: About = {
   name: 'SymChit',
   version: '1.0.0',
   author: 'Oliver Ernster',
+  copyright: 'Copyright © Oliver Ernster 2026',
   statement: 'SymChit records what you observed and when.',
   credits: [{ work: 'Go', licence: 'BSD 3-Clause', holder: 'The Go Authors' }],
 }
