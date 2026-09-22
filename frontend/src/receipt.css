@@ -50,8 +50,29 @@
   letter-spacing: 0.02em;
 }
 
+/*
+  The letterhead: the mark beside the line naming the program and its address.
+  Drawn as a row so the picture and the words share a baseline rather than the
+  words wrapping under a floated image, which is what a doctor's copier would
+  make the worst of.
+*/
 .receipt .provenance:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 12px;
+}
+
+/*
+  Large enough to be recognised across a desk, small enough that it is plainly
+  a letterhead and not the subject of the page. The sheet is somebody's medical
+  notes; the program that produced them identifies itself and then gets out of
+  the way.
+*/
+.receipt .provenance .mark {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
 }
 
 .receipt .provenance:last-child {

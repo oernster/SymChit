@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from 'react'
 import { api, type ReceiptLine, type Refused } from './api'
+import crest from './assets/icons/application-icon.png'
 
 interface Props {
   refused: Refused
@@ -17,6 +18,15 @@ export function daysBefore(iso: string, days: number): string {
   const [year, month, day] = iso.split('-').map(Number)
   const date = new Date(Date.UTC(year, month - 1, day - days))
   return date.toISOString().slice(0, 10)
+}
+
+/**
+ * Whether a line is the sheet's letterhead: the first line, a provenance one. The same words close the sheet at the foot, where a second copy of the
+ * mark would read as a decoration rather than as a heading, so the position is
+ * part of the test and not only the kind.
+ */
+function isLetterhead(line: ReceiptLine, index: number): boolean {
+  return index === 0 && line.kind === 'provenance'
 }
 
 export function ReceiptPane({ refused }: Props) {
@@ -58,7 +68,19 @@ export function ReceiptPane({ refused }: Props) {
       {lines.length > 0 && (
         <article className="receipt" aria-label="The symptom record">
           {lines.map((line, index) => (
-            <p key={index} className={`line ${line.kind}`}>{line.text}</p>
+            <p key={index} className={`line ${line.kind}`}>
+              {/*
+                The mark goes beside the first provenance line, which is the one
+                naming the program and its address, so the sheet is identifiable
+                at a glance on a desk of paper. It sits with the words rather
+                than above them because the pair is the letterhead: a picture
+                and the address it belongs to. It is decorative, so it carries
+                no alt text; the line beside it already says what it is, so a
+                screen reader repeating the name twice helps nobody.
+              */}
+              {isLetterhead(line, index) && <img className="mark" src={crest} alt="" />}
+              {line.text}
+            </p>
           ))}
         </article>
       )}
