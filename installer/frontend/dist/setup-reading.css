@@ -1,0 +1,82 @@
+/*
+  The licence screen's own surface: a plain reading of what the licence means,
+  then the published text in a pane that reads itself down.
+
+  It is a stylesheet of its own because it is one screen's concern and setup.css
+  is close enough to the size limit that adding this to it would push it into
+  the band the rule reserves. The tokens are setup.css's; nothing here names a
+  colour of its own.
+*/
+
+.reading-lead {
+    margin: 18px 0 8px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.plainly {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.plainly li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 7px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* A mark rather than a bullet glyph, so the indent is the same whatever the
+   platform's list rendering does with it. */
+.plainly li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0.62em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+/*
+  The pane holding the licence text.
+
+  It is a TEXT VIEW: a pane holding words, not a control. So it draws no ring
+  in any state, Tab included, which is the one thing a reader arriving here by
+  keyboard must not see. Chromium makes an overflowing scroll container a
+  keyboard stop by itself, so the pane is still reachable and still scrolls on
+  the arrows; suppressing the outline takes the ring away without taking the
+  reachability with it. This matches the application's own dialog-body exactly.
+
+  The height is stated so the pane is the only thing on the screen that
+  scrolls: the screen itself must not grow a scrollbar, since the window is
+  fixed and the footer below it belongs to the screen.
+*/
+.reading {
+    height: 210px;
+    overflow-y: auto;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--raised);
+    color: var(--muted);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+}
+
+.reading:focus,
+.reading:focus-visible {
+    outline: none;
+}
+
+/* Hover belongs to controls. The pointer rests inside a reading pane for as
+   long as the screen is open, so a ring here would report where the mouse is
+   rather than mark anything. */
+.reading:hover {
+    border-color: var(--border);
+}

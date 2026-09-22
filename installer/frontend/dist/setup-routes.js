@@ -87,18 +87,62 @@ function routeManage(state) {
     ])
 }
 
+// stopReading ends the licence pane's self-reading cycle. It is held here
+// because a screen stack has no unmount to hook: the one place that knows the
+// screen has changed is the one place that can stop the timer.
+let stopReading = null
+
+// leaveLicence stops the cycle if one is running. Called before every route,
+// so no path off the screen can leave a timer behind it.
+function leaveLicence() {
+    if (stopReading) {
+        stopReading()
+        stopReading = null
+    }
+}
+
 // routeLicence is reachable from every screen that offers the header's
 // controls, which is every screen but progress. Closing it re-derives the
 // screen behind it from the same reading of the machine, exactly as cancelling
 // a removal does, so no second copy of "where was I" has to be kept in step.
+//
+// Every word on the screen comes from Go. Naming a licence explains nothing to
+// most people, so the plain reading is shown first and the published text sits
+// beneath it, reading itself down for anyone who would rather watch than
+// scroll.
 function routeLicence(state) {
+    const licence = backend().Licence()
+    const close = () => {
+        leaveLicence()
+        if (state) {
+            route(state)
+            return
+        }
+        backend().Quit()
+    }
+    setFooter([{label: 'Close', kind: 'primary', onClick: close}])
     showScreen('licence')
-    setFooter([
-        {
-            label: 'Close', kind: 'primary',
-            onClick: () => (state ? route(state) : backend().Quit()),
-        },
-    ])
+    Promise.resolve(licence).then((held) => fillLicence(held))
+}
+
+// fillLicence writes what Go answered onto the screen and starts the pane
+// reading itself. A screen reached again starts a fresh cycle, start hold and
+// all, which is right: somebody returning to a licence is starting to read it
+// again.
+function fillLicence(held) {
+    $('licence-lead').textContent = held.lead + ' © ' + held.holder
+    const plainly = $('licence-plainly')
+    plainly.replaceChildren()
+    for (const line of held.plain) {
+        const item = document.createElement('li')
+        item.textContent = line
+        plainly.appendChild(item)
+    }
+    const pane = $('licence-text')
+    pane.textContent = held.text
+    pane.scrollTop = 0
+    leaveLicence()
+    stopReading = readItself(pane)
 }
 
 // routeUninstall is reachable from every other screen. The record is kept
@@ -129,6 +173,9 @@ function routeUninstall(state) {
 }
 
 function route(state) {
+    // Every way off the licence screen comes through here, so this is where
+    // the pane's timer stops; a screen stack has no unmount to hang it on.
+    leaveLicence()
     currentState = state
     if (state.mode === 'uninstall') {
         routeUninstall(state)

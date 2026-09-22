@@ -7,6 +7,10 @@
           content="default-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"/>
     <title>Setup</title>
     <link rel="stylesheet" href="setup.css"/>
+    <!-- The reading surface has a stylesheet of its own: it is one screen's
+         concern and setup.css is close enough to its size limit that a
+         section this size would push it into the band the rule reserves. -->
+    <link rel="stylesheet" href="setup-reading.css"/>
 </head>
 <body>
 <div class="shell">
@@ -66,24 +70,26 @@
             <div class="options" id="uninstall-options"></div>
         </section>
 
-        <!-- The setup program carries ONE licence, the one it is itself covered
-             by. SymChit's own licensing is the application's business and is
-             shown in its About dialog, not here. -->
+        <!-- Naming a licence is not explaining one, so the plain reading comes
+             first and the published text sits beneath it for anyone who wants
+             the thing itself. Every word of both is handed over by Go; the page
+             states none of it, the same rule the product's name follows.
+
+             The text pane reads itself down gently and steps aside the moment
+             the reader touches it. It is a pane holding words rather than a
+             control, so it never draws a ring, in any state, Tab included. -->
         <section class="screen" id="screen-licence">
             <h1>Licence</h1>
-            <p class="lead" id="licence-lead">This setup program is free software
-                under the GNU General Public Licence, version 3.</p>
-            <div class="infobox">
-                <span class="path">&#169; Oliver Ernster</span><br/>
-                It comes with no warranty, to the extent the law allows. You may
-                redistribute it under the terms of that licence, whose full text
-                is in the LICENSE file beside the program it installs.
-            </div>
-            <p class="lead credits-lead">Built with:</p>
+            <p class="lead" id="licence-lead"></p>
+            <p class="reading-lead">What that means for you:</p>
+            <ul class="plainly" id="licence-plainly"></ul>
+            <p class="reading-lead">Built with:</p>
             <div class="infobox">
                 Go and golang.org/x/sys, BSD 3-Clause, &#169; The Go Authors<br/>
                 Wails, MIT, &#169; Lea Anthony
             </div>
+            <p class="reading-lead">The licence in full:</p>
+            <div class="reading" id="licence-text"></div>
         </section>
 
         <section class="screen" id="screen-running">
@@ -115,6 +121,7 @@
 </div>
 
 <script src="setup-shell.js"></script>
+<script src="setup-scroll.js"></script>
 <script src="setup-routes.js"></script>
 </body>
 </html>

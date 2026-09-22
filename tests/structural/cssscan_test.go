@@ -58,8 +58,10 @@ var scrollDeclaration = regexp.MustCompile(`(?m)overflow(-y)?\s*:\s*(auto|scroll
 // is named here rather than found.
 var setupPage = []string{
 	filepath.Join("installer", "frontend", "dist", "setup.css"),
+	filepath.Join("installer", "frontend", "dist", "setup-reading.css"),
 	filepath.Join("installer", "frontend", "dist", "index.html"),
 	filepath.Join("installer", "frontend", "dist", "setup-routes.js"),
+	filepath.Join("installer", "frontend", "dist", "setup-scroll.js"),
 	filepath.Join("installer", "frontend", "dist", "setup-shell.js"),
 }
 

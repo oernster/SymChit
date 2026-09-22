@@ -9,6 +9,7 @@ import (
 	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/oernster/symchit/internal/infrastructure/setup"
+	"github.com/oernster/symchit/internal/licence"
 )
 
 // uninstallExeName is the copy of setup left inside the install directory, so
@@ -60,6 +61,37 @@ type StateDTO struct {
 type OptionsDTO struct {
 	StartMenu bool `json:"startMenu"`
 	Desktop   bool `json:"desktop"`
+}
+
+// LicenceDTO is the licence screen's whole content, so the page states none of
+// it. The name of the licence, who holds the copyright, what it means in
+// ordinary words and the published text itself all come from
+// internal/licence, which the gate holds to the repository's own LICENSE.
+type LicenceDTO struct {
+	// Lead names the product and the licence in one sentence. It is built here
+	// rather than on the page for the reason StateDTO.AppName exists: a page
+	// with no build step that writes the product's name down survives a rename
+	// with nothing to say so.
+	Lead   string   `json:"lead"`
+	Holder string   `json:"holder"`
+	Plain  []string `json:"plain"`
+	Text   string   `json:"text"`
+}
+
+// Licence answers what SymChit is given under.
+//
+// The screen it fills exists because naming a licence is not explaining one:
+// somebody about to install a program reads "GNU General Public Licence,
+// version 3", learns nothing from it and presses the button anyway. The plain
+// reading goes first for that reason, with the text beneath it for anyone who
+// wants the thing itself rather than a summary of it.
+func (a *App) Licence() LicenceDTO {
+	return LicenceDTO{
+		Lead:   setup.AppName + " is free software under the " + licence.Name + ".",
+		Holder: licence.Holder,
+		Plain:  licence.Plainly(),
+		Text:   licence.Text(),
+	}
 }
 
 // Progress is emitted on the "progress" event while a long operation runs.
@@ -209,11 +241,8 @@ func (a *App) Uninstall(removeRecord bool) error {
 	_ = setup.RemoveUninstallEntry()
 
 	a.progress(60, "Clearing what the window kept...")
-	if webview, webviewErr := setup.WebViewDir(); webviewErr == nil {
-		_ = setup.RemoveTree(webview)
-	}
-	if logs, logErr := setup.LogDir(); logErr == nil {
-		_ = setup.RemoveTree(logs)
+	for _, folder := range setup.Leftovers() {
+		_ = setup.RemoveTree(folder)
 	}
 
 	if removeRecord {
