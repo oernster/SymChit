@@ -8,6 +8,69 @@
   colour of its own.
 */
 
+/*
+  The licence screen fills the body exactly and never scrolls as a whole.
+
+  Every other screen is short enough to be centred in the body, which scrolls
+  if it has to. This one is not; a body that scrolls pushes the heading and
+  the first statement up under the header's rule, sliced through the middle of
+  a line. So the screen becomes the column: the words above keep their own
+  height and the pane takes whatever is left, which means the licence is the
+  one thing that scrolls whatever the window does.
+
+  The id beats `.screen.active` on specificity, which is what lets one screen
+  lay itself out differently without a rule for all the others.
+*/
+#screen-licence.active {
+    display: flex;
+    flex-direction: column;
+    /* Basis zero, for the reason the columns take it below: the screen takes
+       exactly the body's height rather than growing from its own content and
+       rounding a fraction of a pixel into a scrollbar. */
+    flex: 1 1 0%;
+    min-height: 0;
+    /* The screen fills the body, so without this its heading begins exactly on
+       the header's rule, with no air between the two. Every other screen is
+       centred in the body and floats clear of it by accident rather than by a
+       rule, which is why nothing else needs this. */
+    padding-top: 16px;
+}
+
+/*
+  The plain reading and the licence itself sit side by side. Stacked, the two
+  together were taller than a window that cannot be resized: the body scrolled,
+  the heading went up under the header's rule and the pane was left with about
+  five lines to show a licence in. The window is wide and the two halves are
+  read independently, so the width is where the room was.
+*/
+.licence-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* The row is stated rather than left implicit. An implicit row is sized to
+       its tallest item, so it grows past the height the grid was given and the
+       fraction rounds up into a scrollbar down the whole window. minmax with a
+       zero floor says the opposite: take the height given, then let what
+       is inside shrink to it. */
+    grid-template-rows: minmax(0, 1fr);
+    gap: 22px;
+    /* A basis of zero rather than of its own content: the columns take exactly
+       what the heading and the lead leave, whatever that is. Growing from the
+       content instead left the screen a fraction of a pixel too tall, which
+       rounds up into a scrollbar down the whole window. */
+    flex: 1 1 0%;
+    min-height: 0;
+}
+
+/* Each column is its own little stack: a lead of fixed height, then the thing
+   it introduces taking the rest. The pane can only flex if every box between
+   it and the screen can shrink, which is what min-height zero says. */
+.licence-plain,
+.licence-formal {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .reading-lead {
     margin: 18px 0 8px;
     font-weight: 600;
@@ -26,6 +89,14 @@
     margin-bottom: 7px;
     color: var(--muted);
     line-height: 1.5;
+}
+
+/* The gap belongs between the statements, not after the last one, where it
+   pushed the column a hair past the height it was given. Measured: the list
+   ended 1.06px below the screen, which is enough to round up into a scrollbar
+   down the whole window. */
+.plainly li:last-child {
+    margin-bottom: 0;
 }
 
 /* A mark rather than a bullet glyph, so the indent is the same whatever the
@@ -51,14 +122,16 @@
   the arrows; suppressing the outline takes the ring away without taking the
   reachability with it. This matches the application's own dialog-body exactly.
 
-  The height is stated so the pane is the only thing on the screen that
-  scrolls: the screen itself must not grow a scrollbar, since the window is
-  fixed and the footer below it belongs to the screen.
+  It takes whatever height the words above leave it rather than a stated one,
+  so the screen fits the fixed window at any content length and the pane is
+  the only thing that scrolls. A stated height was tried and is what put the
+  heading off the top of the screen.
 */
 .reading {
-    height: 210px;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
-    padding: 14px 16px;
+    padding: 16px;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: var(--raised);

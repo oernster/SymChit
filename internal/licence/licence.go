@@ -43,17 +43,16 @@ func Text() string {
 // to do with this", never "what clause governs it". The last line is the one
 // that makes it a licence rather than a gift, so it is stated as plainly as
 // the rest instead of being softened.
+//
+// Each is kept to a single line at the setup window's width. That is not only
+// tidiness: the window is fixed, so a list that wraps to two lines apiece
+// takes the room the licence pane needs and pushes the heading off the top.
 func Plainly() []string {
 	return []string{
-		"You can use it for anything you like, for as long as you like, " +
-			"without paying for it.",
-		"You can give copies to anybody: a friend, a relative, a waiting room.",
-		"You can read every line of the source. You can change it too, if " +
-			"you can program; if not, somebody else can do it for you.",
-		"If you pass on a changed version, it has to come with its source and " +
-			"carry this same licence, so whoever gets it next has everything " +
-			"you had.",
-		"It comes with no warranty. Nobody is promising it will suit your " +
-			"purpose; nobody is liable if it does not.",
+		"Use it for anything you like, for as long as you like, without paying.",
+		"Give copies to anybody: a friend, a relative, a waiting room.",
+		"Read every line of the source; change it if you can program.",
+		"Pass on a changed version with its source, under this same licence.",
+		"No warranty: nobody promises it will suit you; nobody is liable.",
 	}
 }

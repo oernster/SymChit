@@ -76,6 +76,19 @@ type LicenceDTO struct {
 	Holder string   `json:"holder"`
 	Plain  []string `json:"plain"`
 	Text   string   `json:"text"`
+	// Notices are the works this setup program itself is built from, shown at
+	// the foot of the licence text because that is where long legal small
+	// print belongs and because the window has no room for a box of its own.
+	Notices []string `json:"notices"`
+}
+
+// setupCredits names what the setup program ships, which is deliberately not
+// the application's list: they are two binaries with two sets of dependencies,
+// and setup carries no database. The application's own credits live in
+// internal/application/about.go and are shown in its About dialog.
+var setupCredits = []string{
+	"Go and golang.org/x/sys, BSD 3-Clause, © The Go Authors",
+	"Wails, MIT, © Lea Anthony",
 }
 
 // Licence answers what SymChit is given under.
@@ -87,10 +100,11 @@ type LicenceDTO struct {
 // wants the thing itself rather than a summary of it.
 func (a *App) Licence() LicenceDTO {
 	return LicenceDTO{
-		Lead:   setup.AppName + " is free software under the " + licence.Name + ".",
-		Holder: licence.Holder,
-		Plain:  licence.Plainly(),
-		Text:   licence.Text(),
+		Lead:    setup.AppName + " is free software under the " + licence.Name + ".",
+		Holder:  licence.Holder,
+		Plain:   licence.Plainly(),
+		Text:    licence.Text(),
+		Notices: setupCredits,
 	}
 }
 

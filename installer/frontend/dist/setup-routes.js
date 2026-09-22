@@ -138,8 +138,12 @@ function fillLicence(held) {
         item.textContent = line
         plainly.appendChild(item)
     }
+    // The works setup is built from go at the foot of the licence rather than
+    // in a box of their own: the window is fixed; a box up here takes the
+    // room the licence pane needs. They are still read out by the pane's own
+    // cycle, which is more than a box that scrolled off would have managed.
     const pane = $('licence-text')
-    pane.textContent = held.text
+    pane.textContent = [held.text.trimEnd(), 'Built with:', ...held.notices].join('\n\n')
     pane.scrollTop = 0
     leaveLicence()
     stopReading = readItself(pane)
