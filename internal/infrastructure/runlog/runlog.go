@@ -1,12 +1,14 @@
-// Package runlog keeps the log a run leaves (FR-065): a line naming
-// when the run started, then what the run reports, in SymChit.log inside
-// %LOCALAPPDATA%\SymChit. Ported from Bridge Talk's runlog, trimmed to what
-// SymChit needs.
+// Package runlog keeps the log a run leaves (FR-065): a line naming when the
+// run started, then what the run reports. Where that file sits is the
+// platform's business and logPath below states each rule. Ported from Bridge
+// Talk's runlog, trimmed to what SymChit needs.
 //
-// A windowed program started from a shortcut or the Run key has no error
-// output: Windows hands it a handle of 0, so the Go runtime's own crash report
-// would reach nobody. Keep points the error output at the log before anything
-// else runs, so a crash leaves a record.
+// A windowed Windows program started from a shortcut or the Run key has no
+// error output: Windows hands it a handle of 0, so the Go runtime's own crash
+// report would reach nobody. Keep points the error output at the log before
+// anything else runs, so a crash leaves a record. That is the one part of this
+// package a platform does differently; it is the only thing behind a build
+// tag: output_windows.go and output_other.go.
 package runlog
 
 import (
@@ -14,12 +16,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"runtime/debug"
 	"sync"
 	"time"
 
 	"github.com/oernster/symchit/internal/product"
-	"golang.org/x/sys/windows"
 )
 
 const (
@@ -35,18 +37,64 @@ const (
 	folderPerm  = 0o755
 	filePerm    = 0o644
 	dataFolder  = "LOCALAPPDATA"
+	stateFolder = "XDG_STATE_HOME"
 )
 
-// errNoDataFolder says the environment names no local data folder.
-var errNoDataFolder = errors.New(dataFolder + " is not set")
+// The platforms named by name, so the rule below reads as the rule rather than
+// as three string comparisons.
+const (
+	windowsOS = "windows"
+	macOS     = "darwin"
+)
+
+// The folders each platform keeps a program's own log in, below the home
+// directory. Windows takes its base from the environment instead.
+var (
+	macLogFolder    = []string{"Library", "Logs"}
+	xdgLogFolder    = []string{".local", "state"}
+	errNoDataFolder = errors.New(dataFolder + " is not set")
+)
 
 // Path answers the log's path without touching the disk.
 func Path() (string, error) {
-	base := os.Getenv(dataFolder)
-	if base == "" {
-		return "", errNoDataFolder
+	return logPath(runtime.GOOS, os.Getenv, os.UserHomeDir)
+}
+
+// logPath works the log's path out from the platform, the environment and the
+// home directory. Each is a parameter rather than read here, so every
+// platform's rule is exercised on every platform: a rule that only runs on the
+// machine it describes is a rule nobody checks until a user reports it.
+//
+// The three answers differ because the platforms do, not by preference:
+// Windows keeps a program's own data under LOCALAPPDATA; macOS keeps logs in
+// Library/Logs, where Console shows them; everywhere else the XDG rule puts
+// state that is not a cache and not configuration under XDG_STATE_HOME, else
+// ~/.local/state. Inside a Flatpak that variable is already pointed at the
+// sandbox, so the same line lands in the right place there too.
+func logPath(goos string, getenv func(string) string,
+	home func() (string, error)) (string, error) {
+	if goos == windowsOS {
+		base := getenv(dataFolder)
+		if base == "" {
+			return "", errNoDataFolder
+		}
+		return filepath.Join(base, product.Name, FileName), nil
 	}
-	return filepath.Join(base, product.Name, FileName), nil
+	if goos != macOS {
+		if base := getenv(stateFolder); base != "" {
+			return filepath.Join(base, product.Name, FileName), nil
+		}
+	}
+	found, err := home()
+	if err != nil {
+		return "", fmt.Errorf("finding the home directory: %w", err)
+	}
+	folder := xdgLogFolder
+	if goos == macOS {
+		folder = macLogFolder
+	}
+	parts := append([]string{found}, folder...)
+	return filepath.Join(append(parts, product.Name, FileName)...), nil
 }
 
 // Open opens the log at path for a run started at started, making its folder
@@ -85,22 +133,9 @@ func Keep(log *os.File) error {
 	return nil
 }
 
-// hasErrorOutput reports whether the run was given an error output.
-func hasErrorOutput() bool {
-	handle, err := windows.GetStdHandle(windows.STD_ERROR_HANDLE)
-	return err == nil && handle != 0 && handle != windows.InvalidHandle
-}
-
-// sendAll points the run's error output at log: first the handle the Go
-// runtime looks up for each report it writes, then os.Stderr, which was fixed
-// from that handle when the program started.
-func sendAll(log *os.File) error {
-	if err := windows.SetStdHandle(windows.STD_ERROR_HANDLE, windows.Handle(log.Fd())); err != nil {
-		return fmt.Errorf("sending error output to %s: %w", log.Name(), err)
-	}
-	os.Stderr = log
-	return nil
-}
+// hasErrorOutput and sendAll are the platform's own, in output_windows.go and
+// output_other.go: they are the only part of the log that Windows does
+// differently.
 
 // Logger writes timestamped lines to the log.
 type Logger struct {

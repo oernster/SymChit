@@ -239,6 +239,87 @@ func TestWithNoDataFolderThereIsNoLog(t *testing.T) {
 	}
 }
 
+// TestEveryPlatformsLogFolder exercises all three rules on whichever platform
+// the suite is run on. Reading the platform inside logPath would leave two of
+// the three untested until a user on that platform reported the answer.
+func TestEveryPlatformsLogFolder(t *testing.T) {
+	t.Parallel()
+	const (
+		home    = "/home/oliver"
+		appdata = `C:\Users\Oliver\AppData\Local`
+		state   = "/home/oliver/.var/app/uk.codecrafter.symchit/.local/state"
+	)
+	noHome := func() (string, error) { return "", errors.New("no home directory") }
+	atHome := func() (string, error) { return home, nil }
+	environment := func(pairs map[string]string) func(string) string {
+		return func(name string) string { return pairs[name] }
+	}
+
+	for _, test := range []struct {
+		name string
+		goos string
+		env  map[string]string
+		home func() (string, error)
+		want string
+	}{
+		{
+			name: "windows keeps it under the local data folder",
+			goos: windowsOS,
+			env:  map[string]string{dataFolder: appdata},
+			home: noHome,
+			want: filepath.Join(appdata, product.Name, FileName),
+		},
+		{
+			name: "macOS keeps it where Console shows it",
+			goos: macOS,
+			// A state folder set by something else is not macOS's rule, so
+			// naming one must not move the log.
+			env:  map[string]string{stateFolder: state},
+			home: atHome,
+			want: filepath.Join(home, "Library", "Logs", product.Name, FileName),
+		},
+		{
+			name: "elsewhere the state folder wins where one is named",
+			goos: "linux",
+			env:  map[string]string{stateFolder: state},
+			home: atHome,
+			want: filepath.Join(state, product.Name, FileName),
+		},
+		{
+			name: "elsewhere it falls back to the XDG default",
+			goos: "linux",
+			env:  map[string]string{},
+			home: atHome,
+			want: filepath.Join(home, ".local", "state", product.Name, FileName),
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := logPath(test.goos, environment(test.env), test.home)
+			if err != nil || got != test.want {
+				t.Errorf("got %q, %v; want %q", got, err, test.want)
+			}
+		})
+	}
+
+	t.Run("windows with no local data folder says so", func(t *testing.T) {
+		t.Parallel()
+		_, err := logPath(windowsOS, environment(nil), atHome)
+		if !errors.Is(err, errNoDataFolder) {
+			t.Errorf("got %v, want %v", err, errNoDataFolder)
+		}
+	})
+
+	for _, goos := range []string{macOS, "linux"} {
+		t.Run("no home directory on "+goos+" says so", func(t *testing.T) {
+			t.Parallel()
+			if _, err := logPath(goos, environment(nil), noHome); err == nil {
+				t.Error("a missing home directory answered no error")
+			}
+		})
+	}
+}
+
 func TestLoggerStampsEachLine(t *testing.T) {
 	t.Parallel()
 	path := plantLog(t, nil)

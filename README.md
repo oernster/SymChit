@@ -4,7 +4,7 @@ A health tracker.  It doesn't contain diagnose.  It's just a little record of sy
 When you notice a symptom, record it. When you see your doctor, take the record
 with you.
 
-SymChit is a local-first symptom recorder for Windows. It keeps what you
+SymChit is a local-first symptom recorder for Windows, Linux and macOS. It keeps what you
 observed and when you observed it, then prints a short factual record for an
 appointment. It is a recorder, not a diagnostician.
 
@@ -73,11 +73,24 @@ these:
 
 ## Running it
 
-Download the executable. To build from source, see
-[DEVELOPMENT.md](DEVELOPMENT.md).
+Download the executable on Windows, the Flatpak bundle on Linux or the DMG on
+macOS. To build any of them from source, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
-Your record lives at `%APPDATA%\SymChit\symchit.db` and the run log at
-`%LOCALAPPDATA%\SymChit\SymChit.log`.
+Your record and the run log go wherever the platform keeps such things:
+
+| | The record | The run log |
+|---|---|---|
+| Windows | `%APPDATA%\SymChit\symchit.db` | `%LOCALAPPDATA%\SymChit\SymChit.log` |
+| Linux | `$XDG_CONFIG_HOME/SymChit/symchit.db` | `$XDG_STATE_HOME/SymChit/SymChit.log` |
+| macOS | `~/Library/Application Support/SymChit/symchit.db` | `~/Library/Logs/SymChit/SymChit.log` |
+
+Inside the Flatpak both land under `~/.var/app/uk.codecrafter.SymChit`.
+
+Windows is the platform SymChit has been run on. The Linux and macOS builds
+compile and are vetted on every test run, which says nothing has been written
+that only Windows can compile; neither has yet been built on its own machine.
+The bespoke setup program stays Windows-only: a Flatpak and a DMG are how those
+platforms install things.
 
 ## Testing
 

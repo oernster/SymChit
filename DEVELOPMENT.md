@@ -43,6 +43,45 @@ The version reaches the binary through `-ldflags -X`, which writes to a `var`
 only. `main.appVersion` is declared `var` for that reason: against a `const` the
 flag silently does nothing.
 
+### Linux and macOS
+
+Neither is built from Windows; each is built on its own machine, from the
+repository root, with bash rather than PowerShell:
+
+```bash
+bash build_flatpak.sh
+```
+
+Ported from PigeonPost's. It installs the flatpak tooling where it is missing,
+adds flathub, pulls the GNOME runtime (which is what supplies the
+webkit2gtk-4.1 that Wails renders through, so the Go build carries
+`-tags webkit2_41`), writes the desktop entry, the metainfo and the manifest,
+builds inside the sandbox and exports `symchit.flatpak`. `bash
+cleanup_flatpak.sh` uninstalls it and removes what the build left; it never
+touches the record.
+
+The finished application is given no network permission at all. SymChit opens no
+connection; the sandbox is where that stops being a claim and becomes a
+rule: a build that started talking to something would fail at run time rather
+than quietly working. The build itself does get the network, since it fetches Go
+modules and npm packages, which is why `--share=network` appears under
+`build-args` and nowhere else.
+
+```bash
+bash builddmg.sh
+```
+
+Also ported from PigeonPost's, for Apple Silicon. It builds, stamps the bundle
+version from `VERSION`, signs with a Developer ID, notarizes and staples both
+the app and the DMG, then replays Gatekeeper's own check. Notarization is not
+optional: since macOS 10.15 a signed but unnotarized app is refused on every
+machine but the one that signed it; the failure is invisible at build time.
+`ALLOW_UNNOTARIZED=1` exists for a local test build and for nothing else.
+
+Neither script has been run on its own platform yet. What is measured is that
+the module compiles and vets for both on every test run, which says nothing
+Windows-only has been written and says nothing about how either build behaves.
+
 ## Running from source
 
 ```powershell
@@ -71,7 +110,10 @@ python tools/genicons.py
 
 It writes the band icons into `frontend/src/assets/icons`, the multi-size
 `build/windows/icon.ico` that Wails puts on the executable, plus `build/appicon.png`, which Wails fills with its own logo when the file is
-absent. The output is committed, so a clone needs neither Python nor Pillow.
+absent, plus `build/linux/icons`, the eight hicolor sizes a Linux desktop
+chooses between, which the Flatpak manifest installs one by one. The output is
+committed, so a clone needs neither Python nor Pillow; the Flatpak build needs
+no Python inside its sandbox either.
 
 The donate mark takes a path of its own. It is a picture rather than an icon, so
 it is cropped to its artwork and scaled by height alone, keeping its width; the

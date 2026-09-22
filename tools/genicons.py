@@ -51,6 +51,11 @@ ICO_SIZES = [(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256,
 # APPICON_SIZE is the square wails build expects build/appicon.png to be.
 APPICON_SIZE = 1024
 
+# HICOLOR_SIZES are the sizes a Linux desktop chooses between when it draws the
+# application in a launcher, a dock or an alt-tab list. The Flatpak manifest
+# installs one file per size into the hicolor theme.
+HICOLOR_SIZES = [16, 24, 32, 48, 64, 128, 256, 512]
+
 # HEADER_SIZE is the setup window's header mark, drawn at 126 pixels. Twice
 # that keeps it crisp on a high-density display. The setup page has no bundler,
 # so it loads the file as it finds it: shipping the master there would put a
@@ -70,6 +75,11 @@ SETUP_BUILD = REPO / "installer" / "build"
 SETUP_ICO = SETUP_BUILD / "windows" / "icon.ico"
 SETUP_APPICON = SETUP_BUILD / "appicon.png"
 SETUP_HEADER = REPO / "installer" / "frontend" / "dist" / "icon.png"
+
+# The Linux desktop takes its icon from the hicolor theme rather than from the
+# executable, so the sizes are written out as files and committed with the rest.
+LINUX_ICONS = BUILD / "linux" / "icons"
+LINUX_ICON_LAYOUT = "symchit_{size}.png"
 
 
 def trimmed(master: pathlib.Path) -> Image.Image:
@@ -144,6 +154,12 @@ def main() -> int:
     for target in (APPICON, SETUP_APPICON):
         large.save(target, "PNG", optimize=True)
         print(f"{'':<22} -> {target.relative_to(REPO)} ({target.stat().st_size:,} bytes)")
+    LINUX_ICONS.mkdir(parents=True, exist_ok=True)
+    for size in HICOLOR_SIZES:
+        target = LINUX_ICONS / LINUX_ICON_LAYOUT.format(size=size)
+        square.resize((size, size), Image.LANCZOS).save(target, "PNG", optimize=True)
+    print(f"{'':<22} -> {LINUX_ICONS.relative_to(REPO)} ({len(HICOLOR_SIZES)} sizes)")
+
     square.resize((HEADER_SIZE, HEADER_SIZE), Image.LANCZOS).save(
         SETUP_HEADER, "PNG", optimize=True
     )

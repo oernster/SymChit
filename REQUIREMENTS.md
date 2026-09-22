@@ -34,6 +34,8 @@ In scope for version 1:
 - A printable symptom receipt over a chosen date range.
 - A machine-readable export of the whole record.
 - A Windows desktop application in Go with Wails, plus the house setup program.
+- The same application on Linux and macOS, packaged as a Flatpak and a signed
+  DMG (Amendment 7).
 
 Out of scope (decided by the source document, sections 10 and 15):
 
@@ -48,9 +50,9 @@ Out of scope (decided by the source document, sections 10 and 15):
 - Advertising, analytics and telemetry.
 - Event types other than symptoms (source section 14; see 3.8).
 - A phone or web version in version 1 (platform decided 2026-09-22).
-- Linux and macOS in version 1. A Flatpak for Linux and a DMG builder for
-  macOS, both following PigeonPost's, are planned for a later version
-  (Amendment 3).
+- A single-file setup program for Linux or macOS. Those two are packaged the way
+  each platform expects, a Flatpak and a signed DMG; the bespoke setup program
+  stays Windows-only (Amendment 7).
 
 ### 1.4 Definitions
 
@@ -96,6 +98,24 @@ administrator rights are needed at any point.
 
 Windows 11 on x64, with the WebView2 runtime that Windows 11 ships. Built and
 tested on the reference machine.
+
+Linux and macOS carry the same application (Amendment 7). Linux is a Flatpak on
+the GNOME runtime, which supplies the webkit2gtk-4.1 that Wails renders through;
+macOS is a signed and notarized DMG for Apple Silicon. Neither has been built on
+its own platform yet: both are held by the gate compiling and vetting the whole
+module for them on every run, which settles that nothing is Windows-only and
+settles nothing else. TESTING.md says so in those words.
+
+Where each platform keeps the two files it owns:
+
+| | The record | The run log |
+|---|---|---|
+| Windows | `%APPDATA%\SymChit\symchit.db` | `%LOCALAPPDATA%\SymChit\SymChit.log` |
+| Linux | `$XDG_CONFIG_HOME/SymChit/symchit.db` | `$XDG_STATE_HOME/SymChit/SymChit.log` |
+| macOS | `~/Library/Application Support/SymChit/symchit.db` | `~/Library/Logs/SymChit/SymChit.log` |
+
+Inside the Flatpak both variables already point at the sandbox, so the same
+rules land under `~/.var/app/uk.codecrafter.SymChit`.
 
 ### 2.4 Constraints
 
@@ -385,9 +405,11 @@ it; test names are provisional until the code exists.
 
 **FR-060 Local store**
 - Priority: Must
-- Requirement: The application shall keep the record in one SQLite file at
-  `%APPDATA%\SymChit\symchit.db`.
-- Verified by: `store_test.go::TestOpensAtTheGivenPath`
+- Requirement: The application shall keep the record in one SQLite file, in the
+  folder the platform keeps a program's own configuration in: on Windows
+  `%APPDATA%\SymChit\symchit.db` (Amendment 7 names the other two in 2.3).
+- Verified by: `store/unavailable_test.go::TestOpensAtTheGivenPath`, which reads
+  the folder from the platform through `os.UserConfigDir`
 
 **FR-061 First run**
 - Priority: Must
@@ -417,10 +439,16 @@ it; test names are provisional until the code exists.
 
 **FR-065 Log**
 - Priority: Must
-- Requirement: The application shall point standard error at
-  `%LOCALAPPDATA%\SymChit\SymChit.log` as its first act; the log shall never
-  contain a symptom, a note or any other part of the record.
-- Verified by: `runlog_test.go`; `tests/structural/boundary_test.go::TestNoRecordFieldsLogged`
+- Requirement: The application shall point standard error at a log in the folder
+  the platform keeps a program's own state in, as its first act: on Windows
+  `%LOCALAPPDATA%\SymChit\SymChit.log` (Amendment 7 names the other two in 2.3).
+  The log shall never contain a symptom, a note or any other part of the record.
+- Note: pointing standard error at a file is Windows-only work, because the
+  failure it answers is Windows-only: a windowed run started from a shortcut is
+  handed a handle of 0 and everything written there is lost. Elsewhere the run
+  keeps its own standard error and the crash report is copied to the log.
+- Verified by: `runlog_test.go`, including
+  `TestEveryPlatformsLogFolder`; `tests/structural/boundary_test.go::TestNoRecordFieldsLogged`
 
 **FR-066 About**
 - Priority: Must
@@ -623,6 +651,7 @@ Still open:
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 7 | 2026-09-22 | 1.3 scope, 2.3 operating environment, FR-060, FR-065 | Linux and macOS leave the deferred list and become part of this version: a Flatpak and a signed DMG, ported from PigeonPost's. Only the bespoke setup program stays Windows-only. | Owner's decision, superseding Amendment 3, which had made them a later version. Measured: one package stopped the module building elsewhere, the run log, whose Windows handle work is now behind a build tag and whose folder rule is a pure function taking the platform as an argument, so all three answers are exercised on every platform. The gate now builds and vets for Linux and macOS on every run, which is what keeps this true; a planted Windows-only import was refused by name. |
 | 6 | 2026-09-22 | New FR-069 | The bar carries a Donate button, last in its right-hand group. | Owner's request. It takes a seat in the bar the window already has rather than a band of its own, as AudioDeck's does, since a whole new strip of chrome carrying one control costs more than it buys. The address lives once, in Go's product package; the page asks for the donation page rather than naming one, so nothing arriving from the page has to be checked before it is opened. |
 | 5 | 2026-09-22 | New FR-068 | The application carries a Guide, reached from the bar. | Owner's request, in line with PigeonPost and ClearBudget. Its words are one document (`frontend/src/guideContent.ts`) and the dialog only draws them, as PigeonPost's does. |
 | 4 | 2026-09-22 | FR-050, FR-053 | Both file dialogs open in the user's Downloads folder, which the user may leave. | Owner's request: it is where a person already looks for files they have saved. Measured: Wails' dialog options carry a default directory; the folder is checked before it is named, so a machine without one falls back to the dialog's own choice. |

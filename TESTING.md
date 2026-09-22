@@ -10,12 +10,17 @@ It runs these in order, stopping at the first failure:
 
 1. `gofmt -l` over the Go, ignoring the front end.
 2. `go vet` over every package but `node_modules`.
-3. `staticcheck`, fetched with `go run honnef.co/go/tools/cmd/staticcheck@latest`.
-4. The whole Go suite.
-5. Coverage of `internal/domain` and `internal/application`, which must be 100%.
-6. Coverage of every other Go package against its measured floor.
-7. The front end: `eslint`, `tsc --noEmit` and `vite build`.
-8. The front-end suite: Vitest over jsdom.
+3. A build and a vet for Linux and for macOS. SymChit ships to all three, so a
+   Windows-only import is a defect the day it is written rather than the day
+   someone tries the Flatpak. This needs no Linux machine and no Mac; it fails
+   naming the import and the platform: proved by planting
+   `golang.org/x/sys/windows` in a file with no build tag.
+4. `staticcheck`, fetched with `go run honnef.co/go/tools/cmd/staticcheck@latest`.
+5. The whole Go suite.
+6. Coverage of `internal/domain` and `internal/application`, which must be 100%.
+7. Coverage of every other Go package against its measured floor.
+8. The front end: `eslint`, `tsc --noEmit` and `vite build`.
+9. The front-end suite: Vitest over jsdom.
 
 `./test.ps1 -SkipFrontend` runs the Go half alone while working on it. There is
 no switch that skips the gate inside `build.ps1`.
@@ -54,7 +59,7 @@ told.
 | `internal/application` | 100 | Every port is faked, so every path is reachable. |
 | `internal/infrastructure/store` | 92 | The rest is SQLite write failures that cannot be forced without breaking the disk. |
 | `internal/infrastructure/export` | 91 | The rest is operating-system write failures on a temporary file. |
-| `internal/infrastructure/runlog` | 74 | The rest is Win32 standard-handle work, reachable only in a windowed process with no error output. |
+| `internal/infrastructure/runlog` | 81 | The rest is Win32 standard-handle work, reachable only in a windowed process with no error output. It was 74 until the folder rule became a pure function taking the platform as an argument: all three platforms' answers are now exercised on whichever platform the suite runs on, rather than two of them waiting for a user to report the answer. |
 | `internal/infrastructure/setup` | 56 | The portable half and the shortcut writing are tested. The registry writes, the process work and the scheduled deletion change the machine, so a real install exercises them instead. |
 | root package (the facade) | 76 | The facade itself is covered. `main`, the log handover, the file dialogs, the browser opener and the single-instance lock need a real window. The floor was 77 until the donate button landed: the opener is one more line of Wails runtime no test can reach, so the blend fell by half a point and the floor was re-measured rather than the facade going untested. |
 
@@ -68,7 +73,7 @@ Not gated at all: `internal/product` holds two constants; `tests/structural` is 
 | `internal/application` | The use cases over fakes: recording reads the clock once, an edit leaves recorded-at alone, a failed write loses nothing the user typed, an import skips what is held. |
 | `internal/infrastructure/store` | Real SQLite in a temporary folder: notes and symptoms read back byte for byte, a deletion is all or nothing, a garbage file is never overwritten, a newer schema is refused, the durability pragmas are set, plus a planted trigger proving a failed write leaves nothing behind. |
 | `internal/infrastructure/export` | The format against a committed sample, a refusal for anything that is not a SymChit export, plus a size cap read before the file is. |
-| `internal/infrastructure/runlog` | Crash reporting, by starting this test binary again as a child and making it panic. |
+| `internal/infrastructure/runlog` | Crash reporting, by starting this test binary again as a child and making it panic, plus each platform's rule for where the log lives, all three exercised wherever the suite runs. |
 | root package | The facade end to end over a real record: every conversion, every refusal, plus a panic in a bound method becoming an error rather than a dead window. |
 | `internal/infrastructure/setup` | The install policy: the payload fence refusing an entry that climbs out of the install folder, the paths, the version comparison that picks the route, plus real shortcuts written into temporary folders with plain paths rather than doubled separators. |
 | `tests/structural` | The invariants in ARCHITECTURE.md. |
@@ -105,6 +110,8 @@ changes.
 | The Apps list's Uninstall and Modify point at a path that exists. | They do now. The first install wrote doubled separators; fixed and covered by a test. |
 | The install folder is removed after setup exits. | Measured with a probe: the ported command removed nothing, so it was rewritten. Still to check by hand on a real install. |
 | Uninstall with "also delete my symptom record" ticked. | Not yet run. |
+| The Flatpak builds on a Linux machine, the window opens and the record lands under `~/.var/app/uk.codecrafter.SymChit`. | Not yet run. The manifest was checked by generating it and parsing it: valid YAML, no network permission on the finished application, plus every one of the eight icons it installs present in the tree. That says nothing about whether it builds. |
+| The DMG builds, signs, notarizes and staples on an Apple Silicon Mac. | Not yet run. Nothing about this script has been measured beyond its syntax. |
 
 ## Further reading
 

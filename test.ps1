@@ -36,6 +36,30 @@ Write-Host 'Vetting...'
 go vet $packages
 if ($LASTEXITCODE -ne 0) { throw "go vet failed with exit code $LASTEXITCODE" }
 
+# SymChit ships to Windows, Linux and macOS, so a Windows-only import is a
+# defect the day it is written rather than the day someone tries the Flatpak.
+# Building for the other two is the cheapest way to find one: it needs no
+# Linux machine and no Mac; it fails by name. Vet runs with it, since a
+# build says only that the package compiles.
+Write-Host 'Building for Linux and macOS...'
+# tests/structural holds test files alone, which go build refuses to be handed.
+# It is still vetted below, where the test files are compiled.
+$buildable = go list -f '{{if .GoFiles}}{{.ImportPath}}{{end}}' ./...
+if ($LASTEXITCODE -ne 0) { throw "go list failed with exit code $LASTEXITCODE" }
+$buildable = $buildable | Where-Object { $_ }
+foreach ($target in 'linux', 'darwin') {
+    $env:GOOS = $target
+    try {
+        go build $buildable
+        if ($LASTEXITCODE -ne 0) { throw "the $target build failed with exit code $LASTEXITCODE" }
+        go vet $packages
+        if ($LASTEXITCODE -ne 0) { throw "go vet for $target failed with exit code $LASTEXITCODE" }
+    } finally {
+        Remove-Item Env:GOOS -ErrorAction SilentlyContinue
+    }
+    Write-Host "  $target builds and vets clean."
+}
+
 Write-Host 'Running staticcheck...'
 go run honnef.co/go/tools/cmd/staticcheck@latest $packages
 if ($LASTEXITCODE -ne 0) { throw "staticcheck failed with exit code $LASTEXITCODE" }
@@ -77,7 +101,10 @@ try {
 # which need a window and a platform. Its floor moved from 77 to 76 when the
 # donate button landed: the opener is one more line of Wails runtime that no
 # test can reach, of exactly the same kind as the file dialogs beside it, so the
-# blend fell rather than the facade going untested. Re-measured, not estimated. The run log needs a windowed process with no error output, so
+# blend fell rather than the facade going untested. Re-measured, not estimated.
+# The run log moved the other way, 74 to 81, when its folder rule became a pure
+# function taking the platform as an argument: all three platforms' answers are
+# now exercised on whichever platform the suite runs on. The run log needs a windowed process with no error output, so
 # its crash tests start a child; what remains uncovered there is the Win32
 # handle work. The store and the export file reach everything but a handful of
 # operating-system write failures that cannot be forced without breaking the
@@ -86,7 +113,7 @@ $measured = [ordered]@{
     '.'                                      = 76
     './internal/infrastructure/store'        = 92
     './internal/infrastructure/export'       = 91
-    './internal/infrastructure/runlog'       = 74
+    './internal/infrastructure/runlog'       = 81
     './internal/infrastructure/setup'        = 56
 }
 
