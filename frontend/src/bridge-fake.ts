@@ -1,0 +1,90 @@
+// A stand-in for the window's Go facade, so components can be driven in a test.
+//
+// Nothing here fakes a rule: every answer is stated by the test. A method not
+// installed rejects, which is how a test says "this call should not happen".
+
+import { vi } from 'vitest'
+import { noWindow, sentence } from './api'
+import type { About, EventEntry, Definition, ImportResult, ReceiptLine, State } from './api'
+
+/** noWindowShown is that refusal as the status line shows it. */
+export const noWindowShown = sentence(noWindow)
+
+export interface FakeBridge {
+  State: ReturnType<typeof vi.fn>
+  Now: ReturnType<typeof vi.fn>
+  About: ReturnType<typeof vi.fn>
+  Record: ReturnType<typeof vi.fn>
+  Suggest: ReturnType<typeof vi.fn>
+  Symptoms: ReturnType<typeof vi.fn>
+  History: ReturnType<typeof vi.fn>
+  Edit: ReturnType<typeof vi.fn>
+  DeletionPrompt: ReturnType<typeof vi.fn>
+  Delete: ReturnType<typeof vi.fn>
+  Rename: ReturnType<typeof vi.fn>
+  Receipt: ReturnType<typeof vi.fn>
+  Export: ReturnType<typeof vi.fn>
+  Import: ReturnType<typeof vi.fn>
+}
+
+export const severities = ['Mild', 'Moderate', 'Severe']
+
+export const aState: State = {
+  name: 'SymChit',
+  version: '1.0.0',
+  problem: '',
+  severities,
+}
+
+export const anEvent: EventEntry = {
+  id: 1,
+  definition: 1,
+  symptom: 'Tired',
+  occurredAt: '2026-09-22T17:12',
+  when: '22 Sep 2026 17:12',
+  severity: 'Mild',
+  note: 'Only been awake for about 10 minutes.',
+}
+
+export const tired: Definition = { id: 1, label: 'Tired' }
+
+export const anAbout: About = {
+  name: 'SymChit',
+  version: '1.0.0',
+  author: 'Oliver Ernster',
+  statement: 'SymChit records what you observed and when.',
+  credits: [{ work: 'Go', licence: 'BSD 3-Clause', holder: 'The Go Authors' }],
+}
+
+export const aReceipt: ReceiptLine[] = [
+  { kind: 'title', text: 'SYMPTOM RECORD' },
+  { kind: 'range', text: '23 August - 22 September 2026' },
+  { kind: 'heading', text: 'Tired - 1 recorded event' },
+  { kind: 'when', text: '22 Sep 17:12' },
+]
+
+export const anImport: ImportResult = { chosen: true, added: 3, skipped: 1 }
+
+/** installBridge puts a fake facade on the window and answers it. */
+export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
+  const refuse = () => Promise.reject(new Error('this call was not expected'))
+  const bridge = {
+    State: vi.fn(() => Promise.resolve(aState)),
+    Now: vi.fn(() => Promise.resolve('2026-09-22T17:12')),
+    About: vi.fn(() => Promise.resolve(anAbout)),
+    Record: vi.fn(refuse),
+    Suggest: vi.fn(() => Promise.resolve([])),
+    Symptoms: vi.fn(() => Promise.resolve([])),
+    History: vi.fn(() => Promise.resolve([])),
+    Edit: vi.fn(refuse),
+    DeletionPrompt: vi.fn(refuse),
+    Delete: vi.fn(refuse),
+    Rename: vi.fn(refuse),
+    Receipt: vi.fn(() => Promise.resolve([])),
+    Export: vi.fn(refuse),
+    Import: vi.fn(refuse),
+    ...answers,
+  } as FakeBridge
+  ;(window as unknown as { go: unknown }).go = { main: { App: bridge } }
+  return bridge
+}

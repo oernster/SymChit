@@ -1,0 +1,59 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import { ReceiptPane, daysBefore } from './ReceiptPane'
+import { aReceipt, installBridge } from './bridge-fake'
+
+describe('the receipt', () => {
+  it('opens on the last thirty days, ending today', async () => {
+    const bridge = installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
+    render(<ReceiptPane refused={vi.fn()} />)
+
+    await waitFor(() => expect(screen.getByLabelText(/To/)).toHaveValue('2026-09-22'))
+    expect(screen.getByLabelText(/From/)).toHaveValue('2026-08-23')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
+    await waitFor(() => expect(bridge.Receipt).toHaveBeenCalledWith('2026-08-23', '2026-09-22'))
+  })
+
+  it('shows every line the backend gave it; nothing else', async () => {
+    installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
+    render(<ReceiptPane refused={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
+
+    const record = await screen.findByLabelText('The symptom record')
+    const shown = Array.from(record.querySelectorAll('p')).map((line) => line.textContent)
+    expect(shown).toEqual(aReceipt.map((line) => line.text))
+  })
+
+  it('cannot be printed until there is something to print', async () => {
+    installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
+    render(<ReceiptPane refused={vi.fn()} />)
+    expect(screen.getByRole('button', { name: 'Print' })).toBeDisabled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Print' })).toBeEnabled())
+
+    const print = vi.fn()
+    window.print = print
+    fireEvent.click(screen.getByRole('button', { name: 'Print' }))
+    expect(print).toHaveBeenCalled()
+  })
+
+  it('shows nothing when the range holds no events', async () => {
+    const refused = vi.fn()
+    installBridge({
+      Receipt: vi.fn(() => Promise.reject(new Error('no events were recorded in that range'))),
+    })
+    render(<ReceiptPane refused={refused} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
+
+    await waitFor(() => expect(refused).toHaveBeenCalledWith('No events were recorded in that range'))
+    expect(screen.queryByLabelText('The symptom record')).toBeNull()
+  })
+
+  it('counts back across a month and a year', () => {
+    expect(daysBefore('2026-09-22', 30)).toBe('2026-08-23')
+    expect(daysBefore('2026-01-05', 30)).toBe('2025-12-06')
+    expect(daysBefore('2026-03-01', 1)).toBe('2026-02-28')
+  })
+})

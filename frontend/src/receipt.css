@@ -1,0 +1,53 @@
+/*
+  The receipt on screen and on paper. Printing takes the receipt alone: the
+  band, the status line and the controls are the application, not the record.
+*/
+
+.receipt {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px 28px;
+  max-width: 560px;
+}
+
+.receipt .line {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.receipt .title {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.receipt .heading {
+  font-weight: 700;
+  margin-top: 18px;
+}
+
+.receipt .when {
+  margin-top: 8px;
+}
+
+.receipt .severity,
+.receipt .note {
+  padding-left: 16px;
+}
+
+@media print {
+  .band,
+  .status,
+  .problem,
+  .receipt-controls,
+  #receipt-title {
+    display: none;
+  }
+
+  body,
+  .receipt {
+    background: #ffffff;
+    color: #000000;
+    border: 0;
+  }
+}

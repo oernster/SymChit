@@ -1,0 +1,19 @@
+{
+  "format": "symchit-record",
+  "version": 1,
+  "definitions": [
+    {
+      "label": "Tired",
+      "lastUsed": "2026-09-22T17:12:00+01:00"
+    }
+  ],
+  "events": [
+    {
+      "symptom": "Tired",
+      "occurredAt": "2026-09-22T17:12:00+01:00",
+      "recordedAt": "2026-09-22T17:12:00+01:00",
+      "severity": "Mild",
+      "note": "Only been awake for about 10 minutes."
+    }
+  ]
+}

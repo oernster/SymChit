@@ -1,0 +1,37 @@
+/*
+  Every colour SymChit uses, in one place. Light and dark follow the Windows app
+  mode through prefers-color-scheme (Q-9). The page names tokens only; a test
+  holds every text pairing to WCAG 2.2 AA (NFR-USE-003).
+*/
+
+:root {
+  color-scheme: light dark;
+
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --text: #1b1f24;
+  --muted: #535c68;
+  --border: #c9d0d8;
+  --accent: #1a5fc8;
+  --on-accent: #ffffff;
+  --danger: #a8231a;
+  --on-danger: #ffffff;
+  --focus: #1a5fc8;
+  --selected: #dce8fb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171c;
+    --surface: #1e2229;
+    --text: #e6e9ed;
+    --muted: #a3adb9;
+    --border: #3a414c;
+    --accent: #6aa6ff;
+    --on-accent: #0b1320;
+    --danger: #ff8a80;
+    --on-danger: #1a0605;
+    --focus: #6aa6ff;
+    --selected: #243349;
+  }
+}

@@ -1,0 +1,103 @@
+# SymChit: development
+
+Every command here is PowerShell, run from the repository root.
+
+## Tools
+
+| Tool | What for | Where from |
+|---|---|---|
+| Go 1.26+ | The application | https://go.dev/dl/ |
+| Node 20+ with npm | The page | https://nodejs.org/ |
+| Wails v2 CLI | Building the window | `go install github.com/wailsapp/wails/v2/cmd/wails@latest` |
+| WebView2 runtime | Running the window | Ships with Windows 11 |
+| Python 3 with Pillow | Regenerating the icons | `python -m pip install pillow` |
+
+Versions measured on the reference machine on 2026-09-22: Go 1.26.3, Wails
+v2.12.0, Node 24.11.1.
+
+## Building
+
+```powershell
+./build.ps1
+```
+
+In order, it:
+
+1. Reads `VERSION`.
+2. Runs `test.ps1` and stops on failure. There is no switch to skip it.
+3. Runs `wails build -ldflags "-X main.appVersion=<version>"`, which installs
+   the front-end dependencies, builds the page and compiles the application.
+4. Checks the executable is there and prints its path and size.
+
+`./build.ps1 -Fast` skips the gate for a working loop. It says so in its output
+and is never how a release is cut.
+
+The version reaches the binary through `-ldflags -X`, which writes to a `var`
+only. `main.appVersion` is declared `var` for that reason: against a `const` the
+flag silently does nothing.
+
+## Running from source
+
+```powershell
+wails dev
+```
+
+The window opens with the page served by Vite, so an edit to `frontend/src`
+appears at once. It reads your real record at `%APPDATA%\SymChit\symchit.db`.
+To leave that alone, run the built executable with a sandboxed folder instead:
+
+```powershell
+$env:APPDATA = "$env:TEMP\symchit-sandbox\Roaming"; $env:LOCALAPPDATA = "$env:TEMP\symchit-sandbox\Local"; ./build/bin/SymChit.exe
+```
+
+The log is at `%LOCALAPPDATA%\SymChit\SymChit.log`. It holds the run's start
+line and any crash; it never holds a symptom, a note or anything else from the
+record.
+
+## The generated assets
+
+The artwork masters live in `assets/`, plus `donate.png` at the root.
+
+```powershell
+python tools/genicons.py
+```
+
+It writes the band icons into `frontend/src/assets/icons`, the multi-size
+`build/windows/icon.ico` that Wails puts on the executable, plus `build/appicon.png`, which Wails fills with its own logo when the file is
+absent. The output is committed, so a clone needs neither Python nor Pillow.
+
+Run it whenever a master changes.
+
+## Versioning
+
+`VERSION` at the root is the only place a version is written. The build reads
+it; nothing else holds one.
+
+## Cutting a release
+
+1. Clear `TECH_DEBT.md` if one is open.
+2. Bump `VERSION` if a bump is owed against the newest tag.
+3. `./build.ps1` and check the gate is green.
+4. Launch the built executable and use it: record, print, export, import.
+5. Commit, tag and publish. Those are the owner's to run.
+
+## The standing rules a first change has to know
+
+- Structure before code. Every behaviour has a numbered requirement in
+  [REQUIREMENTS.md](REQUIREMENTS.md) with acceptance criteria; a change to
+  behaviour amends the specification first.
+- The domain performs no IO and never reads the clock.
+- Only `main.go` wires infrastructure to the application.
+- No file over 400 lines; none left between 381 and 399.
+- Every colour goes in `frontend/src/theme.css` and nowhere else.
+- A shape crossing the window boundary is written twice, in `dto.go` and in
+  `frontend/src/api.ts`. The structural test compares them.
+- A call from the page takes a refusal handler as its last argument and answers
+  null when refused, so a call that ignores a refusal does not compile.
+- A new guard is not a guard until a planted violation has made it fail.
+
+## Further reading
+
+- [ARCHITECTURE.md](ARCHITECTURE.md): the invariants.
+- [TESTING.md](TESTING.md): the gate and the floors.
+- [REQUIREMENTS.md](REQUIREMENTS.md): what it must do.
