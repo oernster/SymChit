@@ -178,6 +178,13 @@ PLIST="${APP_BUNDLE}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${VERSION}" "${PLIST}" \
     || /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string ${VERSION}" "${PLIST}"
 
+# Section 4 of the GNU GPL asks that a copy of the licence reach every recipient
+# along with the program, so it goes inside the bundle. It has to happen BEFORE
+# signing: a file added afterwards is a file Gatekeeper was never told the hash
+# of, so the signature no longer verifies.
+section "Placing the licence in the bundle"
+cp LICENSE "${APP_BUNDLE}/Contents/Resources/LICENSE"
+
 section "Codesigning the app bundle"
 codesign --force --deep --options runtime --sign "${DEVELOPER_ID}" "${APP_BUNDLE}"
 codesign --verify --deep --strict "${APP_BUNDLE}"

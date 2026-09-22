@@ -48,6 +48,13 @@ if ($SkipInstaller) { return }
 
 # The setup program is a second Wails application in the same module. It embeds
 # the built application as a zip, so one file is the whole distribution.
+# Section 4 of the GNU GPL asks that a copy of the licence be given to every
+# recipient along with the program; section 6 carries that into conveying
+# the built binary. So the licence travels in the payload and lands in the
+# install folder beside the executable. The setup program shows it on screen as
+# well; a file the user keeps is the part that answers the licence.
+Copy-Item (Join-Path $root 'LICENSE') (Join-Path $root 'build\bin\LICENSE') -Force
+
 Write-Host 'Packaging the application as the setup payload...'
 $payload = Join-Path $root 'installer\payload.zip'
 if (Test-Path $payload) { Remove-Item $payload -Force }

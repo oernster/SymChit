@@ -167,6 +167,9 @@ modules:
       - chmod -R u+w gopath gocache 2>/dev/null || true
       - install -Dm644 packaging/${APP_ID}.desktop /app/share/applications/${APP_ID}.desktop
       - install -Dm644 packaging/${APP_ID}.metainfo.xml /app/share/metainfo/${APP_ID}.metainfo.xml
+      # Section 4 of the GNU GPL asks that a copy of the licence reach every
+      # recipient along with the program, so it travels inside the bundle.
+      - install -Dm644 LICENSE /app/share/licenses/${APP_ID}/LICENSE
 ${ICON_INSTALL_CMDS}    sources:
       - type: dir
         path: .
