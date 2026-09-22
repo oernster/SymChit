@@ -1,0 +1,39 @@
+# Line endings, pinned rather than left to the machine.
+#
+# This repository is configured with core.autocrlf=true, so without the rules
+# below git rewrites text files to CRLF on checkout. Two things then break, and
+# both were measured rather than predicted:
+#
+#   gofmt refuses a CRLF Go file, so test.ps1 fails at its first step on a file
+#   nobody had edited. It happened after a commit on 2026-09-22 and named six
+#   files at once.
+#
+#   A shell script checked out with CRLF has `#!/usr/bin/env bash\r` as its
+#   first line, and Linux looks for an interpreter whose name ends in a
+#   carriage return. The Flatpak and DMG builders would fail on the platform
+#   they exist for.
+#
+# Pinning is the fix rather than normalising by hand each time: a rule that has
+# to be remembered after every checkout is not a rule.
+
+# Let git decide what is text, then store every text file with LF.
+* text=auto
+
+# The files where the ending is load-bearing, stated outright.
+*.go text eol=lf
+*.sh text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+
+# PowerShell is only ever run on Windows here, and CRLF is what it expects.
+*.ps1 text eol=crlf
+
+# Anything git might mistake for text.
+*.png binary
+*.ico binary
+*.zip binary
+*.db binary
