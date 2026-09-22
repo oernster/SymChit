@@ -72,7 +72,7 @@ describe('the shell', () => {
     fireEvent.click(screen.getByRole('button', { name: /About/ }))
     expect(await screen.findByRole('heading', { name: 'SymChit 1.0.0' })).toBeInTheDocument()
     // The notice carries the symbol and the year, both written out.
-    expect(screen.getByText('Copyright © Oliver Ernster 2026')).toBeInTheDocument()
+    expect(screen.getByText('© Oliver Ernster 2026')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   })

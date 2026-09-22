@@ -21,7 +21,7 @@ func TestAboutCarriesTheStatement(t *testing.T) {
 	}
 	// The notice is written out here rather than compared against the constant,
 	// which would assert nothing: the symbol and the year are the claim.
-	if about.Copyright != "Copyright © Oliver Ernster 2026" {
+	if about.Copyright != "© Oliver Ernster 2026" {
 		t.Errorf("the copyright reads %q", about.Copyright)
 	}
 	about.Credits[0].Work = "changed"

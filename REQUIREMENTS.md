@@ -455,8 +455,8 @@ it; test names are provisional until the code exists.
 - Requirement: The application shall offer an About dialog stating the
   product name, the version, the author, the copyright notice and the
   open-source works it is built with, each with its licence, plus the statement
-  in FR-067. The notice shall read `Copyright © Oliver Ernster 2026`
-  (Amendment 8).
+  in FR-067. The notice shall read `© Oliver Ernster 2026` (Amendment 8): the
+  symbol says it, so the word beside it says it twice.
 - Note: the year is the year of the first release, not the year the program is
   run in. A notice that follows the clock claims a date nothing was published
   on.
