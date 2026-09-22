@@ -193,6 +193,12 @@ if [ "${NOTARIZING}" -eq 1 ]; then
     ditto -c -k --keepParent "${APP_BUNDLE}" "${APP_ZIP}"
     notarytool_submit "${APP_ZIP}"
     xcrun stapler staple "${APP_BUNDLE}"
+    # Proving the ticket is attached, not merely that stapling was attempted.
+    # A notarized build with no ticket on it still launches for whoever built
+    # it, then asks the network on someone else's machine and fails there. The
+    # DMG gets the same check further down; this one covers the bundle a user
+    # copies out of it, which is the copy they actually run.
+    xcrun stapler validate "${APP_BUNDLE}"
     rm -rf "$(dirname "${APP_ZIP}")"
 fi
 

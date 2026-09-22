@@ -108,6 +108,33 @@ func LogDir() (string, error) {
 	return filepath.Join(base, product.Name), nil
 }
 
+// Leftovers answers the folders an uninstall always clears: what the window
+// kept for itself and the run log. Neither holds any part of the record.
+//
+// The record's own folder is deliberately NOT here, which is the whole of
+// FR-072: removing the program is not a decision to throw away years of
+// observations, so the record goes only when the user has ticked the box that
+// names the file. A test asserts that no folder in this list is the record's
+// folder or a parent of it, so a later change to any of these paths cannot
+// take the record with it by accident.
+//
+// The install directory is not here either: setup is running from inside it,
+// so it is scheduled for deletion after this process exits.
+//
+// A folder whose environment variable is missing is left out rather than
+// guessed at. The machine cannot say where it would be; joining an empty
+// base gives a relative path, which would delete a folder of that name beside
+// whatever the working directory happens to be.
+func Leftovers() []string {
+	var folders []string
+	for _, resolve := range []func() (string, error){WebViewDir, LogDir} {
+		if folder, err := resolve(); err == nil {
+			folders = append(folders, folder)
+		}
+	}
+	return folders
+}
+
 // ExtractZip extracts a zip archive into dest, creating directories as needed
 // and refusing any entry whose path would escape dest.
 func ExtractZip(data []byte, dest string) error {
