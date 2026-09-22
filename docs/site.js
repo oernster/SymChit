@@ -1,4 +1,5 @@
-// The site's two small jobs: the appearance toggle and the version pill.
+// The site's two small jobs: the appearance toggle; and reading the newest
+// release so the page can say which version it is and how big each file is.
 //
 // The toggle mirrors the application's own rule (FR-073). The page opens dark
 // and wears light only when the reader asks for it; the choice is remembered in
@@ -43,29 +44,69 @@ function toggle() {
     apply(next)
 }
 
-// The version is never written into this page. It comes from the newest
-// release on GitHub, so the site cannot claim a version that was never cut.
-// Until there is one, the pill stays hidden rather than showing a guess.
-function showVersion() {
-    const pill = document.getElementById('version-pill')
-    if (!pill) {
-        return
-    }
+// No version is written into this page. Every download button points at
+// GitHub's releases/latest/download redirect, which always serves the newest
+// release. The names carry no version, so the links cannot go stale. This
+// only decorates: the version, where the release notes are and how big each
+// file is. Deliberately NOT the date it was published: the site carries no
+// visible dates, so a page read a year from now reads the same. One request
+// feeds every part of the page that wants an answer from it; where it fails,
+// what is already written stands on its own.
+function decorateFromLatestRelease() {
     fetch('https://api.github.com/repos/oernster/SymChit/releases/latest')
         .then((answer) => (answer.ok ? answer.json() : null))
         .then((release) => {
-            const tag = release && release.tag_name
-            if (!tag) {
+            if (!release) {
                 return
             }
-            pill.textContent = 'Version ' + String(tag).replace(/^v/, '')
-            pill.style.display = 'block'
+            showVersion(String(release.tag_name || '').replace(/^v/, ''))
+            showNotes(release.html_url)
+            showSizes(release.assets || [])
         })
         .catch(() => {
-            /* no network, no pill; the page is complete without it */
+            /* no network, no decoration; the page is complete without it */
         })
+}
+
+/** showVersion fills the hero's pill and the download section's chip. Until
+ *  there is a release the pill stays hidden rather than showing a guess, while
+ *  the chip keeps the words it was written with. */
+function showVersion(version) {
+    if (!version) {
+        return
+    }
+    const pill = document.getElementById('version-pill')
+    if (pill) {
+        pill.textContent = 'Version ' + version
+        pill.style.display = 'block'
+    }
+    const chip = document.getElementById('dl-version')
+    if (chip) {
+        chip.textContent = 'Version ' + version
+    }
+}
+
+/** showNotes points the release-notes link at this particular release rather
+ *  than at whatever is newest when somebody follows it. */
+function showNotes(url) {
+    const link = document.getElementById('dl-whats-new')
+    if (link && url) {
+        link.href = url
+    }
+}
+
+/** showSizes adds each file's size to the line naming what it is, so somebody
+ *  on a slow connection knows what they are starting. */
+function showSizes(assets) {
+    const megabyte = 1024 * 1024
+    for (const asset of assets) {
+        const line = document.querySelector('[data-asset="' + asset.name + '"]')
+        if (line && asset.size) {
+            line.textContent = line.textContent + ' · ' + (asset.size / megabyte).toFixed(1) + ' MB'
+        }
+    }
 }
 
 apply(stored())
 document.getElementById('theme-toggle').addEventListener('click', toggle)
-showVersion()
+decorateFromLatestRelease()

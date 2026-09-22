@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>SymChit: a symptom diary you keep on your own computer</title>
-<meta name="description" content="SymChit is a symptom diary for Windows, Linux and macOS. Write down what you noticed and when, then print it for your next appointment. It stays on your computer."/>
+<meta name="description" content="SymChit is a symptom diary for Windows, Linux and macOS. Write down what you noticed and when, then print it for your next appointment with a healthcare professional. It stays on your computer."/>
 <link rel="icon" href="application-icon.png"/>
 <link rel="stylesheet" href="styles.css"/>
 </head>
@@ -33,7 +33,7 @@
     <h1>Write it down when it happens.</h1>
     <p class="lead">SymChit is a symptom diary that lives on your own computer. Note
         what you felt and when you felt it, then print the whole lot to take to your
-        next appointment.</p>
+        next appointment with a doctor, a nurse or whoever you are seeing.</p>
     <div class="actions">
         <a class="button primary" href="#get">Get SymChit</a>
         <a class="button plain" href="#sheet">See what it prints</a>
@@ -83,7 +83,7 @@
                 <h3>Print it for the appointment</h3>
                 <p>Choose the dates you want and press Print. Your printer will offer
                     to save it as a PDF if you would rather email it or keep a copy.
-                    Take the sheet in and hand it over.</p>
+                    Take the sheet to your appointment and hand it to the doctor or nurse you are seeing.</p>
             </div>
         </div>
     </div>
@@ -200,31 +200,61 @@
 
 <section id="get">
     <div class="wrap">
-        <h2>Get SymChit</h2>
-        <p class="intro">Free on all three, with no licence key and no paid tier.</p>
-        <div class="cards">
-            <div class="card">
+        <div class="eyebrow">Get SymChit</div>
+        <h2>Download SymChit</h2>
+        <p class="intro">Pick your platform and you have the newest release. Free
+            and open source under the GNU GPL-3.0 licence, with no licence key and
+            no paid tier.</p>
+        <span class="dl-version" id="dl-version">Latest release</span>
+        <!--
+            Every button points at GitHub's releases/latest/download redirect, which
+            always serves the newest release's file. The names carry no version, so
+            these links cannot go stale. site.js adds the version and the file sizes
+            when it can reach the API; without it the page still says everything
+            that matters.
+        -->
+        <div class="downloads">
+            <div class="dl-card">
+                <div class="ico">&#x1FA9F;</div>
                 <h3>Windows</h3>
-                <p class="platform">A setup program that installs for you alone, so
-                    Windows never asks for an administrator.</p>
-                <a class="button primary" href="https://github.com/oernster/SymChit/releases/latest">Download</a>
+                <p class="req">Windows 10 or 11, 64-bit</p>
+                <a class="primary" href="https://github.com/oernster/SymChit/releases/latest/download/SymChitSetup.exe">Download for Windows</a>
+                <p class="meta" data-asset="SymChitSetup.exe">Setup program (.exe)</p>
+                <p class="meta">Windows may show a SmartScreen warning when you run
+                    it: <a href="https://ernster.dev/windows-smartscreen.html">here is why</a>.</p>
+                <p class="how">It installs for you alone, so Windows never asks for
+                    an administrator. Run it again later to update, repair or
+                    uninstall.</p>
             </div>
-            <div class="card">
-                <h3>Linux</h3>
-                <p class="platform">A Flatpak bundle. Install it once and it runs
-                    from your applications menu like anything else.</p>
-                <a class="button plain" href="https://github.com/oernster/SymChit/releases/latest">Download</a>
-            </div>
-            <div class="card">
+            <div class="dl-card">
+                <div class="ico">&#x1F34E;</div>
                 <h3>macOS</h3>
-                <p class="platform">A disk image for Apple Silicon, signed and
-                    notarized with Apple, so it opens without a fight.</p>
-                <a class="button plain" href="https://github.com/oernster/SymChit/releases/latest">Download</a>
+                <p class="req">Apple Silicon, M1 or later</p>
+                <a class="primary" href="https://github.com/oernster/SymChit/releases/latest/download/SymChit.dmg">Download for macOS</a>
+                <p class="meta" data-asset="SymChit.dmg">Disk image (.dmg)</p>
+                <p class="meta">Signed and notarized with Apple, so it opens without
+                    a fight.</p>
+                <p class="how">Open the disk image and drag SymChit into
+                    Applications.</p>
+            </div>
+            <div class="dl-card">
+                <div class="ico">&#x1F427;</div>
+                <h3>Linux</h3>
+                <p class="req">Any distribution with Flatpak</p>
+                <a class="primary" href="https://github.com/oernster/SymChit/releases/latest/download/symchit.flatpak">Download for Linux</a>
+                <p class="meta" data-asset="symchit.flatpak">Flatpak bundle (.flatpak)</p>
+                <p class="meta">It runs from your applications menu like anything
+                    else.</p>
+                <p class="how">Install it with <code>flatpak install symchit.flatpak</code>.</p>
             </div>
         </div>
-        <p class="note">Prefer to build it yourself? The whole source is on
-            <a href="https://github.com/oernster/SymChit">GitHub</a>, with the build
-            steps written out.</p>
+        <p class="dl-links">
+            <a id="dl-whats-new" href="https://github.com/oernster/SymChit/releases/latest">What is new in this release</a>
+            &nbsp;&middot;&nbsp;
+            <a href="https://github.com/oernster/SymChit/releases">All releases</a>
+            &nbsp;&middot;&nbsp;
+            <a href="https://github.com/oernster/SymChit">Source on GitHub</a>
+        </p>
     </div>
 </section>
 

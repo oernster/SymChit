@@ -388,6 +388,130 @@ section .intro {
   max-width: 66ch;
 }
 
+/* The download section, in the house shape --------------------------- */
+
+.eyebrow {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* The version is never written into the page; site.js fills this from the
+   newest release. Until there is one it reads "Latest release", which is true
+   and says nothing that could go stale. */
+.dl-version {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 14px;
+}
+
+.downloads {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+
+/* A column, so every card's parts line up across the row however much each one
+   has to say. The buttons sat at three different heights when the cards were
+   laid out as prose with a button dropped at the end of it. */
+.dl-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dl-card .ico {
+  font-size: 30px;
+}
+
+.dl-card h3 {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dl-card .req {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* One button per card and all three the same: the platform is the choice, so
+   nothing about the button should suggest one of them is the recommended way
+   in. It sits directly under the requirements line, at the same height in
+   every card, because what follows it is allowed to differ in length. */
+.dl-card .primary {
+  display: inline-block;
+  margin: 14px auto 4px;
+  padding: 12px 24px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--on-accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.dl-card .primary:hover,
+.dl-card .primary:focus-visible {
+  border-color: var(--ring);
+  outline: none;
+}
+
+.dl-card .meta {
+  color: var(--muted);
+  font-size: 12.5px;
+  min-height: 1.2em;
+  margin: 0;
+}
+
+.dl-card .how {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 8px 0 0;
+}
+
+.dl-card code {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.dl-links {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 18px 0 0;
+}
+
+.dl-links a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.dl-links a:hover,
+.dl-links a:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
 .donate {
   display: flex;
   align-items: center;
