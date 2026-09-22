@@ -78,7 +78,7 @@ func main() {
 	app := newApp(services, clock, zone, appVersion, problem, nil, closeRecord)
 	app.chooser = windowChooser{app: app}
 	app.opener = windowOpener{app: app}
-	app.focuser = windowFocus{app: app}
+	app.focuser = windowFocus{}
 
 	err = wails.Run(&options.App{
 		Title:              product.Name,

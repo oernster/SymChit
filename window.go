@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"runtime/debug"
+	"time"
 
+	"github.com/oernster/symchit/internal/infrastructure/windowfocus"
 	"github.com/oernster/symchit/internal/product"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -61,24 +65,36 @@ func (o windowOpener) Open(address string) {
 	runtime.BrowserOpenURL(o.app.ctx, address)
 }
 
-// windowFocus hands the keyboard to the page through the window's own runtime.
-type windowFocus struct{ app *App }
+// settleBeforeFocus lets the window finish showing before the keyboard is
+// handed over, so the focus change lands on a settled window. PigeonPost's
+// measured value, taken with the rest of this.
+const settleBeforeFocus = 250 * time.Millisecond
 
-// Focus asks the window to show itself, which is what reaches the webview.
+// windowFocus hands the keyboard to the page.
+type windowFocus struct{}
+
+// Focus gives the WebView2 control the keyboard, a little after the window has
+// opened.
 //
-// Wails' Windows frontend answers Show with SetForegroundWindow plus SetFocus
-// on the main window; the WM_SETFOCUS that follows is where it calls Focus on
-// the webview, which is the step never taken when the window first opens.
-// Read from the Wails 2.12.0 source rather than inferred.
+// Ported from PigeonPost, where it was measured and where it works. Asking the
+// Wails runtime to show the window is NOT enough, which is how this was got
+// wrong the first time: that focuses the MAIN window, while WebView2 hosts the
+// page in a child window of its own and the keys follow the child.
 //
-// The context is checked because the runtime ENDS THE PROCESS on a nil one
-// (`log.Fatalf`); a window that dies rather than opening is the worst outcome
-// available here.
-func (f windowFocus) Focus() {
-	if f.app.ctx == nil {
-		return
-	}
-	runtime.Show(f.app.ctx)
+// The wait happens on a goroutine of its own, so nothing about opening the
+// window waits for it. A panic there would end the process with the window
+// already up, so it is recovered and reported to the log.
+func (windowFocus) Focus() {
+	go func() {
+		defer func() {
+			if recovered := recover(); recovered != nil {
+				fmt.Fprintf(os.Stderr, "handing over the keyboard: %v\n%s",
+					recovered, debug.Stack())
+			}
+		}()
+		time.Sleep(settleBeforeFocus)
+		windowfocus.GiveTheKeyboardToThePage(product.Name)
+	}()
 }
 
 // instanceID names SymChit's single-instance lock, per user (FR-064).

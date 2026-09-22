@@ -36,6 +36,10 @@ var logWriters = map[string]int{
 	// It is a constant sentence plus an error, written before the record is
 	// opened, so there is nothing of the record in the program yet to leak.
 	"main.go": 2,
+	// Handing the keyboard to the page panicked: the recovered value and the
+	// stack. It runs on a goroutine of its own, where a panic would otherwise
+	// end the process with the window already open and nothing said.
+	"window.go": 1,
 }
 
 // TestOnlyTheKnownPlacesWriteToTheLog keeps FR-065's promise checkable.

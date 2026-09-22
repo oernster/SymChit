@@ -29,7 +29,10 @@ type fileChooser interface {
 // WebView2 keeps DOM focus and keyboard focus apart: the page can hold the
 // first while the webview holds none of the second; a key pressed then reaches
 // no listener at all. Measured 2026-09-22 in the built window, where
-// no Tab ever stepped the ring until the page had been clicked once.
+// no Tab ever stepped the ring until the page had been clicked once. Showing
+// the main window is not enough either: WebView2 hosts the page in a child
+// window of its own and the keys follow the child, so the child is what has
+// to be focused.
 type windowFocuser interface {
 	Focus()
 }

@@ -40,15 +40,14 @@ func TestTheSystemClockReadsTheWallClock(t *testing.T) {
 	}
 }
 
-func TestFocusBeforeTheWindowHasAContextDoesNothing(t *testing.T) {
+func TestFocusIsBestEffortAndReturnsAtOnce(t *testing.T) {
 	t.Parallel()
-	// The Wails runtime ends the PROCESS on a nil context (log.Fatalf), so a
-	// focus asked for before startup would kill the window rather than open
-	// it. The guard is the only part of this reachable without a real window;
-	// the runtime call itself is not, being covered by a person opening it.
-	app, _, _ := facade(t)
-	app.ctx = nil
-	windowFocus{app: app}.Focus()
+	// Focus does its work on a goroutine of its own, so nothing about opening
+	// the window waits for the quarter second it sleeps first. What is
+	// reachable without a real window is that the call returns and that it
+	// asks for nothing of the facade; the Win32 half is covered by a person
+	// opening the built window and pressing Tab.
+	windowFocus{}.Focus()
 }
 
 // countingFocuser stands in for the window, counting the times it was asked
