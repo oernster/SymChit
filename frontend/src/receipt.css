@@ -35,6 +35,36 @@
   padding-left: 16px;
 }
 
+/*
+  The framing (FR-045): what made the sheet, printed above the title and below
+  the last event, then what the sheet is, printed under the range. It is set
+  apart from the record so that nothing framing the notes reads as one of them.
+*/
+.receipt .provenance,
+.receipt .statement {
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+.receipt .provenance {
+  letter-spacing: 0.02em;
+}
+
+.receipt .provenance:first-child {
+  margin-bottom: 12px;
+}
+
+.receipt .provenance:last-child {
+  margin-top: 18px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.receipt .statement {
+  margin-top: 6px;
+  max-width: 46em;
+}
+
 @media print {
   .band,
   .status,

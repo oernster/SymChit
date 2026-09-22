@@ -58,7 +58,15 @@ export interface Filter {
 }
 
 export interface ReceiptLine {
-  kind: 'title' | 'range' | 'heading' | 'when' | 'severity' | 'note'
+  kind:
+    | 'title'
+    | 'range'
+    | 'heading'
+    | 'when'
+    | 'severity'
+    | 'note'
+    | 'provenance'
+    | 'statement'
   text: string
 }
 

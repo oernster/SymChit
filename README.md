@@ -59,7 +59,9 @@ these:
 - Shows the history newest first, filtered by dates, symptom or severity.
 - Corrects and deletes entries, asking first and naming what will go.
 - Prints a symptom record for a date range, which is also a PDF if you choose
-  Save as PDF.
+  Save as PDF. The sheet names the program that produced it and says, above the
+  first entry, that it is not a diagnosis: it is your own notes, printed for a
+  healthcare professional to read.
 - Exports the whole record to a JSON file you own; reads one back too.
 
 ## Built with

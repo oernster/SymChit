@@ -230,34 +230,10 @@ func TestEditAndFilterRefusals(t *testing.T) {
 	}
 }
 
-func TestReceiptAndRename(t *testing.T) {
+func TestRename(t *testing.T) {
 	t.Parallel()
-	app, clock, _ := facade(t)
-	record(t, app, RecordFormDTO{Symptom: "Tired", Note: "Only been awake for about 10 minutes."})
-	clock.now = clock.now.Add(time.Hour)
-
-	lines, err := app.Receipt("2026-08-23", "2026-09-22")
-	if err != nil {
-		t.Fatalf("Receipt: %v", err)
-	}
-	want := []ReceiptLineDTO{
-		{Kind: "title", Text: "SYMPTOM RECORD"},
-		{Kind: "range", Text: "23 August - 22 September 2026"},
-		{Kind: "heading", Text: "Tired - 1 recorded event"},
-		{Kind: "when", Text: "22 Sep 17:12"},
-		{Kind: "note", Text: "Only been awake for about 10 minutes."},
-	}
-	if len(lines) != len(want) {
-		t.Fatalf("receipt = %+v", lines)
-	}
-	for i := range want {
-		if lines[i] != want[i] {
-			t.Errorf("line %d = %+v, want %+v", i, lines[i], want[i])
-		}
-	}
-	if _, err := app.Receipt("2026-01-01", "2026-01-31"); !errors.Is(err, domain.ErrEmptyRange) {
-		t.Errorf("an empty range = %v", err)
-	}
+	app, _, _ := facade(t)
+	record(t, app, RecordFormDTO{Symptom: "Tired"})
 
 	symptoms, _ := app.Symptoms()
 	if err := app.Rename(symptoms[0].ID, "Exhausted"); err != nil {

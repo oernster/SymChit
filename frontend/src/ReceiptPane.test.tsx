@@ -25,6 +25,22 @@ describe('the receipt', () => {
     expect(shown).toEqual(aReceipt.map((line) => line.text))
   })
 
+  it('sets the framing apart from the record it frames', async () => {
+    // The framing (FR-045) is styled by its kind, so a line that loses its kind
+    // loses the separation on paper while still reading correctly here.
+    installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
+    render(<ReceiptPane refused={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
+
+    const record = await screen.findByLabelText('The symptom record')
+    const lines = Array.from(record.querySelectorAll('p'))
+    const framed = lines.filter((line) => line.classList.contains('provenance'))
+    expect(framed).toHaveLength(2)
+    expect(framed[0]).toBe(lines[0])
+    expect(framed[1]).toBe(lines[lines.length - 1])
+    expect(record.querySelectorAll('p.statement')).toHaveLength(1)
+  })
+
   it('cannot be printed until there is something to print', async () => {
     installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
     render(<ReceiptPane refused={vi.fn()} />)

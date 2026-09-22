@@ -48,6 +48,14 @@ The receipt is domain code because its wording is a rule, not decoration: it is
 what stops a printed record saying anything the user did not record. The page
 receives lines with a kind and draws them; it composes no sentences of its own.
 
+The sheet's framing (FR-045) is the one exception to that; it is handed in
+rather than read. The words name the product and its address and say what the
+sheet is; they live in `internal/product`, which the domain may not import
+because the domain depends on nothing. So `Receipt.Lines` takes a `Framing` and
+writes it where it belongs, while the facade fills that struct from `product`.
+The domain stays pure, the words keep one home and the sheet still carries
+nothing the domain did not write.
+
 ### Application: `internal/application`
 
 One service per user-visible action, over the ports in `ports.go`.
@@ -98,7 +106,9 @@ toggle, as the application does.
 
 | Decision | Why | What it costs |
 |---|---|---|
-| The receipt's lines are built in the domain, not the page. | The one thing SymChit must never do is add words to a medical record. A test asserts every line is a title, a range, a heading, a count or a recorded field. | The page cannot reflow a line; it styles by kind. |
+| The receipt's lines are built in the domain, not the page. | The one thing SymChit must never do is add words to a medical record. A test asserts every line is a title, a range, a heading, a count, a recorded field or one of the two framing lines. | The page cannot reflow a line; it styles by kind. |
+| The printed sheet says what made it and what it is not. | A sheet outlives the window it came from: the reader is a doctor who has never seen SymChit and cannot be assumed to know that the notes are the patient's own. The framing is fixed text that names no event, so it says nothing about what was recorded. | Two more line kinds; the words become a promise once a sheet is in a filing cabinet. |
+| The line kinds are compared against the page's union by a test. | The wire test sees that a line carries a kind; it cannot see which kinds exist, while nothing in either build compares the two lists. A kind added in Go alone renders with a class no stylesheet knows, which reads correctly on screen and prints wrong. | A second scan; a new kind is two edits rather than one. |
 | The store resolves a symptom by key, creating it when absent. | Recording an event and creating its symptom is one transaction, so a failure leaves neither. | The store holds a key column the domain computes. |
 | An edit sends no time unless the user changed it. | An empty time means "keep what is held", so an edit cannot move an occurrence to the moment of the edit. The rule is structural rather than remembered. | The edit form compares before sending. |
 | A record that will not open becomes `store.Unavailable`. | The window opens and says what is wrong, instead of a program that never appears. Every action answers with the same reason. | Eleven one-line methods that refuse. |

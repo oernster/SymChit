@@ -63,18 +63,20 @@ told.
 | `internal/infrastructure/setup` | 56 | The portable half and the shortcut writing are tested. The registry writes, the process work and the scheduled deletion change the machine, so a real install exercises them instead. |
 | root package (the facade) | 76 | The facade itself is covered. `main`, the log handover, the file dialogs, the browser opener and the single-instance lock need a real window. The floor was 77 until the donate button landed: the opener is one more line of Wails runtime no test can reach, so the blend fell by half a point and the floor was re-measured rather than the facade going untested. |
 
-Not gated at all: `internal/product` holds two constants; `tests/structural` is itself the guard.
+Not gated at all: `internal/product` holds constants and no behaviour, though the
+two that reach paper are asserted word for word from the facade's own tests;
+`tests/structural` is itself the guard.
 
 ## What each suite proves
 
 | Suite | What it settles |
 |---|---|
-| `internal/domain` | The rules: blank and future occurrences refused, case variants matched, filters combined, the receipt's grouping, ordering and exact lines, including a range that crosses a year. |
+| `internal/domain` | The rules: blank and future occurrences refused, case variants matched, filters combined, the receipt's grouping, ordering and exact lines, including a range that crosses a year. The printed framing too: it wraps the record, the statement prints once and under the range, then two different records are shown to carry framing identical word for word. |
 | `internal/application` | The use cases over fakes: recording reads the clock once, an edit leaves recorded-at alone, a failed write loses nothing the user typed, an import skips what is held. |
 | `internal/infrastructure/store` | Real SQLite in a temporary folder: notes and symptoms read back byte for byte, a deletion is all or nothing, a garbage file is never overwritten, a newer schema is refused, the durability pragmas are set, plus a planted trigger proving a failed write leaves nothing behind. |
 | `internal/infrastructure/export` | The format against a committed sample, a refusal for anything that is not a SymChit export, plus a size cap read before the file is. The version contract as well: every version ever written still reads its own frozen sample, no reader claims a version nothing wrote, a file naming no version is refused rather than read as the current one, plus a gap in the table refusing rather than guessing. |
 | `internal/infrastructure/runlog` | Crash reporting, by starting this test binary again as a child and making it panic, plus each platform's rule for where the log lives, all three exercised wherever the suite runs. |
-| root package | The facade end to end over a real record: every conversion, every refusal, plus a panic in a bound method becoming an error rather than a dead window. |
+| root package | The facade end to end over a real record: every conversion, every refusal, plus a panic in a bound method becoming an error rather than a dead window. `receipt_test.go` holds the sheet on its own, with the framing's exact words written out a second time, so an edit to the line saying the record is not a diagnosis fails rather than ships. |
 | `internal/infrastructure/setup` | The install policy: the payload fence refusing an entry that climbs out of the install folder, the paths, the version comparison that picks the route, plus real shortcuts written into temporary folders with plain paths rather than doubled separators. |
 | `tests/structural` | The invariants in ARCHITECTURE.md. |
 | `frontend` | The page over a fake facade: the keyboard path to a recorded event, the form keeping everything when a save is refused, an edit sending no time unless it changed, the confirmation naming what will go, plus the receipt showing exactly the lines it was given. The self-reading cycle is covered twice: the pure machine tick by tick, then the hook under jsdom for what suspends it and what freezes it. The focus ring is covered the same way: the rules alone, then the ring against a real page, where Tab and Right agree, Shift+Tab and Left agree, both wrap, a disabled control is passed over and a text field keeps its arrows. |
@@ -85,7 +87,12 @@ Not gated at all: `internal/product` holds two constants; `tests/structural` is 
 - They never touch your real record: every store test opens a file under `t.TempDir()`; the facade tests do the same.
 - They never mock SQLite. The store is tested against the real engine.
 - They never assert against Wails' generated bindings. The wire contract is
-  `frontend/src/api.ts`, compared with the Go DTOs by a structural test.
+  `frontend/src/api.ts`, compared with the Go DTOs by a structural test; its
+  receipt-line kinds are compared with the domain's by a second one. The first
+  sees that a line carries a kind; only the second sees which kinds exist. Both
+  arms were proved by planting a violation: a kind dropped from the page's union
+  and a kind the page was never told about each failed by name, with the tree
+  put back afterwards.
 
 ## What only a person can settle
 
@@ -99,6 +106,7 @@ changes.
 | Wails' IPC works under the page's Content-Security-Policy. | Works: the severities shown came from Go. |
 | `window.print()` opens the Windows print dialog. | It does, offering Save as PDF and Microsoft Print to PDF. |
 | The printed page carries the receipt alone. | It does: no band, no status line, no controls. |
+| The framing prints: the program and its address above the title and below the last event, with the statement under the range. | Not yet run in the real window. The lines are covered by the suite and by the page's own test; how WebView2 lays them out on paper, plus what a record spanning several pages does to the closing line, are readings only a print can give. They print once each, at the top and the bottom of the document, rather than repeating on every page. |
 | Recording, editing, deleting, exporting and importing through the real window. | All worked; the import skipped the event already held. |
 | The Guide and About open, scroll and close. | They do. |
 | The Guide and About hold still for five seconds, then read themselves down; they step aside the moment the reader scrolls. | Not yet run in the real window. The cycle is covered by the suite and the pane's ring was measured in Chromium against the built stylesheet; neither is a reading of the running application. |

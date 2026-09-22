@@ -72,15 +72,33 @@ func BuildReceipt(events []Event, from, to Date, zone *time.Location) (Receipt, 
 type LineKind string
 
 // The kinds of receipt line. There are no others: a receipt holds a title, its
-// range, a heading with a count per symptom and the recorded fields of events.
+// range, a heading with a count per symptom, the recorded fields of events and
+// the two framing lines of FR-045.
 const (
-	LineTitle    LineKind = "title"
-	LineRange    LineKind = "range"
-	LineHeading  LineKind = "heading"
-	LineWhen     LineKind = "when"
-	LineSeverity LineKind = "severity"
-	LineNote     LineKind = "note"
+	LineTitle      LineKind = "title"
+	LineRange      LineKind = "range"
+	LineHeading    LineKind = "heading"
+	LineWhen       LineKind = "when"
+	LineSeverity   LineKind = "severity"
+	LineNote       LineKind = "note"
+	LineProvenance LineKind = "provenance"
+	LineStatement  LineKind = "statement"
 )
+
+// Framing is the fixed text printed around the record: what produced the sheet
+// and what the sheet is (FR-045).
+//
+// It is handed in rather than read here. The words are the product's own and
+// live in internal/product; the domain depends on nothing, so it is given them
+// at the moment it writes the lines.
+type Framing struct {
+	// Provenance names the program and its address. It prints above the title
+	// and again below the last event.
+	Provenance string
+	// Statement says the record is not a diagnosis. It prints below the range,
+	// where a reader meets it before any recorded event.
+	Statement string
+}
 
 // Line is one line of a receipt.
 type Line struct {
@@ -103,15 +121,18 @@ const (
 	whenYearedLayout = "02 Jan 2006 15:04"
 )
 
-// Lines writes the receipt as the lines it is printed in (FR-041).
+// Lines writes the receipt as the lines it is printed in (FR-041), wrapped in
+// the framing it is handed (FR-045).
 //
 // Event times leave out the year when the whole range lies in one year, as the
 // source example does; a range that crosses a year names the year on every
 // event, so no line can be read as the wrong year (Amendment 2).
-func (r Receipt) Lines() []Line {
+func (r Receipt) Lines(framing Framing) []Line {
 	lines := []Line{
+		{Kind: LineProvenance, Text: framing.Provenance},
 		{Kind: LineTitle, Text: receiptTitle},
 		{Kind: LineRange, Text: r.rangeText()},
+		{Kind: LineStatement, Text: framing.Statement},
 	}
 	layout := whenLayout
 	if r.From.Year != r.To.Year {
@@ -133,7 +154,7 @@ func (r Receipt) Lines() []Line {
 			}
 		}
 	}
-	return lines
+	return append(lines, Line{Kind: LineProvenance, Text: framing.Provenance})
 }
 
 // heading writes a group's heading: its symptom and how many events it holds.

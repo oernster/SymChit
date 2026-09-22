@@ -118,6 +118,14 @@ func (a *App) Rename(id int64, label string) (err error) {
 	return a.services.History.Rename(domain.DefinitionID(id), label)
 }
 
+// printFraming is the fixed text printed around every record (FR-045). It is
+// built here, where the product's own words meet the domain that cannot read
+// them.
+var printFraming = domain.Framing{
+	Provenance: product.PrintProvenance,
+	Statement:  product.PrintStatement,
+}
+
 // Receipt answers the receipt's lines for a range (FR-040, FR-041).
 func (a *App) Receipt(from, to string) (lines []ReceiptLineDTO, err error) {
 	defer guard(&err)
@@ -133,7 +141,7 @@ func (a *App) Receipt(from, to string) (lines []ReceiptLineDTO, err error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, line := range receipt.Lines() {
+	for _, line := range receipt.Lines(printFraming) {
 		lines = append(lines, ReceiptLineDTO{Kind: string(line.Kind), Text: line.Text})
 	}
 	return lines, nil
