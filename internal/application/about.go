@@ -1,8 +1,8 @@
 package application
 
-import "github.com/oernster/symchit/internal/product"
+import "github.com/oernster/symdiary/internal/product"
 
-// Credit names one open-source work SymChit is built with, with its licence as
+// Credit names one open-source work SymDiary is built with, with its licence as
 // its own LICENSE file states it.
 type Credit struct {
 	Work    string
@@ -20,7 +20,7 @@ type About struct {
 	Credits   []Credit
 }
 
-// credits lists the works that ship inside SymChit. Build tools that ship
+// credits lists the works that ship inside SymDiary. Build tools that ship
 // nothing (Vite, TypeScript, the test runners) are not credited. Each licence
 // was read from the work's own LICENSE file on 2026-09-22.
 var credits = []Credit{

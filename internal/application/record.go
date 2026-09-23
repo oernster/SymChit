@@ -3,7 +3,7 @@ package application
 import (
 	"time"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // RecordForm is what the user entered on the recording form.

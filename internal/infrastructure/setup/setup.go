@@ -18,7 +18,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/product"
 )
 
 const (
@@ -56,7 +56,7 @@ func quotedPath(path string) string {
 }
 
 // InstallDir answers the per-user install directory,
-// %LOCALAPPDATA%\Programs\SymChit. Installing there is what keeps the whole
+// %LOCALAPPDATA%\Programs\SymDiary. Installing there is what keeps the whole
 // flow free of an administrator prompt.
 func InstallDir() (string, error) {
 	base := os.Getenv("LOCALAPPDATA")
@@ -67,7 +67,7 @@ func InstallDir() (string, error) {
 }
 
 // RecordDir answers the folder holding the user's symptom record,
-// %APPDATA%\SymChit. It is the one thing an uninstall must not remove unless
+// %APPDATA%\SymDiary. It is the one thing an uninstall must not remove unless
 // it is asked to in so many words (FR-072).
 func RecordDir() (string, error) {
 	base := os.Getenv("APPDATA")

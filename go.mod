@@ -1,4 +1,4 @@
-module github.com/oernster/symchit
+module github.com/oernster/symdiary
 
 go 1.26.3
 

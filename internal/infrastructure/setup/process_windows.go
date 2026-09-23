@@ -13,10 +13,10 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/product"
 )
 
-// ErrAppRunning says SymChit is open, so an install or an uninstall that would
+// ErrAppRunning says SymDiary is open, so an install or an uninstall that would
 // overwrite or delete the running executable must not start. Asking before any
 // file is touched is the point: extracting over a locked executable fails part
 // way and leaves a half-written install.
@@ -24,7 +24,7 @@ import (
 //lint:ignore ST1005 setup dialog text shown to the user verbatim
 var ErrAppRunning = errors.New(product.Name + " is open. Please close it and try again.")
 
-// ErrAppStillRunning says SymChit was asked to close but was still there after
+// ErrAppStillRunning says SymDiary was asked to close but was still there after
 // the wait, so setup stops rather than writing over a locked file.
 //
 //lint:ignore ST1005 setup dialog text shown to the user verbatim
@@ -40,7 +40,7 @@ const (
 	forcedExitCode = 1
 )
 
-// IsAppRunning reports whether SymChit is currently running.
+// IsAppRunning reports whether SymDiary is currently running.
 func IsAppRunning() bool { return len(processIDs(ExeName)) > 0 }
 
 // processIDs answers the ids of every running process with the given

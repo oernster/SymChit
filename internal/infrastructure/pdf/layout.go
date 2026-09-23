@@ -1,6 +1,6 @@
 // Package pdf writes a symptom record out as a PDF.
 //
-// SymChit used to hand the record to the browser's own print path. That path
+// SymDiary used to hand the record to the browser's own print path. That path
 // belongs to three different engines, so what came off the paper depended on
 // three things: which desktop the reader was using; whether their print dialog
 // had "Headers and footers" ticked; which of the CSS the sheet leaned on their
@@ -16,7 +16,7 @@ package pdf
 import (
 	"strings"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // Millimetres of paper. A4 is the size a record printed in the United Kingdom

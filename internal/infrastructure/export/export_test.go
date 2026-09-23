@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // bst is British Summer Time as a fixed offset, so the sample does not depend on
@@ -89,14 +89,14 @@ func TestFailedExportLeavesNothing(t *testing.T) {
 func TestReadRefusals(t *testing.T) {
 	t.Parallel()
 	folder := t.TempDir()
-	valid := `"format":"symchit-record","version":1`
+	valid := `"format":"symdiary-record","version":1`
 	cases := map[string]struct {
 		body string
 		want error
 	}{
 		"not json":      {`{`, ErrNotAnExport},
 		"other format":  {`{"format":"other","version":1}`, ErrNotAnExport},
-		"newer":         {`{"format":"symchit-record","version":2}`, ErrNewerFormat},
+		"newer":         {`{"format":"symdiary-record","version":2}`, ErrNewerFormat},
 		"blank symptom": {`{` + valid + `,"events":[{"symptom":" "}]}`, domain.ErrBlankSymptom},
 		"bad severity": {`{` + valid + `,"events":[{"symptom":"Tired","occurredAt":"2026-09-22T17:12:00+01:00",` +
 			`"recordedAt":"2026-09-22T17:12:00+01:00","severity":"awful"}]}`, domain.ErrUnknownSeverity},

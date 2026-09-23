@@ -6,7 +6,7 @@
 // this browser. The face shown is the appearance it would move TO, so the sun
 // appears while you are in the dark, exactly as the button in the window does.
 
-const STORED = 'symchit.site.theme'
+const STORED = 'symdiary.site.theme'
 const DARK_FACE = 'dark-mode.png'
 const LIGHT_FACE = 'light-mode.png'
 
@@ -53,7 +53,7 @@ function toggle() {
 // feeds every part of the page that wants an answer from it; where it fails,
 // what is already written stands on its own.
 function decorateFromLatestRelease() {
-    fetch('https://api.github.com/repos/oernster/SymChit/releases/latest')
+    fetch('https://api.github.com/repos/oernster/SymDiary/releases/latest')
         .then((answer) => (answer.ok ? answer.json() : null))
         .then((release) => {
             if (!release) {

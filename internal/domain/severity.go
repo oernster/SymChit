@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// Severity is the user's own optional rating of an event (FR-004). SymChit never
+// Severity is the user's own optional rating of an event (FR-004). SymDiary never
 // computes one.
 type Severity int
 

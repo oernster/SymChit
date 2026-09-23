@@ -84,7 +84,7 @@
 
 @media print {
   /*
-    Nothing in SymChit prints through the browser any more: the record is drawn
+    Nothing in SymDiary prints through the browser any more: the record is drawn
     as a PDF by Go, so that it reads the same on every desktop rather than
     differently on each of three engines (FR-040, Amendment 16).
 

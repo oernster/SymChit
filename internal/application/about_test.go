@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/product"
 )
 
 func TestAboutCarriesTheStatement(t *testing.T) {

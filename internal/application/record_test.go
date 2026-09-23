@@ -3,7 +3,7 @@ package application
 import (
 	"testing"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 func TestRecordNowUsesTheClock(t *testing.T) {

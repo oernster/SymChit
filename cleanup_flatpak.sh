@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Uninstalls and purges the SymChit Flatpak. Run from the repo root:
+# Uninstalls and purges the SymDiary Flatpak. Run from the repo root:
 #
 #   bash cleanup_flatpak.sh
 #
@@ -9,8 +9,8 @@
 # for, not something a cleanup script decides.
 set -euo pipefail
 
-APP_ID="uk.codecrafter.SymChit"
-BIN_NAME="symchit"
+APP_ID="uk.codecrafter.SymDiary"
+BIN_NAME="symdiary"
 
 bold=$(tput bold 2>/dev/null || true)
 reset=$(tput sgr0 2>/dev/null || true)
@@ -33,4 +33,4 @@ echo "  Done."
 
 echo
 echo "${bold}Purge complete.${reset}"
-echo "Your record was left alone: ~/.var/app/${APP_ID}/config/SymChit/symchit.db"
+echo "Your record was left alone: ~/.var/app/${APP_ID}/config/SymDiary/symdiary.db"

@@ -2,7 +2,7 @@
 
 A health tracker.  It doesn't diagnose.  It's just a little record of symptoms.
 
-> **Commercial licences available.** SymChit is free and open source under the
+> **Commercial licences available.** SymDiary is free and open source under the
 > GPL-3.0. If those terms do not suit what you are building, such as a
 > closed-source product, a commercial licence can be bought from me separately.
 > It covers my own code; third-party libraries keep their own licences. See
@@ -11,7 +11,7 @@ A health tracker.  It doesn't diagnose.  It's just a little record of symptoms.
 When you notice a symptom, record it. When you see your doctor, take the record
 with you.
 
-SymChit is a local-first symptom recorder for Windows, macOS and Linux. It keeps what you
+SymDiary is a local-first symptom recorder for Windows, macOS and Linux. It keeps what you
 observed and when you observed it, then saves a short factual record as a PDF
 you can take to an appointment. It is a recorder, not a diagnostician.
 
@@ -36,7 +36,7 @@ Tired - 9 recorded events
 For anyone who wants an accurate record of their own symptoms to discuss with a healthcare professional; someone who would rather keep that record on their own computer.
 
 Not for anyone wanting advice about what their symptoms mean, a wellness score,
-a medication tracker or anything to sync between devices. SymChit does none of
+a medication tracker or anything to sync between devices. SymDiary does none of
 those and is not intended to.
 
 ## What it does not do
@@ -53,7 +53,7 @@ these:
   no advertising and no telemetry. A test forbids the networking packages
   outright and the page carries a Content-Security-Policy of `connect-src
   'none'`. The Donate button is not an exception: it hands an address to the
-  desktop and your browser does the asking, so SymChit still fetches nothing.
+  desktop and your browser does the asking, so SymDiary still fetches nothing.
   On Linux the Flatpak is granted no network permission at all, so there the
   claim is enforced by the sandbox rather than only by a test.
 - It does not encrypt your record. The file is protected by your user account,
@@ -94,13 +94,13 @@ Your record and the run log go wherever the platform keeps such things:
 
 | | The record | The run log |
 |---|---|---|
-| Windows | `%APPDATA%\SymChit\symchit.db` | `%LOCALAPPDATA%\SymChit\SymChit.log` |
-| macOS | `~/Library/Application Support/SymChit/symchit.db` | `~/Library/Logs/SymChit/SymChit.log` |
-| Linux | `$XDG_CONFIG_HOME/SymChit/symchit.db` | `$XDG_STATE_HOME/SymChit/SymChit.log` |
+| Windows | `%APPDATA%\SymDiary\symdiary.db` | `%LOCALAPPDATA%\SymDiary\SymDiary.log` |
+| macOS | `~/Library/Application Support/SymDiary/symdiary.db` | `~/Library/Logs/SymDiary/SymDiary.log` |
+| Linux | `$XDG_CONFIG_HOME/SymDiary/symdiary.db` | `$XDG_STATE_HOME/SymDiary/SymDiary.log` |
 
-Inside the Flatpak both land under `~/.var/app/uk.codecrafter.SymChit`.
+Inside the Flatpak both land under `~/.var/app/uk.codecrafter.SymDiary`.
 
-All three have been built and run. Windows is the platform SymChit has been used
+All three have been built and run. Windows is the platform SymDiary has been used
 on; the Flatpak and the DMG have each been built on their own machine and the
 window opened, with the DMG notarized. The bespoke setup program stays
 Windows-only: a Flatpak and a DMG are how those platforms install things.
@@ -124,7 +124,7 @@ is never cut that way.
 
 ## Documentation
 
-- [REQUIREMENTS.md](REQUIREMENTS.md): what SymChit must do, requirement by
+- [REQUIREMENTS.md](REQUIREMENTS.md): what SymDiary must do, requirement by
   requirement, with the acceptance criteria and the tests that verify them.
 - [ARCHITECTURE.md](ARCHITECTURE.md): the invariants and the tests that enforce
   them.
@@ -135,20 +135,20 @@ is never cut that way.
 
 ## Supporting the project
 
-SymChit is free and stays free. There is no paid tier, no licence key and no
+SymDiary is free and stays free. There is no paid tier, no licence key and no
 feature held back behind a donation. If it has saved you an afternoon or made an
 appointment go better, the Donate button at the right of the bar opens a
-contribution page in your browser. SymChit sends nothing itself: it hands the
+contribution page in your browser. SymDiary sends nothing itself: it hands the
 address to the desktop and your browser does the rest.
 
-<a href="https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC"><img src="docs/donate.png" alt="Donate to SymChit" width="120"></a>
+<a href="https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC"><img src="docs/donate.png" alt="Donate to SymDiary" width="120"></a>
 
 ## What version 1 promises
 
 A first release is where a promise starts, so here is what this one is.
 
-Your exported file stays readable. Every export SymChit has ever written will
-be read by every later SymChit: the format carries its own version and old
+Your exported file stays readable. Every export SymDiary has ever written will
+be read by every later SymDiary: the format carries its own version and old
 readers are kept beside new ones, with each old version's real bytes frozen in
 the test suite. A file you own is worth nothing if next year's version refuses
 it.
@@ -164,4 +164,4 @@ the setup program's screens. Those improve whenever they can.
 GPL-3.0. See [LICENSE](LICENSE). For terms that suit a closed-source product,
 see [commercial licensing](https://ernster.dev/commercial-licensing.html).
 
-SymChit is not a medical device and gives no medical advice.
+SymDiary is not a medical device and gives no medical advice.

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // filled answers a store holding Tired at 09:00 and 17:12 plus Headache at 12:30.

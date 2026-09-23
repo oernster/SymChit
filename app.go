@@ -8,9 +8,9 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
+	"github.com/oernster/symdiary/internal/product"
 )
 
 // errInternal is what the page is told when a bound method panics. The stack
@@ -31,7 +31,7 @@ type fileKind struct {
 	extension string
 }
 
-// The two kinds of file SymChit writes.
+// The two kinds of file SymDiary writes.
 var (
 	exportKind = fileKind{
 		title:     "Export your record",
@@ -75,7 +75,7 @@ type browserOpener interface {
 // recordSheet writes a record out as a document the reader keeps, answering how
 // many pages it came to.
 //
-// SymChit used to hand the record to the browser's own print path instead. That
+// SymDiary used to hand the record to the browser's own print path instead. That
 // path belongs to three different engines: what came off the paper depended on
 // which desktop the reader was using, on whether their print dialog had
 // "Headers and footers" ticked and on which of the CSS the sheet leaned on

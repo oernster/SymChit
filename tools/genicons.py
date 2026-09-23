@@ -91,7 +91,7 @@ SETUP_DIST = REPO / "installer" / "frontend" / "dist"
 # The Linux desktop takes its icon from the hicolor theme rather than from the
 # executable, so the sizes are written out as files and committed with the rest.
 LINUX_ICONS = BUILD / "linux" / "icons"
-LINUX_ICON_LAYOUT = "symchit_{size}.png"
+LINUX_ICON_LAYOUT = "symdiary_{size}.png"
 
 
 def trimmed(master: pathlib.Path) -> Image.Image:

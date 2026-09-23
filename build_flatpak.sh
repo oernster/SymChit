@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds the SymChit Flatpak for Linux (verified target: Ubuntu). Run from the repo root:
+# Builds the SymDiary Flatpak for Linux (verified target: Ubuntu). Run from the repo root:
 #
 #   bash build_flatpak.sh
 #
@@ -13,23 +13,23 @@
 #
 # Ported from PigeonPost's build_flatpak.sh. Two differences, both deliberate:
 #
-#   1. The finished application is given NO network permission. SymChit opens no connection
+#   1. The finished application is given NO network permission. SymDiary opens no connection
 #      (FR-063) and the sandbox is where that claim can be enforced rather than asserted, so
 #      a build that ever started talking to something would fail at run time instead of
 #      quietly working. The BUILD still needs the network to fetch Go modules and npm
 #      packages, which is why --share=network appears under build-args and nowhere else.
-#   2. There is no `wails generate module` step. SymChit's wire contract is the hand-written
+#   2. There is no `wails generate module` step. SymDiary's wire contract is the hand-written
 #      frontend/src/api.ts; the generated bindings are gitignored and imported by nothing, so
 #      nothing in the sandbox needs them.
 #
-# Outputs: symchit.flatpak (installable anywhere) and a user install of ${APP_ID}.
+# Outputs: symdiary.flatpak (installable anywhere) and a user install of ${APP_ID}.
 set -euo pipefail
 
-APP_ID="uk.codecrafter.SymChit"
-BIN_NAME="symchit"
-APP_NAME="SymChit"
+APP_ID="uk.codecrafter.SymDiary"
+BIN_NAME="symdiary"
+APP_NAME="SymDiary"
 APP_SUMMARY="A local-first symptom recorder"
-HOMEPAGE="https://github.com/oernster/SymChit"
+HOMEPAGE="https://github.com/oernster/SymDiary"
 RUNTIME="org.gnome.Platform"
 SDK="org.gnome.Sdk"
 RUNTIME_VERSION="50"
@@ -74,7 +74,7 @@ flatpak install --user --noninteractive flathub \
 section "Writing packaging files"
 mkdir -p "${PACKAGING_DIR}"
 
-# No MimeType is claimed. SymChit reads one kind of file, its own export, through a dialog
+# No MimeType is claimed. SymDiary reads one kind of file, its own export, through a dialog
 # the user opened. A file manager handing it a file it never asked for is not a route the
 # application has.
 cat > "${PACKAGING_DIR}/${APP_ID}.desktop" << DESKTOP
@@ -98,7 +98,7 @@ cat > "${PACKAGING_DIR}/${APP_ID}.metainfo.xml" << METAINFO
   <project_license>GPL-3.0-only</project_license>
   <description>
     <p>
-      SymChit records what you observed and when you observed it, then prints a short
+      SymDiary records what you observed and when you observed it, then prints a short
       factual record to take to an appointment. It is a recorder, not a diagnostician:
       it gives no medical advice, interprets nothing and opens no network connection.
       The record stays on your own computer.
@@ -121,7 +121,7 @@ for size in ${HICOLOR_SIZES}; do
 done
 
 # finish-args is the permission the FINISHED application runs with; it is the shortest
-# list SymChit can work from: a display, a GPU for the web view, plus the home directory,
+# list SymDiary can work from: a display, a GPU for the web view, plus the home directory,
 # which is where the record lives and where an export is written or read. There is no
 # --share=network: the application opens no connection, so the sandbox is told not to give
 # it one. The donate button is not an exception, since the address is handed to the desktop
@@ -196,4 +196,4 @@ flatpak build-bundle \
 section "Done"
 echo "Installed for the current user: flatpak run ${APP_ID}"
 echo "Distributable bundle: ${BUNDLE}"
-echo "The record lives at ~/.var/app/${APP_ID}/config/${APP_NAME}/symchit.db"
+echo "The record lives at ~/.var/app/${APP_ID}/config/${APP_NAME}/symdiary.db"

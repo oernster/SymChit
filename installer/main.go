@@ -1,4 +1,4 @@
-// Command installer is the bespoke SymChit setup program.
+// Command installer is the bespoke SymDiary setup program.
 //
 // It is built as a second Wails application in the same module, so it wears the
 // same WebView and the same palette as the application it installs. It carries
@@ -15,7 +15,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/product"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"

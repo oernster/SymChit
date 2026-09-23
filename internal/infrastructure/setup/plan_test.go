@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/symchit/internal/infrastructure/setup"
-	"github.com/oernster/symchit/internal/infrastructure/setup/setuptest"
+	"github.com/oernster/symdiary/internal/infrastructure/setup"
+	"github.com/oernster/symdiary/internal/infrastructure/setup/setuptest"
 )
 
 // assertOrder states that the named calls happened, in this order, allowing

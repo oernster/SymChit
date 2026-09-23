@@ -42,7 +42,7 @@ installer/build/bin/
 installer/frontend/wailsjs/
 dist-installer/
 build/darwin/
-SymChit.dmg
+SymDiary.dmg
 # builddmg.sh stages the bundle here before create-dmg runs and removes it
 # afterwards. It is listed because a build that stops in the middle leaves it
 # behind; a staged copy of the whole application is not a thing to commit.
@@ -54,11 +54,11 @@ dist-dmg/
 # desktop and metainfo files. All six are generated from VERSION and the
 # product's own names at build time, so a committed copy would be a second
 # statement of things that already have one home.
-symchit.flatpak
+symdiary.flatpak
 .flatpak-build/
 .flatpak-repo/
 .flatpak-builder/
-uk.codecrafter.SymChit.yml
+uk.codecrafter.SymDiary.yml
 packaging/
 
 # What an operating system leaves in a folder it has been shown. Neither is

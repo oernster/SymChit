@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // recorded answers a store holding one Tired event at 09:30 plus the editor over it.

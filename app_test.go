@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
-	"github.com/oernster/symchit/internal/infrastructure/export"
-	"github.com/oernster/symchit/internal/infrastructure/pdf"
-	"github.com/oernster/symchit/internal/infrastructure/store"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
+	"github.com/oernster/symdiary/internal/infrastructure/export"
+	"github.com/oernster/symdiary/internal/infrastructure/pdf"
+	"github.com/oernster/symdiary/internal/infrastructure/store"
 )
 
 // stoppedClock is a clock the test moves by hand.
@@ -53,7 +53,7 @@ func london(t *testing.T) *time.Location {
 func facade(t *testing.T) (*App, *stoppedClock, *fakeChooser) {
 	t.Helper()
 	folder := t.TempDir()
-	opened, err := store.Open(filepath.Join(folder, "symchit.db"))
+	opened, err := store.Open(filepath.Join(folder, "symdiary.db"))
 	if err != nil {
 		t.Fatalf("opening the record: %v", err)
 	}
@@ -97,7 +97,7 @@ func TestStateAndAbout(t *testing.T) {
 	if err != nil {
 		t.Fatalf("State: %v", err)
 	}
-	if state.Name != "SymChit" || state.Version != "1.2.3" || state.Problem != "" {
+	if state.Name != "SymDiary" || state.Version != "1.2.3" || state.Problem != "" {
 		t.Errorf("state = %+v", state)
 	}
 	if strings.Join(state.Severities, ",") != "Mild,Moderate,Severe" {

@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // AddEvent writes a new event and answers it as stored.

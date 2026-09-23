@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // EditForm is what the user changed on an event.

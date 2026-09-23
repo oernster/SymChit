@@ -25,7 +25,7 @@ const (
 )
 
 // modulePath prefixes every internal import.
-const modulePath = "github.com/oernster/symchit/"
+const modulePath = "github.com/oernster/symdiary/"
 
 // frontendSource is the front end's own source, held to the same size rule as
 // the Go: a component gathers markup, behaviour and the words on screen in one
@@ -299,14 +299,14 @@ func lineCount(t *testing.T, path string) int {
 	return strings.Count(string(raw), "\n") + 1
 }
 
-// TestNoNetworkImports keeps SymChit off the network (NFR-PRIV-001). The
+// TestNoNetworkImports keeps SymDiary off the network (NFR-PRIV-001). The
 // record is health data: nothing may leave the machine because the application
 // is running.
 func TestNoNetworkImports(t *testing.T) {
 	for _, path := range goFiles(t) {
 		for _, imported := range importsOf(t, path) {
 			if imported == "net" || strings.HasPrefix(imported, "net/") {
-				t.Errorf("%s imports %q: SymChit opens no network connection", path, imported)
+				t.Errorf("%s imports %q: SymDiary opens no network connection", path, imported)
 			}
 		}
 	}

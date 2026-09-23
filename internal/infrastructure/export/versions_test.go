@@ -15,7 +15,7 @@ import (
 const samplePattern = "version-%d.json"
 
 // TestEveryVersionEverWrittenCanStillBeRead is the export's whole promise. A
-// user's export is their copy of their own record, so a SymChit that cannot
+// user's export is their copy of their own record, so a SymDiary that cannot
 // open a file it wrote two years ago has taken their record off them.
 //
 // Proved by planting: raising formatVersion to 2 without adding a reader fails
@@ -46,20 +46,20 @@ func TestEveryVersionEverWrittenCanStillBeRead(t *testing.T) {
 }
 
 // TestNoReaderClaimsAVersionThatWasNeverWritten keeps the table honest in the
-// other direction: a reader for a version no SymChit ever wrote would accept a
+// other direction: a reader for a version no SymDiary ever wrote would accept a
 // file nothing produced.
 func TestNoReaderClaimsAVersionThatWasNeverWritten(t *testing.T) {
 	t.Parallel()
 	for version := range readers {
 		if version < firstVersion || version > formatVersion {
-			t.Errorf("there is a reader for format %d, which no SymChit ever wrote", version)
+			t.Errorf("there is a reader for format %d, which no SymDiary ever wrote", version)
 		}
 	}
 }
 
 // TestAFileNamingNoVersionIsRefused closes the hole that read an unversioned
 // file as though it were the current format. A file with the right marker and
-// no version is not an export SymChit wrote, whatever else is in it; a record
+// no version is not an export SymDiary wrote, whatever else is in it; a record
 // is not the thing to be generous about.
 func TestAFileNamingNoVersionIsRefused(t *testing.T) {
 	t.Parallel()

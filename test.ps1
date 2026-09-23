@@ -1,4 +1,4 @@
-# Verifies SymChit: formatting, vet, staticcheck, the Go suite and its coverage
+# Verifies SymDiary: formatting, vet, staticcheck, the Go suite and its coverage
 # floors, then the front end's lint, types and suite.
 #
 #   ./test.ps1                 run everything
@@ -36,7 +36,7 @@ Write-Host 'Vetting...'
 go vet $packages
 if ($LASTEXITCODE -ne 0) { throw "go vet failed with exit code $LASTEXITCODE" }
 
-# SymChit ships to Windows, Linux and macOS, so a Windows-only import is a
+# SymDiary ships to Windows, Linux and macOS, so a Windows-only import is a
 # defect the day it is written rather than the day someone tries the Flatpak.
 # Building for the other two is the cheapest way to find one: it needs no
 # Linux machine and no Mac; it fails by name. Vet runs with it, since a
@@ -69,7 +69,7 @@ go test $packages
 if ($LASTEXITCODE -ne 0) { throw "go test failed with exit code $LASTEXITCODE" }
 
 Write-Host "Measuring coverage of $($gated -join ', ')..."
-$profilePath = Join-Path ([System.IO.Path]::GetTempPath()) 'symchit-coverage.out'
+$profilePath = Join-Path ([System.IO.Path]::GetTempPath()) 'symdiary-coverage.out'
 try {
     go test "-coverprofile=$profilePath" @gated
     if ($LASTEXITCODE -ne 0) { throw "the coverage run failed with exit code $LASTEXITCODE" }

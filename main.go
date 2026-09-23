@@ -1,4 +1,4 @@
-// Command symchit records symptoms as they are noticed and prints a factual
+// Command symdiary records symptoms as they are noticed and prints a factual
 // record to take to a doctor.
 //
 // This file is the composition root: the only file permitted to wire concrete
@@ -11,12 +11,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/infrastructure/export"
-	"github.com/oernster/symchit/internal/infrastructure/pdf"
-	"github.com/oernster/symchit/internal/infrastructure/runlog"
-	"github.com/oernster/symchit/internal/infrastructure/store"
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/infrastructure/export"
+	"github.com/oernster/symdiary/internal/infrastructure/pdf"
+	"github.com/oernster/symdiary/internal/infrastructure/runlog"
+	"github.com/oernster/symdiary/internal/infrastructure/store"
+	"github.com/oernster/symdiary/internal/product"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"

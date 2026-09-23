@@ -11,10 +11,10 @@ import (
 	"testing"
 )
 
-// themeFile holds every colour SymChit uses; nothing else may name one.
+// themeFile holds every colour SymDiary uses; nothing else may name one.
 var themeFile = filepath.Join("frontend", "src", "theme.css")
 
-// minimumContrast is WCAG 2.2 AA for body text (NFR-USE-003). SymChit's text
+// minimumContrast is WCAG 2.2 AA for body text (NFR-USE-003). SymDiary's text
 // is body size throughout, so the larger-text allowance never applies.
 const minimumContrast = 4.5
 
@@ -52,7 +52,7 @@ var indicators = [][2]string{
 // hexColour matches a token declaration such as `--text: #1b1f24;`.
 var hexColour = regexp.MustCompile(`--([a-z-]+):\s*(#[0-9a-fA-F]{6})`)
 
-// lightMarker splits the theme into its two blocks. SymChit opens dark, so the
+// lightMarker splits the theme into its two blocks. SymDiary opens dark, so the
 // dark tokens are the plain `:root` ones and everything from this selector on
 // is the light override (FR-073).
 const lightMarker = ":root[data-theme='light']"

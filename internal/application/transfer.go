@@ -1,6 +1,6 @@
 package application
 
-import "github.com/oernster/symchit/internal/domain"
+import "github.com/oernster/symdiary/internal/domain"
 
 // Transfer moves the whole record out to a file and back in (FR-050, FR-053).
 type Transfer struct {

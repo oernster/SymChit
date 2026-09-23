@@ -1,4 +1,4 @@
-// Package application holds SymChit's use cases, one per user-visible action.
+// Package application holds SymDiary's use cases, one per user-visible action.
 //
 // It depends on the domain and on the ports declared in this file. The
 // infrastructure implements the ports; the composition root wires them in.
@@ -7,7 +7,7 @@ package application
 import (
 	"time"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // Clock answers the current instant. The real one reads the system clock; tests
@@ -58,7 +58,7 @@ type Store interface {
 	Import(definitions []DefinitionInput, events []EventInput) error
 }
 
-// Record is the whole of what SymChit keeps, as an export carries it.
+// Record is the whole of what SymDiary keeps, as an export carries it.
 type Record struct {
 	Definitions []domain.Definition
 	Events      []domain.Event

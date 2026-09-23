@@ -13,7 +13,7 @@ type EventID int64
 type DefinitionID int64
 
 // Event is one observation: a symptom at a point in time, with the user's
-// optional severity and note. It holds what the user said and nothing SymChit
+// optional severity and note. It holds what the user said and nothing SymDiary
 // concluded from it.
 type Event struct {
 	ID         EventID
@@ -22,7 +22,7 @@ type Event struct {
 	Symptom string
 	// OccurredAt is when the user says it happened. Editable.
 	OccurredAt time.Time
-	// RecordedAt is when SymChit created the event. Set once (FR-007).
+	// RecordedAt is when SymDiary created the event. Set once (FR-007).
 	RecordedAt time.Time
 	Severity   Severity
 	// Note is kept byte for byte as entered (FR-005).

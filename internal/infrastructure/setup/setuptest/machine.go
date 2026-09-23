@@ -11,13 +11,13 @@ package setuptest
 import (
 	"path/filepath"
 
-	"github.com/oernster/symchit/internal/infrastructure/setup"
+	"github.com/oernster/symdiary/internal/infrastructure/setup"
 )
 
 // recordName is the file the application keeps its observations in. The double
 // answers a path under its own pretend folders, so nothing here touches a real
 // one.
-const recordName = "symchit.db"
+const recordName = "symdiary.db"
 
 // Machine records what was done to it, in the order it was done, so a test can
 // state the sequence rather than the individual acts. Every field an act reads
@@ -57,7 +57,7 @@ func Ready() *Machine {
 	return &Machine{
 		Dir:      filepath.Join("C:\\", "Programs", setup.AppName),
 		Record:   filepath.Join("C:\\", "Record", setup.AppName),
-		Self:     filepath.Join("C:\\", "Downloads", "SymChitSetup.exe"),
+		Self:     filepath.Join("C:\\", "Downloads", "SymDiarySetup.exe"),
 		Leftover: []string{"webview", "logs"},
 	}
 }

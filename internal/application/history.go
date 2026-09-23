@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // History answers what has been recorded: the events, the suggestions and the

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // errBroken is the failure the fakes inject.

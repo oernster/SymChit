@@ -120,7 +120,7 @@ export function App() {
   return (
     <div className="shell">
       <div ref={start} className="focus-sink" tabIndex={-1} aria-hidden="true" />
-      <nav className="band" aria-label={state?.name ?? 'SymChit'}>
+      <nav className="band" aria-label={state?.name ?? 'SymDiary'}>
         <div className="band-group">
           {panes.map((entry) => (
             <BandButton key={entry.pane} label={entry.label} icon={entry.icon}

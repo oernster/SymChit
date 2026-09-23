@@ -1,4 +1,4 @@
-# SymChit: Technical Debt
+# SymDiary: Technical Debt
 
 A standing reference to the project's outstanding technical debt. It records what is still open, weighs whether each item is worth doing and gives the rationale. Every item is a behaviour-preserving internal concern: nothing here proposes reverting a feature or changing any UI or UX behaviour. Scope is the whole repository (the Go core, the React front end, the setup program with its hand-written page and the delivery scripts) read against `ARCHITECTURE.md`, `TESTING.md` and the structural tests in `tests/structural`.
 

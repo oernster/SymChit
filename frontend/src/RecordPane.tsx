@@ -1,4 +1,4 @@
-// The recording form, where SymChit opens (FR-001 to FR-009).
+// The recording form, where SymDiary opens (FR-001 to FR-009).
 
 import { useRef, useState, type FormEvent } from 'react'
 import { api, type Refused } from './api'

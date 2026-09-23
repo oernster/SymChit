@@ -76,7 +76,7 @@ func TestTheRecordGoesOnlyWhenItIsAskedFor(t *testing.T) {
 }
 
 // TestAFolderWithNowhereToLiveIsLeftOut keeps a missing environment variable
-// from turning into a relative path. Joining an empty base gives "SymChit.exe"
+// from turning into a relative path. Joining an empty base gives "SymDiary.exe"
 // rather than a folder under the user's profile; removing that would take
 // a folder of that name beside whatever the working directory happens to be.
 func TestAFolderWithNowhereToLiveIsLeftOut(t *testing.T) {

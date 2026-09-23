@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/oernster/symchit/internal/licence"
+	"github.com/oernster/symdiary/internal/licence"
 )
 
 // rootLicence is the licence as the repository publishes it, which is the file
@@ -37,7 +37,7 @@ func TestTheEmbeddedLicenceIsThePublishedOne(t *testing.T) {
 		return
 	}
 	t.Errorf("the licence embedded in internal/licence is not %s: %d bytes against %d. "+
-		"A person installing SymChit reads the embedded copy, so the two are the "+
+		"A person installing SymDiary reads the embedded copy, so the two are the "+
 		"same text or the setup program is stating terms nobody granted. Copy "+
 		"%s over internal/licence/LICENSE.", rootLicence, len(got), len(want), rootLicence)
 	if where := firstDifference(got, want); where >= 0 {

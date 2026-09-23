@@ -4,7 +4,7 @@
 // Ported from PigeonPost's guideContent.ts. It does two jobs, in this order. It
 // NAMES the furniture, each entry carrying the real picture the band draws, so a
 // control can be identified by someone who has just met it. Then it states the
-// few rules the window cannot say for itself: what is kept locally, what SymChit
+// few rules the window cannot say for itself: what is kept locally, what SymDiary
 // will never do and what cannot be undone.
 
 import recordIcon from './assets/icons/record.png'
@@ -41,10 +41,10 @@ export interface GuideSection {
 
 export const guideSections: GuideSection[] = [
   {
-    heading: 'What SymChit is for',
+    heading: 'What SymDiary is for',
     paragraphs: [
       'When you notice a symptom, record it. When you see your doctor, take the record with you.',
-      'SymChit keeps what you observed and when you observed it. It does not work out what your symptoms mean: that is for you and your healthcare professional, with the record in front of you both.',
+      'SymDiary keeps what you observed and when you observed it. It does not work out what your symptoms mean: that is for you and your healthcare professional, with the record in front of you both.',
     ],
   },
   {
@@ -54,7 +54,7 @@ export const guideSections: GuideSection[] = [
       {
         icon: recordIcon,
         name: 'Record',
-        text: 'where SymChit opens. Type the symptom, add a note or a severity if you want to, then Record now. The time is filled in for you.',
+        text: 'where SymDiary opens. Type the symptom, add a note or a severity if you want to, then Record now. The time is filled in for you.',
       },
       {
         icon: historyIcon,
@@ -84,7 +84,7 @@ export const guideSections: GuideSection[] = [
       {
         icon: lightModeIcon,
         name: 'Light mode',
-        text: 'moves the window between dark and light. The picture is the one you would move to, so the sun means light is a press away; SymChit opens in whichever you left it in.',
+        text: 'moves the window between dark and light. The picture is the one you would move to, so the sun means light is a press away; SymDiary opens in whichever you left it in.',
       },
       {
         icon: guideIcon,
@@ -107,7 +107,7 @@ export const guideSections: GuideSection[] = [
       },
       {
         title: 'A symptom is yours to name.',
-        text: 'Type anything. The first time you use a name it is kept for next time, exactly as you typed it. SymChit never rewords it into medical terms.',
+        text: 'Type anything. The first time you use a name it is kept for next time, exactly as you typed it. SymDiary never rewords it into medical terms.',
       },
       {
         title: 'Severity and notes are optional.',
@@ -115,12 +115,12 @@ export const guideSections: GuideSection[] = [
       },
       {
         title: 'Something you remember later still belongs in the record.',
-        text: 'Set a different time on the recording screen and enter it then. SymChit keeps both when it happened and when you wrote it down.',
+        text: 'Set a different time on the recording screen and enter it then. SymDiary keeps both when it happened and when you wrote it down.',
       },
     ],
   },
   {
-    heading: 'What SymChit will not do',
+    heading: 'What SymDiary will not do',
     rules: [
       {
         title: 'It does not diagnose.',
@@ -141,7 +141,7 @@ export const guideSections: GuideSection[] = [
     rules: [
       {
         title: 'It stays on this computer.',
-        text: 'There is no account, no cloud service and no advertising. SymChit opens no network connection at all; exporting and printing happen only when you ask.',
+        text: 'There is no account, no cloud service and no advertising. SymDiary opens no network connection at all; exporting and printing happen only when you ask.',
       },
       {
         title: 'It is not encrypted.',
@@ -149,7 +149,7 @@ export const guideSections: GuideSection[] = [
       },
       {
         title: 'Deleting cannot be undone.',
-        text: 'SymChit asks first and names what will go. Once it is gone, only an export made earlier can bring it back.',
+        text: 'SymDiary asks first and names what will go. Once it is gone, only an export made earlier can bring it back.',
       },
     ],
   },

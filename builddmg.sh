@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds the SymChit macOS DMG for Apple Silicon. Run on an arm64 Mac from the repo root:
+# Builds the SymDiary macOS DMG for Apple Silicon. Run on an arm64 Mac from the repo root:
 #
 #   bash builddmg.sh
 #
@@ -13,7 +13,7 @@
 # profile must exist, else the build stops before anything is built.
 #
 # Ported from PigeonPost's builddmg.sh. One difference: there is no icon generation step.
-# SymChit's icons are written by tools/genicons.py and committed, so build/appicon.png is
+# SymDiary's icons are written by tools/genicons.py and committed, so build/appicon.png is
 # already there and a clone needs neither Python nor Pillow. Wails writes build/darwin
 # itself on the first run for this platform, so no Info.plist is committed either; the
 # version is stamped into the produced bundle below.
@@ -24,10 +24,10 @@
 #   APPLE_KEYCHAIN_PROFILE     the stored credential to use instead
 #   ALLOW_UNNOTARIZED=1        build without notarizing; local testing only, never released
 #
-# Output: SymChit.dmg in the repo root
+# Output: SymDiary.dmg in the repo root
 set -euo pipefail
 
-APP_NAME="SymChit"
+APP_NAME="SymDiary"
 PLATFORM="darwin/arm64"
 APP_BUNDLE="build/bin/${APP_NAME}.app"
 DIST_DIR="dist-dmg"
@@ -45,13 +45,13 @@ APPLE_TEAM_ID="${APPLE_TEAM_ID:-W7K465GKFJ}"
 # and the failure is invisible at build time.
 ALLOW_UNNOTARIZED="${ALLOW_UNNOTARIZED:-}"
 # The notarization credential for this app, created once with
-#   xcrun notarytool store-credentials SymChit \
+#   xcrun notarytool store-credentials SymDiary \
 #     --apple-id <id> --team-id <team> --password <app-specific>
 # One profile per app means a leaked credential can be revoked for a single app. Stated
 # explicitly rather than derived from APP_NAME: the profile is a fact registered with
 # Apple; deriving it would silently change which credential the build looks for if
 # that name were ever edited.
-NOTARY_PROFILE="${APPLE_KEYCHAIN_PROFILE:-SymChit}"
+NOTARY_PROFILE="${APPLE_KEYCHAIN_PROFILE:-SymDiary}"
 # The notary service accepts only an app-specific password from appleid.apple.com and
 # rejects the Apple account password with HTTP 401. The shape is distinctive, so it is
 # checked before the build rather than discovered after it.
@@ -261,4 +261,4 @@ fi
 
 section "Done"
 echo "${DMG_PATH}"
-echo "The record lives at ~/Library/Application Support/${APP_NAME}/symchit.db"
+echo "The record lives at ~/Library/Application Support/${APP_NAME}/symdiary.db"

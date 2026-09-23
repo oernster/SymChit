@@ -1,4 +1,4 @@
-// Package domain holds SymChit's rules: what an event is, how symptoms are
+// Package domain holds SymDiary's rules: what an event is, how symptoms are
 // matched, how the history is filtered and what a receipt contains.
 //
 // It performs no IO and never reads the clock. Every instant and every time zone
@@ -25,7 +25,7 @@ func KeyOf(label string) SymptomKey {
 }
 
 // CheckLabel refuses a label with nothing in it. The label itself is never
-// changed: SymChit keeps what the user typed (FR-013).
+// changed: SymDiary keeps what the user typed (FR-013).
 func CheckLabel(label string) error {
 	if KeyOf(label) == "" {
 		return ErrBlankSymptom

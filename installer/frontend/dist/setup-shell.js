@@ -19,7 +19,7 @@ function backend() {
 // The choice is kept in this window's own storage, which can refuse both
 // reading and writing; a theme is not worth a dead setup program, so a refusal
 // leaves the default showing.
-const THEME_KEY = 'symchit.setup.theme'
+const THEME_KEY = 'symdiary.setup.theme'
 const DEFAULT_THEME = 'dark'
 
 function storedTheme() {
@@ -138,7 +138,7 @@ function renderOptions(container, specs) {
 const freshChoices = {startMenu: true, desktop: true}
 
 // launchOption finishes every screen that writes files. Setup's job is done
-// once SymChit is running, so the same tick that starts it closes setup.
+// once SymDiary is running, so the same tick that starts it closes setup.
 function launchOption() {
     return {
         key: 'launch',
@@ -207,7 +207,7 @@ function showError(message) {
     setFooter([{label: 'Close', kind: 'primary', onClick: () => backend().Quit()}])
 }
 
-// withAppClosed runs the work once SymChit is not running. If it is open, the
+// withAppClosed runs the work once SymDiary is not running. If it is open, the
 // offer to close it comes first, before any file is touched, rather than
 // failing later on a locked executable.
 async function withAppClosed(proceed) {

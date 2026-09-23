@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
+	"github.com/oernster/symdiary/internal/product"
 )
 
 // The bound methods, one per user-visible action. Each converts the page's
@@ -167,7 +167,7 @@ func (a *App) Export() (path string, err error) {
 
 // Donate opens the donation page in the user's browser (FR-069).
 //
-// SymChit does not fetch that page: it hands the address to the desktop and the
+// SymDiary does not fetch that page: it hands the address to the desktop and the
 // browser does the asking, so the button leaves the no-network guarantee
 // untouched. The address does not cross the wire either. The page asks for the
 // donation page rather than naming one, so there is nothing arriving from

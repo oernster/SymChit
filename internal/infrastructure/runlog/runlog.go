@@ -1,7 +1,7 @@
 // Package runlog keeps the log a run leaves (FR-065): a line naming when the
 // run started, then what the run reports. Where that file sits is the
 // platform's business and logPath below states each rule. Ported from Bridge
-// Talk's runlog, trimmed to what SymChit needs.
+// Talk's runlog, trimmed to what SymDiary needs.
 //
 // A windowed Windows program started from a shortcut or the Run key has no
 // error output: Windows hands it a handle of 0, so the Go runtime's own crash
@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/product"
 )
 
 const (

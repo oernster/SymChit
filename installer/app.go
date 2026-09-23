@@ -7,8 +7,8 @@ import (
 
 	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/oernster/symchit/internal/infrastructure/setup"
-	"github.com/oernster/symchit/internal/licence"
+	"github.com/oernster/symdiary/internal/infrastructure/setup"
+	"github.com/oernster/symdiary/internal/licence"
 )
 
 // App is the Wails facade for the setup program. Everything the page can do
@@ -105,7 +105,7 @@ var setupCredits = []string{
 	"Wails, MIT, © Lea Anthony",
 }
 
-// Licence answers what SymChit is given under.
+// Licence answers what SymDiary is given under.
 //
 // The screen it fills exists because naming a licence is not explaining one:
 // somebody about to install a program reads "GNU General Public Licence,
@@ -169,7 +169,7 @@ func (a *App) DetectState() StateDTO {
 	}
 }
 
-// AppRunning reports whether SymChit is open, so the page can offer to close it
+// AppRunning reports whether SymDiary is open, so the page can offer to close it
 // rather than failing later on a locked executable.
 func (a *App) AppRunning() bool { return a.machine.AppRunning() }
 

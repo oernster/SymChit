@@ -1,4 +1,4 @@
-// Package licence carries the licence SymChit is given under, both as the
+// Package licence carries the licence SymDiary is given under, both as the
 // published text and as a short reading of what it means for the person
 // installing it.
 //

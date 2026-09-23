@@ -7,8 +7,8 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/oernster/symchit/internal/infrastructure/windowfocus"
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/infrastructure/windowfocus"
+	"github.com/oernster/symdiary/internal/product"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -101,10 +101,10 @@ func (windowFocus) Focus() {
 	}()
 }
 
-// instanceID names SymChit's single-instance lock, per user (FR-064).
-const instanceID = "uk.codecrafter.symchit"
+// instanceID names SymDiary's single-instance lock, per user (FR-064).
+const instanceID = "uk.codecrafter.symdiary"
 
-// singleInstance brings the running window forward when SymChit is started
+// singleInstance brings the running window forward when SymDiary is started
 // again; the second copy then ends.
 func singleInstance(app *App) *options.SingleInstanceLock {
 	return &options.SingleInstanceLock{

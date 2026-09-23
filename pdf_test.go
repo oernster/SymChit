@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // aTiredEvent puts one event in the record so there is something to write.

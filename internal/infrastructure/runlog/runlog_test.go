@@ -17,13 +17,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/product"
 )
 
 const (
 	// childEnv names what the child does; logEnv names the log it keeps.
-	childEnv = "SYMCHIT_RUNLOG_CHILD"
-	logEnv   = "SYMCHIT_RUNLOG_PATH"
+	childEnv = "SYMDIARY_RUNLOG_CHILD"
+	logEnv   = "SYMDIARY_RUNLOG_PATH"
 
 	// panicAct panics on another goroutine; fatalAct sends all error output
 	// to the log, writes a warning to it, then fails with a fatal error.
@@ -247,7 +247,7 @@ func TestEveryPlatformsLogFolder(t *testing.T) {
 	const (
 		home    = "/home/oliver"
 		appdata = `C:\Users\Oliver\AppData\Local`
-		state   = "/home/oliver/.var/app/uk.codecrafter.symchit/.local/state"
+		state   = "/home/oliver/.var/app/uk.codecrafter.symdiary/.local/state"
 	)
 	noHome := func() (string, error) { return "", errors.New("no home directory") }
 	atHome := func() (string, error) { return home, nil }

@@ -93,7 +93,7 @@ func TestShortcutsCarryPlainPaths(t *testing.T) {
 
 func TestLiteralQuotesForPowerShell(t *testing.T) {
 	t.Parallel()
-	if got := literal(`C:\Users\Oliver\SymChit.exe`); got != `'C:\Users\Oliver\SymChit.exe'` {
+	if got := literal(`C:\Users\Oliver\SymDiary.exe`); got != `'C:\Users\Oliver\SymDiary.exe'` {
 		t.Errorf("literal = %s", got)
 	}
 	// A quote inside a path is doubled, which is how PowerShell reads one

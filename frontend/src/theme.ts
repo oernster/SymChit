@@ -2,7 +2,7 @@
 // button offers next. Pure, with no DOM and no React, so every rule is
 // reachable from a test by calling it; useTheme drives it against the page.
 //
-// SymChit opens dark and stays dark until somebody says otherwise (FR-073).
+// SymDiary opens dark and stays dark until somebody says otherwise (FR-073).
 // It does not follow the Windows app mode: a window that changes under the
 // reader because the desktop reached dusk is a surprise, while the choice here
 // is one press away.
@@ -14,7 +14,7 @@ export type Theme = 'dark' | 'light'
 export const defaultTheme: Theme = 'dark'
 
 /** Where the choice is kept, in the window's own storage. */
-export const themeKey = 'symchit.theme'
+export const themeKey = 'symdiary.theme'
 
 /**
  * The theme a stored value means. Anything that is not one of the two is the

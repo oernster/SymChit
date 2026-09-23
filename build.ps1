@@ -1,4 +1,4 @@
-# Builds SymChit for Windows: the application, then the setup program that
+# Builds SymDiary for Windows: the application, then the setup program that
 # carries it.
 #
 #   ./build.ps1                 the gate, then the application and the setup program
@@ -6,8 +6,8 @@
 #   ./build.ps1 -Fast           no gate, for a working loop
 #
 # Outputs:
-#   build/bin/SymChit.exe            the application
-#   dist-installer/SymChitSetup.exe  the setup program, carrying the application
+#   build/bin/SymDiary.exe            the application
+#   dist-installer/SymDiarySetup.exe  the setup program, carrying the application
 #                                    as an embedded payload
 #
 # The gate runs first and cannot be skipped by any switch that ships: -Fast is
@@ -40,7 +40,7 @@ if ($Fast) {
 wails build -ldflags "-X main.appVersion=$version"
 if ($LASTEXITCODE -ne 0) { throw "wails build failed with exit code $LASTEXITCODE" }
 
-$binary = Join-Path $root 'build\bin\SymChit.exe'
+$binary = Join-Path $root 'build\bin\SymDiary.exe'
 if (-not (Test-Path $binary)) { throw "the build reported success but $binary is not there" }
 Write-Host ("Built {0} ({1:N0} bytes)" -f $binary, (Get-Item $binary).Length)
 
@@ -72,9 +72,9 @@ try {
 Write-Host 'Collecting the setup program...'
 $distDir = Join-Path $root 'dist-installer'
 New-Item -ItemType Directory -Force -Path $distDir | Out-Null
-$built = Join-Path $root 'installer\build\bin\SymChitSetup.exe'
+$built = Join-Path $root 'installer\build\bin\SymDiarySetup.exe'
 if (-not (Test-Path $built)) { throw "the setup build reported success but $built is not there" }
-$setup = Join-Path $distDir 'SymChitSetup.exe'
+$setup = Join-Path $distDir 'SymDiarySetup.exe'
 Copy-Item $built $setup -Force
 
 # Put the empty-zip placeholder back, so `go build ./...` and the tests keep

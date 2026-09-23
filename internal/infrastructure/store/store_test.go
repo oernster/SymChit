@@ -8,15 +8,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // open answers a store over a fresh file in a folder whose name has a space in
 // it, as %APPDATA% under a user name with a space would.
 func open(t *testing.T) (*Store, string) {
 	t.Helper()
-	path := filepath.Join(t.TempDir(), "App Data", "SymChit", "symchit.db")
+	path := filepath.Join(t.TempDir(), "App Data", "SymDiary", "symdiary.db")
 	store, err := Open(path)
 	if err != nil {
 		t.Fatalf("Open: %v", err)
@@ -276,7 +276,7 @@ func TestOpenRefusesAFolderItCannotMake(t *testing.T) {
 	if err := os.WriteFile(blocker, nil, 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Open(filepath.Join(blocker, "symchit.db")); err == nil {
+	if _, err := Open(filepath.Join(blocker, "symdiary.db")); err == nil {
 		t.Error("a record under a file opened")
 	}
 }
@@ -300,7 +300,7 @@ func TestReopenKeepsEverything(t *testing.T) {
 
 func TestCorruptFileIsNeverReplaced(t *testing.T) {
 	t.Parallel()
-	path := filepath.Join(t.TempDir(), "symchit.db")
+	path := filepath.Join(t.TempDir(), "symdiary.db")
 	garbage := bytes.Repeat([]byte("not a database "), 512)
 	if err := os.WriteFile(path, garbage, 0o600); err != nil {
 		t.Fatal(err)

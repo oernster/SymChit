@@ -20,7 +20,7 @@ const (
 )
 
 // UninstallInfo carries the values written to the HKCU uninstall registry
-// entry, which is what puts SymChit in Settings and in the Apps list.
+// entry, which is what puts SymDiary in Settings and in the Apps list.
 type UninstallInfo struct {
 	Version      string
 	InstallDir   string
@@ -35,7 +35,7 @@ func hidden() *syscall.SysProcAttr {
 	return &syscall.SysProcAttr{HideWindow: true, CreationFlags: windows.CREATE_NO_WINDOW}
 }
 
-// WriteUninstallEntry registers SymChit under the current user's uninstall
+// WriteUninstallEntry registers SymDiary under the current user's uninstall
 // list. NoModify and NoRepair are both zero, so Windows offers Modify and
 // Repair alongside Uninstall and each one reopens this setup program.
 func WriteUninstallEntry(info UninstallInfo) error {
@@ -77,7 +77,7 @@ func RemoveUninstallEntry() error {
 	return nil
 }
 
-// InstalledVersion answers the installed version and whether SymChit is
+// InstalledVersion answers the installed version and whether SymDiary is
 // installed at all, read from the uninstall registry entry.
 func InstalledVersion() (string, bool) {
 	key, err := registry.OpenKey(registry.CURRENT_USER, uninstallKeyPath, registry.QUERY_VALUE)

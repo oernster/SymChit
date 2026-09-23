@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/product"
 )
 
 func TestUnavailableRefusesEverythingWithTheReason(t *testing.T) {
@@ -33,7 +33,7 @@ func TestOpensAtTheGivenPath(t *testing.T) {
 	base := t.TempDir()
 	t.Setenv("APPDATA", base)
 	path, err := DefaultPath()
-	if want := filepath.Join(base, "SymChit", "symchit.db"); err != nil || path != want {
+	if want := filepath.Join(base, "SymDiary", "symdiary.db"); err != nil || path != want {
 		t.Errorf("DefaultPath = %q, %v; want %q", path, err, want)
 	}
 	t.Setenv("APPDATA", "")
@@ -50,7 +50,7 @@ func TestOpensAtTheGivenPath(t *testing.T) {
 // That is what makes the Flatpak's promise true without a second code path.
 // Flatpak redirects XDG_CONFIG_HOME into the sandbox, os.UserConfigDir reads
 // it on Linux, so the record lands at
-// ~/.var/app/uk.codecrafter.SymChit/config/SymChit/symchit.db, which is the
+// ~/.var/app/uk.codecrafter.SymDiary/config/SymDiary/symdiary.db, which is the
 // path build_flatpak.sh prints when it finishes. A change here that reached
 // for the home directory instead would move the record on Linux and macOS
 // while leaving Windows looking correct, so it is asserted rather than

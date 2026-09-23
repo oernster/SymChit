@@ -3,10 +3,10 @@ package application
 import (
 	"testing"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
-const exportPath = `C:\exports\symchit.json`
+const exportPath = `C:\exports\symdiary.json`
 
 func TestExportThenImportRoundTrip(t *testing.T) {
 	t.Parallel()

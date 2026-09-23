@@ -1,11 +1,11 @@
 /*
-  SymChit's site wears the application's own palette, so the page and the
+  SymDiary's site wears the application's own palette, so the page and the
   window look like one thing. The tokens are copied from
   frontend/src/theme.css; dark is plain :root and light is the override,
   because the window opens dark and the button moves it.
 
   Every path here is relative. The site is served from a sub-path while it is
-  previewed at ernster.dev/SymChit/, so a leading slash would reach for the
+  previewed at ernster.dev/SymDiary/, so a leading slash would reach for the
   portfolio's root and find nothing.
 */
 

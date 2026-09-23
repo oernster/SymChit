@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/symchit/internal/infrastructure/setup"
-	"github.com/oernster/symchit/internal/infrastructure/setup/setuptest"
-	"github.com/oernster/symchit/internal/licence"
+	"github.com/oernster/symdiary/internal/infrastructure/setup"
+	"github.com/oernster/symdiary/internal/infrastructure/setup/setuptest"
+	"github.com/oernster/symdiary/internal/licence"
 )
 
 // thisVersion is the version the setup program under test carries. The machine

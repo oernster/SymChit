@@ -117,8 +117,8 @@ interface WailsWindow {
 /** Refused receives the reason a call did not happen, ready to show. */
 export type Refused = (reason: string) => void
 
-/** noWindow is the reason given when the page runs outside SymChit's window. */
-export const noWindow = 'SymChit is not running: this page needs its window.'
+/** noWindow is the reason given when the page runs outside SymDiary's window. */
+export const noWindow = 'SymDiary is not running: this page needs its window.'
 
 const bridge = (): Bridge | null => (window as unknown as WailsWindow).go?.main?.App ?? null
 

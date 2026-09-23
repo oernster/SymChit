@@ -64,13 +64,13 @@ describe('the shell', () => {
     await screen.findByRole('heading', { name: 'Record a symptom' })
 
     fireEvent.click(screen.getByRole('button', { name: /Guide/ }))
-    expect(await screen.findByRole('heading', { name: 'How SymChit works' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'How SymDiary works' })).toBeInTheDocument()
     expect(screen.getByText(/It does not diagnose\./)).toBeInTheDocument()
     fireEvent.keyDown(window, { key: 'Escape' })
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
 
     fireEvent.click(screen.getByRole('button', { name: /About/ }))
-    expect(await screen.findByRole('heading', { name: 'SymChit 1.0.0' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'SymDiary 1.0.0' })).toBeInTheDocument()
     // The notice carries the symbol and the year, both written out.
     expect(screen.getByText('© Oliver Ernster 2026')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
@@ -115,7 +115,7 @@ describe('the shell', () => {
     await waitFor(() => expect(document.documentElement.dataset.theme).toBe('light'))
     // The button now offers the way back, by its words and by its picture.
     expect(screen.getByRole('button', { name: /Dark mode/ })).toBeInTheDocument()
-    expect(window.localStorage.getItem('symchit.theme')).toBe('light')
+    expect(window.localStorage.getItem('symdiary.theme')).toBe('light')
   })
 
   it('opens every dialog on its first stop, never on the page of words', async () => {
@@ -126,7 +126,7 @@ describe('the shell', () => {
     // The Guide's body is reachable by Tab and is not a control, so the dialog
     // opens past it, on Close.
     fireEvent.click(screen.getByRole('button', { name: /Guide/ }))
-    await screen.findByRole('heading', { name: 'How SymChit works' })
+    await screen.findByRole('heading', { name: 'How SymDiary works' })
     await waitFor(() =>
       expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Close' })),
     )

@@ -20,7 +20,7 @@ import (
 const driverName = "sqlite"
 
 // busyTimeoutMillis is how long a statement waits for a lock held by another
-// connection before failing. SymChit runs one instance with one connection, so
+// connection before failing. SymDiary runs one instance with one connection, so
 // the wait covers only an external tool holding the file open.
 const busyTimeoutMillis = 5000
 
@@ -33,9 +33,9 @@ const dsnLayout = "file:%s?_pragma=journal_mode(WAL)&_pragma=synchronous(FULL)" 
 // the user alone.
 const directoryMode = 0o700
 
-// ErrNewerSchema refuses a file written by a later SymChit, which this one
+// ErrNewerSchema refuses a file written by a later SymDiary, which this one
 // would not know how to keep.
-var ErrNewerSchema = errors.New("the record was written by a newer SymChit")
+var ErrNewerSchema = errors.New("the record was written by a newer SymDiary")
 
 // Store is the SQLite record.
 type Store struct {
@@ -53,7 +53,7 @@ func Open(path string) (*Store, error) {
 	if err != nil {
 		return nil, fmt.Errorf("opening %s: %w", path, err)
 	}
-	// One connection: SymChit is the single writer; a pragma set on one
+	// One connection: SymDiary is the single writer; a pragma set on one
 	// connection is not set on another.
 	db.SetMaxOpenConns(1)
 	store := &Store{db: db}

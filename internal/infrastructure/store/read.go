@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // timeLayout is how an instant is kept: RFC 3339 with its offset, to the

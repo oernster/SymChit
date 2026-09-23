@@ -5,12 +5,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
-	"github.com/oernster/symchit/internal/product"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
+	"github.com/oernster/symdiary/internal/product"
 )
 
-// DefaultPath answers where the record lives: %APPDATA%\SymChit\symchit.db
+// DefaultPath answers where the record lives: %APPDATA%\SymDiary\symdiary.db
 // (FR-060).
 func DefaultPath() (string, error) {
 	base, err := os.UserConfigDir()

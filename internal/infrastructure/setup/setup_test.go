@@ -31,16 +31,16 @@ func zipped(t *testing.T, entries map[string]string) []byte {
 
 func TestExtractWritesEveryEntry(t *testing.T) {
 	t.Parallel()
-	dest := filepath.Join(t.TempDir(), "Programs", "SymChit")
+	dest := filepath.Join(t.TempDir(), "Programs", "SymDiary")
 	payload := zipped(t, map[string]string{
-		"SymChit.exe":     "the application",
+		"SymDiary.exe":    "the application",
 		"docs/README.txt": "a note",
 	})
 	if err := ExtractZip(payload, dest); err != nil {
 		t.Fatalf("ExtractZip: %v", err)
 	}
 	for name, want := range map[string]string{
-		"SymChit.exe":     "the application",
+		"SymDiary.exe":    "the application",
 		"docs/README.txt": "a note",
 	} {
 		got, err := os.ReadFile(filepath.Join(dest, filepath.FromSlash(name)))
@@ -117,7 +117,7 @@ func TestSizeAndCopyAndRemove(t *testing.T) {
 // naming a place that does not exist.
 func TestQuotedWritesThePathAsWindowsDoes(t *testing.T) {
 	t.Parallel()
-	path := `C:\Users\Oliver\AppData\Local\Programs\SymChit\uninstall.exe`
+	path := `C:\Users\Oliver\AppData\Local\Programs\SymDiary\uninstall.exe`
 	got := quotedPath(path)
 	if want := `"` + path + `"`; got != want {
 		t.Errorf("quotedPath = %s, want %s", got, want)
@@ -139,11 +139,11 @@ func TestThePathsAreWhereTheyAreSaid(t *testing.T) {
 		answer func() (string, error)
 		want   string
 	}{
-		"install":  {InstallDir, filepath.Join(local, "Programs", "SymChit")},
-		"log":      {LogDir, filepath.Join(local, "SymChit")},
-		"record":   {RecordDir, filepath.Join(roaming, "SymChit")},
-		"file":     {RecordFile, filepath.Join(roaming, "SymChit", "symchit.db")},
-		"webview":  {WebViewDir, filepath.Join(roaming, "SymChit.exe")},
+		"install":  {InstallDir, filepath.Join(local, "Programs", "SymDiary")},
+		"log":      {LogDir, filepath.Join(local, "SymDiary")},
+		"record":   {RecordDir, filepath.Join(roaming, "SymDiary")},
+		"file":     {RecordFile, filepath.Join(roaming, "SymDiary", "symdiary.db")},
+		"webview":  {WebViewDir, filepath.Join(roaming, "SymDiary.exe")},
 		"startdir": {StartMenuProgramsDir, filepath.Join(roaming, "Microsoft", "Windows", "Start Menu", "Programs")},
 	}
 	for name, c := range cases {

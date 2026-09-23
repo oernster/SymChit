@@ -33,7 +33,7 @@ const removalPoll = 200 * time.Millisecond
 // executable open, which no test can reproduce without being that executable.
 func TestSchedulingARemovalActuallyRemovesTheFolder(t *testing.T) {
 	t.Parallel()
-	folder := filepath.Join(t.TempDir(), "Programs", "SymChit")
+	folder := filepath.Join(t.TempDir(), "Programs", "SymDiary")
 	if err := os.MkdirAll(filepath.Join(folder, "docs"), dirPerm); err != nil {
 		t.Fatalf("making the install folder: %v", err)
 	}

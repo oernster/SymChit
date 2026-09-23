@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
 // evenWidths measures every character the same, so what lands on which page is

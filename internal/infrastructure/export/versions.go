@@ -2,7 +2,7 @@ package export
 
 // The export's version contract.
 //
-// The file a user exports is their own copy of their record, so SymChit has to
+// The file a user exports is their own copy of their record, so SymDiary has to
 // go on reading it after the format has moved on. That is a promise about every
 // version ever written, not only the current one, so it is stated as a table
 // rather than left to whatever struct the code happens to hold today.
@@ -21,14 +21,14 @@ package export
 import (
 	"encoding/json"
 
-	"github.com/oernster/symchit/internal/application"
+	"github.com/oernster/symdiary/internal/application"
 )
 
 // firstVersion is the earliest version that ever existed. A file declaring
-// anything below it, the absent version included, was not written by SymChit.
+// anything below it, the absent version included, was not written by SymDiary.
 const firstVersion = 1
 
-// readers answers each format version this SymChit can read. A version with no
+// readers answers each format version this SymDiary can read. A version with no
 // entry here cannot be read, whatever formatVersion says.
 var readers = map[int]func([]byte) (application.Record, error){
 	1: readVersion1,

@@ -1,4 +1,4 @@
-# SymChit: development
+# SymDiary: development
 
 Every command here is PowerShell, run from the repository root.
 
@@ -30,7 +30,7 @@ In order, it:
 4. Checks the executable is there and prints its path and size.
 5. Zips `build/bin` into `installer/payload.zip`.
 6. Builds the setup program from `installer/`, with the same version flag.
-7. Copies it to `dist-installer/SymChitSetup.exe`, then puts the empty-zip
+7. Copies it to `dist-installer/SymDiarySetup.exe`, then puts the empty-zip
    placeholder back in `installer/payload.zip`, so a payload of megabytes never
    reaches a commit.
 
@@ -56,11 +56,11 @@ Ported from PigeonPost's. It installs the flatpak tooling where it is missing,
 adds flathub, pulls the GNOME runtime (which is what supplies the
 webkit2gtk-4.1 that Wails renders through, so the Go build carries
 `-tags webkit2_41`), writes the desktop entry, the metainfo and the manifest,
-builds inside the sandbox and exports `symchit.flatpak`. `bash
+builds inside the sandbox and exports `symdiary.flatpak`. `bash
 cleanup_flatpak.sh` uninstalls it and removes what the build left; it never
 touches the record.
 
-The finished application is given no network permission at all. SymChit opens no
+The finished application is given no network permission at all. SymDiary opens no
 connection; the sandbox is where that stops being a claim and becomes a
 rule: a build that started talking to something would fail at run time rather
 than quietly working. The build itself does get the network, since it fetches Go
@@ -90,14 +90,14 @@ wails dev
 ```
 
 The window opens with the page served by Vite, so an edit to `frontend/src`
-appears at once. It reads your real record at `%APPDATA%\SymChit\symchit.db`.
+appears at once. It reads your real record at `%APPDATA%\SymDiary\symdiary.db`.
 To leave that alone, run the built executable with a sandboxed folder instead:
 
 ```powershell
-$env:APPDATA = "$env:TEMP\symchit-sandbox\Roaming"; $env:LOCALAPPDATA = "$env:TEMP\symchit-sandbox\Local"; ./build/bin/SymChit.exe
+$env:APPDATA = "$env:TEMP\symdiary-sandbox\Roaming"; $env:LOCALAPPDATA = "$env:TEMP\symdiary-sandbox\Local"; ./build/bin/SymDiary.exe
 ```
 
-The log is at `%LOCALAPPDATA%\SymChit\SymChit.log`. It holds the run's start
+The log is at `%LOCALAPPDATA%\SymDiary\SymDiary.log`. It holds the run's start
 line and any crash; it never holds a symptom, a note or anything else from the
 record.
 
@@ -135,7 +135,7 @@ it; nothing else holds one.
 2. Bump `VERSION` if a bump is owed against the newest tag.
 3. `./build.ps1` and check the gate is green.
 4. Launch the built executable and use it: record, save a PDF, export, import.
-5. Run `dist-installer/SymChitSetup.exe` and walk each route: install, reopen
+5. Run `dist-installer/SymDiarySetup.exe` and walk each route: install, reopen
    for manage, repair, then uninstall. The checks only a person can settle are
    listed in [TESTING.md](TESTING.md).
 6. Commit, tag and publish. Those are the owner's to run.

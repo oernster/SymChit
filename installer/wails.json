@@ -1,7 +1,7 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "symchit-setup",
-  "outputfilename": "SymChitSetup",
+  "name": "symdiary-setup",
+  "outputfilename": "SymDiarySetup",
   "author": {
     "name": "Oliver Ernster",
     "email": "oernster@codecrafter.uk"

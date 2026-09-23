@@ -1,6 +1,6 @@
-# SymChit: architecture
+# SymDiary: architecture
 
-SymChit records observations and retrieves them. Everything below follows from
+SymDiary records observations and retrieves them. Everything below follows from
 one rule: **record what happened; do not decide what it means.**
 
 ## The invariants
@@ -15,7 +15,7 @@ planting a violation and reading the exit code.
 | 3 | The application layer depends on the domain and on the ports it declares, never on infrastructure or Wails. | `TestApplicationDoesNotImportInfrastructure` |
 | 4 | Only `main.go` wires infrastructure to the application. | `TestCompositionRootIsWhitelisted` |
 | 5 | No source file exceeds 400 lines; none sits in the 381 to 399 danger band. | `TestNoFileExceedsLineLimit`, `TestNoFileInDangerBand` |
-| 6 | SymChit opens no network connection: no `net` package anywhere, `connect-src 'none'` on the page. | `TestNoNetworkImports`, `TestThePageOpensNoConnection` |
+| 6 | SymDiary opens no network connection: no `net` package anywhere, `connect-src 'none'` on the page. | `TestNoNetworkImports`, `TestThePageOpensNoConnection` |
 | 7 | The wire is stated twice, in Go and in TypeScript; the two agree field for field; the receipt's line kinds agree name for name with the page's union and with the document's styles. | `tests/structural/wire_test.go`, `tests/structural/linekind_test.go` |
 | 8 | Every colour lives in `frontend/src/theme.css`; every text pairing meets WCAG 2.2 AA in both modes. | `tests/structural/colours_test.go` |
 | 9 | Every exported type carries a doc comment. | `TestEveryExportedTypeIsDocumented` |
@@ -91,7 +91,7 @@ One service per user-visible action, over the ports in `ports.go`.
 What a reader takes to an appointment. It is handed the receipt's lines and a
 path; it answers a file.
 
-SymChit used to hand the record to the window's browser engine to print. That
+SymDiary used to hand the record to the window's browser engine to print. That
 engine is a different one on each desktop, so the same record came off the
 paper three different ways, with what the reader got depending also on a
 tickbox in their own print dialog. The record is the product, so it is drawn once here
@@ -165,8 +165,8 @@ its own storage.
 
 | Decision | Why | What it costs |
 |---|---|---|
-| The receipt's lines are built in the domain, not the page. | The one thing SymChit must never do is add words to a medical record. A test asserts every line is a title, a range, a heading, a count, a recorded field or one of the two framing lines. | The page cannot reflow a line; it styles by kind. |
-| The saved document says what made it and what it is not. | A sheet outlives the window it came from: the reader is a doctor who has never seen SymChit and cannot be assumed to know that the notes are the patient's own. The framing is fixed text that names no event, so it says nothing about what was recorded. | Two more line kinds; the words become a promise once a sheet is in a filing cabinet. |
+| The receipt's lines are built in the domain, not the page. | The one thing SymDiary must never do is add words to a medical record. A test asserts every line is a title, a range, a heading, a count, a recorded field or one of the two framing lines. | The page cannot reflow a line; it styles by kind. |
+| The saved document says what made it and what it is not. | A sheet outlives the window it came from: the reader is a doctor who has never seen SymDiary and cannot be assumed to know that the notes are the patient's own. The framing is fixed text that names no event, so it says nothing about what was recorded. | Two more line kinds; the words become a promise once a sheet is in a filing cabinet. |
 | The line kinds are compared against the page's union by a test. | The wire test sees that a line carries a kind; it cannot see which kinds exist, while nothing in either build compares the two lists. A kind added in Go alone renders with a class no stylesheet knows, which reads correctly on screen and prints wrong. | A second scan; a new kind is two edits rather than one. |
 | The record is drawn as a PDF rather than printed by the browser. | A page belongs to whichever engine the desktop ships, so the same record came off the paper three different ways, with what the reader got depending also on a tickbox in their own print dialog. The record is the product. Drawing it ourselves also buys what no browser would keep: an event never split across two sheets, a page number on every page, a document the suite can measure rather than one only a printer can. | A PDF library, a typeface carried in the binary and a layout to maintain, in exchange for the print stylesheet and the page-margin tricks it replaces. |
 | The store resolves a symptom by key, creating it when absent. | Recording an event and creating its symptom is one transaction, so a failure leaves neither. | The store holds a key column the domain computes. |
@@ -174,13 +174,13 @@ its own storage.
 | A record that will not open becomes `store.Unavailable`. | The window opens and says what is wrong, instead of a program that never appears. Every action answers with the same reason. | Eleven one-line methods that refuse. |
 | Times are stored as RFC 3339 with their offset. | The instant reads back as the same instant; an export carries the offset it was written in. | Ordering happens in Go rather than in SQL. |
 | No encryption at rest. | A passphrase is a thing to lose; the Windows account already guards the file. Stated in the README rather than assumed. | Anyone who can sign in as the user can read the record. |
-| SymChit opens dark and carries its own switch, rather than following Windows. | A window that changes under the reader because the desktop reached dusk is a surprise; a button in the bar is one press away and what it chooses is remembered. The palette is held to AA in both modes by a test either way. | The page owns a preference, so the tokens hang off an attribute rather than a media query; the setup program carries the same button so the two cannot disagree. |
+| SymDiary opens dark and carries its own switch, rather than following Windows. | A window that changes under the reader because the desktop reached dusk is a surprise; a button in the bar is one press away and what it chooses is remembered. The palette is held to AA in both modes by a test either way. | The page owns a preference, so the tokens hang off an attribute rather than a media query; the setup program carries the same button so the two cannot disagree. |
 | The Guide and About read themselves down, gently, until the reader takes over. | Long help holds still on open, descends a pixel every second tick, holds at the tail and rewinds; any wheel, press, key or focus arrival suspends it for 2.5 seconds and it then resumes from wherever the reader left it. The pace belongs to the application rather than to either dialog. | A timer per open dialog, plus a pure state machine to keep the pacing testable without waiting. |
 | The focus ring is answered by the page, not left to the browser. | The browser has an opinion about Tab and none about the arrows, so the house model (Tab and Right forward, Shift+Tab and Left back, wrapping at both ends) has to be stated. It is split in two: the rules are a pure module under test; one listener drives them against the page. | One key listener at the shell, plus a text field that has to be asked for its arrows back rather than assumed. |
 | Three ring states and no more. | Nothing at rest, so the window is quiet until it is used; green while a control is hovered or focused, because both say "you can use this" and a reader should not have to learn two colours for one fact; permanently red while disabled, because the red IS the state and a ring that waited for the mouse would leave Save PDF looking like a button nobody had pressed yet. The accent is data meaning and never a ring. | A disabled control has to give up its fill as well; otherwise the ring it is meant to show disappears into it. |
 | Only the run log knows which platform it is on. | Everything else was already portable: the record's folder comes from `os.UserConfigDir`, the page is a page; SQLite is pure Go. The run log answers a Windows-only failure, a windowed run handed a standard error handle of 0, so that half sits behind a build tag; its folder rule is a pure function taking the platform as an argument, so all three answers are exercised wherever the suite runs. | Two small files instead of one, plus a rule stated rather than read from the machine it runs on. |
-| The Flatpak is given no network permission. | SymChit opens no connection; the sandbox is where that claim stops being a claim: an application that started talking to something would fail at run time rather than quietly working. The build gets the network, because it fetches Go modules and npm packages. | The manifest has two permission lists that must not be confused for each other. |
-| The donate address lives in Go and the page never names one. | The page asks for the donation page; Go holds the only copy of the address and hands it to the desktop. Nothing arrives from the page, so there is no address to validate before opening; the no-network guarantee is untouched because SymChit fetches nothing. | One more bound method, plus a seam over Wails' opener so no test opens a browser. |
+| The Flatpak is given no network permission. | SymDiary opens no connection; the sandbox is where that claim stops being a claim: an application that started talking to something would fail at run time rather than quietly working. The build gets the network, because it fetches Go modules and npm packages. | The manifest has two permission lists that must not be confused for each other. |
+| The donate address lives in Go and the page never names one. | The page asks for the donation page; Go holds the only copy of the address and hands it to the desktop. Nothing arrives from the page, so there is no address to validate before opening; the no-network guarantee is untouched because SymDiary fetches nothing. | One more bound method, plus a seam over Wails' opener so no test opens a browser. |
 | The Donate button takes a seat in the bar rather than a band of its own. | The window already has a tray of icon buttons and no footer, so a second strip carrying one control costs more than it buys. It is drawn at its neighbours' height: a member sized smaller than the row it sits in reads as a mistake. | The mark keeps its own width, so one rule sits beside the band's square icons. |
 | The window hands the page the keyboard as it opens. | DOM focus and keyboard focus are two different things in a hosted webview. The page can hold the first while the webview holds none of the second; no key then reaches any listener: measured in the built window, where no Tab stepped the ring until the page had been clicked once. Showing the main window does not fix it either: WebView2 hosts the page in a child window of its own and the keys follow the child. The page cannot fix this from its own side, so the facade asks the window on DOM ready. | A `windowFocuser` seam wired at the composition root, over `internal/infrastructure/windowfocus`, which focuses the WebView2 child window through Win32 and does nothing off Windows. It runs on a goroutine of its own, with a recover behind it, so neither the wait nor a panic there can touch the opening window. |
 | The licence is explained before it is shown. | Naming a licence explains nothing to the person installing the program; a setup screen that says "GNU General Public Licence, version 3" and stops has told them only that there is one. So the screen says what they may do and what they must do, in ordinary words, then shows the text in full for anyone who wants it. | A plain reading and the published text, both from `internal/licence`, in a pane that reads itself down and steps aside when touched. The pane is a text view, so it draws no ring in any state. |
@@ -188,22 +188,22 @@ its own storage.
 
 ## The export format
 
-The file a user exports is their own copy of their record, so SymChit has to go
+The file a user exports is their own copy of their record, so SymDiary has to go
 on reading it after the format has moved on. That is a promise about every
 version ever written, not only the current one.
 
 Every file carries an envelope that never changes shape: `format`, always
-`symchit-record`, then `version`, an integer. The envelope is read on its own
+`symdiary-record`, then `version`, an integer. The envelope is read on its own
 first; the version chooses which reader reads the rest. Reading the whole
 file into one struct and hoping it fits is the thing a versioned format exists
 to avoid.
 
 | The file says | What happens |
 |---|---|
-| A different `format` (or nothing that parses as JSON) | Refused: not a SymChit export |
-| No `version` (or one below 1) | Refused. An unversioned file is not one SymChit wrote; a record is not the thing to be generous about |
-| A version SymChit knows | Read by that version's own reader |
-| A version above the current one | Refused, naming the version, so the user knows a newer SymChit wrote it |
+| A different `format` (or nothing that parses as JSON) | Refused: not a SymDiary export |
+| No `version` (or one below 1) | Refused. An unversioned file is not one SymDiary wrote; a record is not the thing to be generous about |
+| A version SymDiary knows | Read by that version's own reader |
+| A version above the current one | Refused, naming the version, so the user knows a newer SymDiary wrote it |
 
 Adding a version is three things, all of which the suite refuses the change
 until you have done: raise `formatVersion`, add a reader to the table in

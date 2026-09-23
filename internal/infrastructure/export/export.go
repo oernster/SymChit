@@ -12,12 +12,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/oernster/symchit/internal/application"
-	"github.com/oernster/symchit/internal/domain"
+	"github.com/oernster/symdiary/internal/application"
+	"github.com/oernster/symdiary/internal/domain"
 )
 
-// formatName marks a file as a SymChit export.
-const formatName = "symchit-record"
+// formatName marks a file as a SymDiary export.
+const formatName = "symdiary-record"
 
 // formatVersion is the version this code writes. It reads this one and every
 // older one, which versions.go states as a table and a test enforces: raising
@@ -34,18 +34,18 @@ const maxFileBytes = 64 << 20
 const timeLayout = time.RFC3339Nano
 
 // tempPattern names the temporary file a write goes through.
-const tempPattern = ".symchit-export-*.tmp"
+const tempPattern = ".symdiary-export-*.tmp"
 
 // The refusals a read can answer.
 var (
-	ErrNotAnExport = errors.New("not a SymChit export")
-	ErrNewerFormat = errors.New("written by a newer SymChit")
-	ErrTooLarge    = errors.New("larger than any SymChit export")
+	ErrNotAnExport = errors.New("not a SymDiary export")
+	ErrNewerFormat = errors.New("written by a newer SymDiary")
+	ErrTooLarge    = errors.New("larger than any SymDiary export")
 	// ErrNoVersion refuses a file that claims to be an export but names no
-	// version SymChit ever wrote. Reading one as though it were the current
+	// version SymDiary ever wrote. Reading one as though it were the current
 	// format is how a hand-edited or third-party file gets to decide what a
 	// medical record says.
-	ErrNoVersion = errors.New("names no SymChit export version")
+	ErrNoVersion = errors.New("names no SymDiary export version")
 )
 
 // fileShape is the file's JSON form.
@@ -121,7 +121,7 @@ func writeAtomically(path string, data []byte) (err error) {
 	return os.Rename(temp.Name(), path)
 }
 
-// Read reads a record from path, refusing anything that is not a SymChit export
+// Read reads a record from path, refusing anything that is not a SymDiary export
 // this version can read.
 func (File) Read(path string) (application.Record, error) {
 	opened, err := os.Open(path)

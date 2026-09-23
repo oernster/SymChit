@@ -18,7 +18,7 @@ export function GuideDialog({ onClose }: Props) {
   const autoScroll = useAutoScroll()
   return (
     <Modal labelId="guide-title" role="dialog" onClose={onClose} pinnedActions>
-      <h2 id="guide-title">How SymChit works</h2>
+      <h2 id="guide-title">How SymDiary works</h2>
       <div className="dialog-body" ref={autoScroll}>
         {guideSections.map((section) => (
           <section className="guide-section" key={section.heading}>
