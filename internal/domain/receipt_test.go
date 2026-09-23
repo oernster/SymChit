@@ -75,7 +75,6 @@ func TestReceiptMatchesTheAcceptanceExample(t *testing.T) {
 		"28 Aug 07:45",
 		"22 Sep 17:12",
 		"Only been awake for about 10 minutes.",
-		testFraming.Provenance,
 	})
 }
 
@@ -133,7 +132,7 @@ func TestReceiptHoldsNoOtherText(t *testing.T) {
 	}
 }
 
-func TestTheFramingWrapsTheRecord(t *testing.T) {
+func TestTheFramingOpensTheRecord(t *testing.T) {
 	t.Parallel()
 	receipt, err := BuildReceipt(sample(t),
 		Date{2026, time.August, 23}, Date{2026, time.September, 22}, london(t))
@@ -141,12 +140,14 @@ func TestTheFramingWrapsTheRecord(t *testing.T) {
 		t.Fatalf("BuildReceipt: %v", err)
 	}
 	lines := receipt.Lines(testFraming)
-	first, last := lines[0], lines[len(lines)-1]
+	first := lines[0]
 	if first.Kind != LineProvenance || first.Text != testFraming.Provenance {
 		t.Errorf("the sheet opens with %+v, want the provenance", first)
 	}
-	if last.Kind != LineProvenance || last.Text != testFraming.Provenance {
-		t.Errorf("the sheet closes with %+v, want the provenance", last)
+	for _, line := range lines[1:] {
+		if line.Kind == LineProvenance {
+			t.Error("the provenance is printed more than once")
+		}
 	}
 	// The statement sits under the range, so it is read before any event.
 	if lines[3].Kind != LineStatement || lines[3].Text != testFraming.Statement {
@@ -209,7 +210,6 @@ func TestReceiptAcrossAYearNamesTheYear(t *testing.T) {
 		"Tired - 2 recorded events",
 		"30 Dec 2025 09:00",
 		"02 Jan 2026 09:00",
-		testFraming.Provenance,
 	})
 }
 

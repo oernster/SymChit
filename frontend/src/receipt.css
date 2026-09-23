@@ -36,9 +36,9 @@
 }
 
 /*
-  The framing (FR-045): what made the sheet, printed above the title and below
-  the last event, then what the sheet is, printed under the range. It is set
-  apart from the record so that nothing framing the notes reads as one of them.
+  The framing (FR-045): what made the sheet, printed once above the title, then
+  what the sheet is, printed under the range. It is set apart from the record so
+  that nothing framing the notes reads as one of them.
 */
 .receipt .provenance,
 .receipt .statement {
@@ -75,18 +75,30 @@
   flex: 0 0 auto;
 }
 
-.receipt .provenance:last-child {
-  margin-top: 18px;
-  border-top: 1px solid var(--border);
-  padding-top: 8px;
-}
-
 .receipt .statement {
   margin-top: 6px;
   max-width: 46em;
 }
 
 @media print {
+  /*
+    The browser draws its own header and footer (the date, the page title, the
+    address, the page number) inside the page margin; a page can reach them no
+    other way. Leave no margin and there is nowhere for them to print, so the
+    margin the paper still needs moves onto the sheet itself.
+
+    The trade: a record long enough to run past one page begins the second at
+    the physical edge, where a printer cannot mark, so its first line can be
+    lost. A record of one page is unaffected.
+  */
+  @page {
+    margin: 0;
+  }
+
+  .receipt {
+    padding: 14mm 16mm;
+  }
+
   .band,
   .status,
   .problem,

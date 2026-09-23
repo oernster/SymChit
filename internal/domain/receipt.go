@@ -92,8 +92,8 @@ const (
 // live in internal/product; the domain depends on nothing, so it is given them
 // at the moment it writes the lines.
 type Framing struct {
-	// Provenance names the program and its address. It prints above the title
-	// and again below the last event.
+	// Provenance names the program and its address. It prints above the title,
+	// once, before anything recorded.
 	Provenance string
 	// Statement says the record is not a diagnosis. It prints below the range,
 	// where a reader meets it before any recorded event.
@@ -154,7 +154,7 @@ func (r Receipt) Lines(framing Framing) []Line {
 			}
 		}
 	}
-	return append(lines, Line{Kind: LineProvenance, Text: framing.Provenance})
+	return lines
 }
 
 // heading writes a group's heading: its symptom and how many events it holds.

@@ -21,9 +21,9 @@ export function daysBefore(iso: string, days: number): string {
 }
 
 /**
- * Whether a line is the sheet's letterhead: the first line, a provenance one. The same words close the sheet at the foot, where a second copy of the
- * mark would read as a decoration rather than as a heading, so the position is
- * part of the test and not only the kind.
+ * Whether a line is the sheet's letterhead: the first line, a provenance one.
+ * The position is part of the test and not only the kind, so a mark can never
+ * arrive anywhere other than the head of the sheet.
  */
 function isLetterhead(line: ReceiptLine, index: number): boolean {
   return index === 0 && line.kind === 'provenance'
@@ -70,7 +70,7 @@ export function ReceiptPane({ refused }: Props) {
           {lines.map((line, index) => (
             <p key={index} className={`line ${line.kind}`}>
               {/*
-                The mark goes beside the first provenance line, which is the one
+                The mark goes beside the provenance line, which is the one
                 naming the program and its address, so the sheet is identifiable
                 at a glance on a desk of paper. It sits with the words rather
                 than above them because the pair is the letterhead: a picture

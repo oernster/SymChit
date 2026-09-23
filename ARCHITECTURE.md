@@ -56,10 +56,11 @@ writes it where it belongs, while the facade fills that struct from `product`.
 The domain stays pure, the words keep one home and the sheet still carries
 nothing the domain did not write.
 
-The application's mark is drawn beside the first of those framing lines and
-nowhere else on the sheet (FR-045). It is the page's own decision, not the
-domain's: a picture is presentation, so the receipt stays a list of lines with
-a kind and the pane decides that the first provenance line is a letterhead.
+The application's mark is drawn beside the opening framing line and nowhere
+else on the sheet (FR-045). It is the page's own decision, not the domain's: a
+picture is presentation, so the receipt stays a list of lines with a kind and
+the pane decides that the first line, where it is a provenance one, is a
+letterhead.
 
 ### Application: `internal/application`
 

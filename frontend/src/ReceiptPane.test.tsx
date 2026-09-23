@@ -35,18 +35,16 @@ describe('the receipt', () => {
     const record = await screen.findByLabelText('The symptom record')
     const lines = Array.from(record.querySelectorAll('p'))
     const framed = lines.filter((line) => line.classList.contains('provenance'))
-    expect(framed).toHaveLength(2)
+    expect(framed).toHaveLength(1)
     expect(framed[0]).toBe(lines[0])
-    expect(framed[1]).toBe(lines[lines.length - 1])
     expect(record.querySelectorAll('p.statement')).toHaveLength(1)
   })
 
   it('marks the sheet once, beside the address at the top', async () => {
     // The letterhead: the application's own icon beside the line naming the
     // program and where it lives, so a sheet on a desk of paper says what
-    // produced it. The same words close the sheet, where a second mark would
-    // read as decoration rather than as a heading, so exactly one is expected
-    // and its place is asserted rather than only its presence.
+    // produced it. It belongs to the opening line alone, so its place is
+    // asserted rather than only its presence.
     installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
     render(<ReceiptPane refused={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
@@ -57,7 +55,9 @@ describe('the receipt', () => {
 
     const lines = Array.from(record.querySelectorAll('p'))
     expect(lines[0]).toContainElement(marks[0] as HTMLElement)
-    expect(lines[lines.length - 1].querySelector('img')).toBeNull()
+    for (const line of lines.slice(1)) {
+      expect(line.querySelector('img')).toBeNull()
+    }
     // Decorative: the words beside it already name the program, so a reader
     // hearing the page read out should not be told twice.
     expect(marks[0]).toHaveAttribute('alt', '')

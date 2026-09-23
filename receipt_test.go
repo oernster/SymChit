@@ -66,7 +66,6 @@ func TestTheReceiptTheWindowSends(t *testing.T) {
 		{Kind: "heading", Text: "Tired - 1 recorded event"},
 		{Kind: "when", Text: "22 Sep 17:12"},
 		{Kind: "note", Text: "Only been awake for about 10 minutes."},
-		{Kind: "provenance", Text: wantedProvenance},
 	}
 	if len(lines) != len(want) {
 		t.Fatalf("receipt = %+v", lines)
