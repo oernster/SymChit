@@ -155,7 +155,7 @@ const exportNameLayout = "%s record %s.json"
 func (a *App) Export() (path string, err error) {
 	defer guard(&err)
 	today := domain.DateOf(a.clock.Now(), a.zone)
-	path, err = a.chooser.SavePath(fmt.Sprintf(exportNameLayout, product.Name, today))
+	path, err = a.chooser.SavePath(fmt.Sprintf(exportNameLayout, product.Name, today), exportKind)
 	if err != nil || path == "" {
 		return "", err
 	}
@@ -203,7 +203,7 @@ func (a *App) SavePDF(from, to string) (path string, err error) {
 		return "", err
 	}
 	today := domain.DateOf(a.clock.Now(), a.zone)
-	path, err = a.chooser.SavePath(fmt.Sprintf(pdfNameLayout, product.Name, today))
+	path, err = a.chooser.SavePath(fmt.Sprintf(pdfNameLayout, product.Name, today), documentKind)
 	if err != nil || path == "" {
 		return "", err
 	}

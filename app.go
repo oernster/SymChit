@@ -17,10 +17,38 @@ import (
 // goes to the log; the page gets a sentence it can show.
 var errInternal = errors.New(product.Name + " hit an internal fault; the details are in its log")
 
-// fileChooser asks the user where to write or read an export. An empty path
-// with no error means the user cancelled.
+// fileKind names what a file dialog is for: the words in its title, how the
+// kind of file is described to the user and the extension it filters to.
+//
+// The extension is not decoration. macOS applies the dialog's filter to the
+// name it is given, so a PDF offered under an export filter is saved as
+// `record.pdf.json`: a file whose name says one thing, whose contents say
+// another and which no viewer will open. Found on macOS 2026-09-23, when both
+// dialogs still shared the one export filter.
+type fileKind struct {
+	title     string
+	describes string
+	extension string
+}
+
+// The two kinds of file SymChit writes.
+var (
+	exportKind = fileKind{
+		title:     "Export your record",
+		describes: product.Name + " record",
+		extension: "json",
+	}
+	documentKind = fileKind{
+		title:     "Save your symptom record",
+		describes: product.Name + " symptom record",
+		extension: "pdf",
+	}
+)
+
+// fileChooser asks the user where to write or read a file. An empty path with
+// no error means the user cancelled.
 type fileChooser interface {
-	SavePath(suggested string) (string, error)
+	SavePath(suggested string, kind fileKind) (string, error)
 	OpenPath() (string, error)
 }
 

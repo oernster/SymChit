@@ -41,6 +41,67 @@ func TestSavePDFWritesTheRecordWhereTheReaderChose(t *testing.T) {
 	}
 }
 
+func TestTheSaveDialogAsksForTheKindOfFileItIsActuallyWriting(t *testing.T) {
+	t.Parallel()
+	// macOS applies the dialog's filter to the name it is given. A document
+	// offered under the export filter was saved as `record.pdf.json`: a file
+	// whose name said one thing, whose contents said another and which no
+	// viewer would open. Found on macOS 2026-09-23.
+	app, _, chooser := facade(t)
+	aTiredEvent(t, app)
+	chooser.save = filepath.Join(t.TempDir(), "record.pdf")
+
+	if _, err := app.SavePDF("2026-08-23", "2026-09-22"); err != nil {
+		t.Fatalf("SavePDF: %v", err)
+	}
+	if chooser.asked.extension != "pdf" {
+		t.Errorf("the save dialog was opened for a .%s file while writing a PDF",
+			chooser.asked.extension)
+	}
+	assertNameMatchesKind(t, chooser)
+
+	chooser.save = filepath.Join(t.TempDir(), "record.json")
+	if _, err := app.Export(); err != nil {
+		t.Fatalf("Export: %v", err)
+	}
+	if chooser.asked.extension != "json" {
+		t.Errorf("the save dialog was opened for a .%s file while writing an export",
+			chooser.asked.extension)
+	}
+	assertNameMatchesKind(t, chooser)
+}
+
+// assertNameMatchesKind states that the name a dialog suggests ends in the
+// extension that dialog filters to. Where they disagree, macOS keeps both.
+func assertNameMatchesKind(t *testing.T, chooser *fakeChooser) {
+	t.Helper()
+	if want := "." + chooser.asked.extension; !strings.HasSuffix(chooser.suggested, want) {
+		t.Errorf("the dialog suggested %q under a %s filter, so the two would be joined",
+			chooser.suggested, want)
+	}
+}
+
+// TestEveryKindOfFileSaysWhatItIs holds the two kinds apart in every respect a
+// reader sees, not only the extension: a dialog headed "Export your record"
+// over a symptom record tells them they are doing something else.
+func TestEveryKindOfFileSaysWhatItIs(t *testing.T) {
+	t.Parallel()
+	for _, kind := range []fileKind{exportKind, documentKind} {
+		if kind.title == "" || kind.describes == "" || kind.extension == "" {
+			t.Errorf("%+v leaves a dialog with nothing to say", kind)
+		}
+		if strings.HasPrefix(kind.extension, ".") {
+			t.Errorf("%q carries its own dot, which the filter adds", kind.extension)
+		}
+	}
+	if exportKind.extension == documentKind.extension {
+		t.Error("both kinds filter to the same extension, so one of them is wrong")
+	}
+	if exportKind.title == documentKind.title {
+		t.Error("both dialogs are headed the same, so one of them names the wrong act")
+	}
+}
+
 func TestSavePDFWritesNothingWhenTheReaderCancels(t *testing.T) {
 	t.Parallel()
 	app, _, chooser := facade(t)

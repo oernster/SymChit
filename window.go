@@ -13,9 +13,12 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-// exportFilter limits the file dialogs to export files.
-var exportFilter = []runtime.FileFilter{
-	{DisplayName: product.Name + " record (*.json)", Pattern: "*.json"},
+// filters limits a dialog to one kind of file.
+func (k fileKind) filters() []runtime.FileFilter {
+	return []runtime.FileFilter{{
+		DisplayName: fmt.Sprintf("%s (*.%s)", k.describes, k.extension),
+		Pattern:     "*." + k.extension,
+	}}
 }
 
 // downloadsName is the folder both file dialogs open in, where a person
@@ -40,18 +43,19 @@ func downloads() string {
 // windowChooser asks through the window's own file dialogs.
 type windowChooser struct{ app *App }
 
-// SavePath opens the save dialog with a suggested name.
-func (c windowChooser) SavePath(suggested string) (string, error) {
+// SavePath opens the save dialog with a suggested name, for one kind of file.
+func (c windowChooser) SavePath(suggested string, kind fileKind) (string, error) {
 	return runtime.SaveFileDialog(c.app.ctx, runtime.SaveDialogOptions{
-		Title: "Export your record", DefaultFilename: suggested,
-		DefaultDirectory: downloads(), Filters: exportFilter,
+		Title: kind.title, DefaultFilename: suggested,
+		DefaultDirectory: downloads(), Filters: kind.filters(),
 	})
 }
 
 // OpenPath opens the open dialog.
 func (c windowChooser) OpenPath() (string, error) {
 	return runtime.OpenFileDialog(c.app.ctx, runtime.OpenDialogOptions{
-		Title: "Import a record", DefaultDirectory: downloads(), Filters: exportFilter,
+		Title: "Import a record", DefaultDirectory: downloads(),
+		Filters: exportKind.filters(),
 	})
 }
 

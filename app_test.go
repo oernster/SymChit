@@ -24,10 +24,20 @@ func (c *stoppedClock) Now() time.Time { return c.now }
 type fakeChooser struct {
 	save, open string
 	err        error
+	// asked is the kind the last save dialog was opened for. macOS applies the
+	// filter to the name, so a dialog opened for the wrong kind writes a file
+	// nothing will open.
+	asked fileKind
+	// suggested is the name that dialog was opened with, kept because the name
+	// and the kind have to agree: it is their disagreement that reaches the user.
+	suggested string
 }
 
-func (c *fakeChooser) SavePath(string) (string, error) { return c.save, c.err }
-func (c *fakeChooser) OpenPath() (string, error)       { return c.open, c.err }
+func (c *fakeChooser) SavePath(suggested string, kind fileKind) (string, error) {
+	c.asked, c.suggested = kind, suggested
+	return c.save, c.err
+}
+func (c *fakeChooser) OpenPath() (string, error) { return c.open, c.err }
 
 // london is the zone the facade works in.
 func london(t *testing.T) *time.Location {
