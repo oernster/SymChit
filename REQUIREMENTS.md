@@ -9,8 +9,8 @@ No questions remain open (Appendix B).
 
 ### 1.1 Purpose
 
-SymChit records symptoms at the moment they are noticed. Later, it prints a
-short factual record to take to a doctor. It is a recorder, not a
+SymChit records symptoms at the moment they are noticed. Later, it saves a
+short factual record as a PDF to take to a doctor. It is a recorder, not a
 diagnostician: it keeps what the user observed and when; interpreting that is
 for the user and their doctor.
 
@@ -30,7 +30,7 @@ In scope for version 1:
 - Reusable symptom definitions, offered by autocomplete.
 - A history of events, filtered by date range, symptom and severity.
 - Editing and deleting events.
-- A printable symptom receipt over a chosen date range.
+- A symptom record over a chosen date range, saved as a PDF.
 - A machine-readable export of the whole record.
 - A Windows desktop application in Go with Wails, plus the house setup program.
 - The same application on Linux and macOS, packaged as a Flatpak and a signed
@@ -65,10 +65,10 @@ Out of scope (decided by the source document, sections 10 and 15):
 | Severity | An optional user choice from a fixed list (FR-004). Never computed. |
 | Note | Optional free text attached to an event, kept byte for byte as entered. |
 | History | The list of events in the application, newest first. |
-| Receipt | The printable symptom record for a date range (section 3.4). |
+| Receipt | The symptom record for a date range: shown in the window and saved as a PDF (section 3.4). |
 | Export | The machine-readable file holding the whole record (section 3.5). |
 | Record | Everything SymChit stores: definitions plus events. |
-| Local time | The time in the zone Windows is set to. |
+| Local time | The time in the zone the desktop is set to. |
 | Reference machine | Oliver's desktop, Windows 11 build 26200. |
 
 ### 1.5 References
@@ -84,13 +84,14 @@ Out of scope (decided by the source document, sections 10 and 15):
 
 ### 2.1 Product perspective
 
-A new, standalone Windows desktop application. It has no server, no network
-access and no data other than the record and its own settings.
+A new, standalone desktop application for Windows, macOS and Linux
+(Amendment 7). It has no server, no network access and no data other than the
+record and its own settings.
 
 ### 2.2 User classes
 
-One: the person whose symptoms are recorded, using their own Windows account.
-A doctor reads the printed receipt and never uses the application. No
+One: the person whose symptoms are recorded, using their own user account.
+A doctor reads the saved record and never uses the application. No
 administrator rights are needed at any point.
 
 ### 2.3 Operating environment
@@ -138,7 +139,7 @@ rules land under `~/.var/app/uk.codecrafter.SymChit`.
 | A-1 | One person's record is small: under 20,000 events over ten years (about five a day). Performance targets (3.6) are set against 20,000. | Oliver | To confirm |
 | A-2 | Windows' clock is right; SymChit trusts it for the default occurrence time. | Oliver | To confirm |
 | A-3 | Oliver supplies the application artwork as a master PNG with a transparent background. | Oliver | To confirm |
-| A-4 | WebView2 in a Wails window can print the receipt through the Windows print dialog, including Microsoft Print to PDF. | Claude | Measured and true (Appendix A, M-1) |
+| A-4 | A PDF the application draws itself opens on a machine that has never met SymChit, and says the same thing on every desktop. | Claude | Measured and true (Appendix A, M-1) |
 
 ## 3. Requirements
 
@@ -335,10 +336,16 @@ that does not resolve is a requirement nobody can check.
   the framing of FR-045; every page carries `Page N of M`; no page begins with
   what was observed at an event whose time was on the page before; cancelling
   the dialog writes nothing and says nothing.
+- Each save dialog shall filter to the kind of file it is about to write and
+  shall suggest a name carrying that extension. macOS applies a dialog's filter
+  to the name it is given, so a document offered under another kind's filter is
+  written under a name that says one thing while its contents say another.
 - Verified by: `internal/application/history_test.go::TestReceiptFromTheStore`,
   `pdf_test.go`, `internal/infrastructure/pdf/layout_test.go` and
   `internal/infrastructure/pdf/sheet_test.go`, plus opening a saved document on
-  the reference machine (A-4).
+  the reference machine (A-4). The dialog's own kind is held by
+  `pdf_test.go::TestTheSaveDialogAsksForTheKindOfFileItIsActuallyWriting`,
+  proved to bite by planting the defect it was written for.
 
 **FR-041 Receipt contents**
 - Priority: Must
@@ -695,8 +702,8 @@ which is worth doing only if startup ever stops feeling quick.
 first page within 300 ms of a filter change, at the 95th percentile over 100
 changes, measured by a benchmark against a generated store.
 
-**NFR-PERF-003 Receipt**: A receipt over 1,000 events shall reach the print
-dialog within 2 s on the reference machine.
+**NFR-PERF-003 Receipt**: A record of over 1,000 events shall be written to a
+PDF within 2 s on the reference machine.
 
 **NFR-PRIV-001 No network**: The application and the setup program shall open
 no network connection. Verified by `tests/structural/boundary_test.go::TestNoNetworkImports`
@@ -760,14 +767,14 @@ prediction, prognosis, treatment or alleviation.
 
 Owner's ruling, 2026-09-22 (Q-8): of those purposes only monitoring could be
 argued at all, while SymChit is a note-taking application. It stores what the user
-typed and prints it back. None of the other purposes apply.
+typed and gives it back. None of the other purposes apply.
 
 The ruling is what the product is built to stay inside, so it is a constraint on
 every later change rather than a note about this version. The line is
 interpretation: the moment SymChit scores, trends, alerts, predicts or says two
 events are related, the argument that it only takes notes is gone. Section 1.3
-already puts every one of those out of scope; FR-042 holds the receipt to the
-record alone.
+already puts every one of those out of scope; FR-042 holds the record to the
+user's own entries alone.
 
 Confirmed 2026-09-22 against the published text, which is what a regulator reads
 rather than this document. Two sources, both read in full at the passages that
@@ -859,7 +866,7 @@ any internal structure. Those change whenever they are improved.
 
 | ID | Question | Measured |
 |---|---|---|
-| M-1 | Does `window.print()` in a Wails v2.12 window open the Windows print dialog with Microsoft Print to PDF offered? | Yes. Measured in the built window on 2026-09-22: the dialog opened, offering Save as PDF and Microsoft Print to PDF; the printed page carried the receipt alone. |
+| M-1 | Can the application draw the record itself, so that it reads the same on every desktop? | Yes, and it had to. Measured 2026-09-22 in the built window, `window.print()` opened the Windows print dialog and printed the receipt alone; measured again on all three desktops, the same page printed three different ways, with the browser's own header and footer reaching the paper unless the reader had turned them off. Since Amendment 16 the document is drawn in Go. Measured 2026-09-23 by writing a record and reading the text positions back out of it: A4, `Page N of M` on every page in order, the first line 19.3mm to 19.8mm from the top of every page, no event split across two sheets and nothing on the paper the record does not hold. |
 
 ### Appendix B: Open questions
 

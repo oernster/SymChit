@@ -16,7 +16,7 @@ planting a violation and reading the exit code.
 | 4 | Only `main.go` wires infrastructure to the application. | `TestCompositionRootIsWhitelisted` |
 | 5 | No source file exceeds 400 lines; none sits in the 381 to 399 danger band. | `TestNoFileExceedsLineLimit`, `TestNoFileInDangerBand` |
 | 6 | SymChit opens no network connection: no `net` package anywhere, `connect-src 'none'` on the page. | `TestNoNetworkImports`, `TestThePageOpensNoConnection` |
-| 7 | The wire is stated twice, in Go and in TypeScript; the two agree field for field; the receipt's line kinds agree name for name. | `tests/structural/wire_test.go`, `tests/structural/linekind_test.go` |
+| 7 | The wire is stated twice, in Go and in TypeScript; the two agree field for field; the receipt's line kinds agree name for name with the page's union and with the document's styles. | `tests/structural/wire_test.go`, `tests/structural/linekind_test.go` |
 | 8 | Every colour lives in `frontend/src/theme.css`; every text pairing meets WCAG 2.2 AA in both modes. | `tests/structural/colours_test.go` |
 | 9 | Every exported type carries a doc comment. | `TestEveryExportedTypeIsDocumented` |
 | 10 | The ring belongs to a control: no container carries a ring rule or a tabindex; a surface made to scroll turns the engine's own ring off. | `tests/structural/focus_test.go::TestNoRingRuleNamesAContainer`, `TestNoContainerTakesFocus`, `TestEveryScrollingSurfaceSuppressesTheNativeRing` |
@@ -62,43 +62,6 @@ stays a list of lines with a kind; both the window and the document decide
 for themselves that the first line, where it is a provenance one, is a
 letterhead.
 
-### Infrastructure: `internal/infrastructure/pdf`
-
-What a reader takes to an appointment. It is handed the receipt's lines and a
-path; it answers a file.
-
-SymChit used to hand the record to the window's browser engine to print. That
-engine is a different one on each desktop, so the same record came off the
-paper three different ways, with what the reader got depending also on a
-tickbox in their own print dialog. The record is the product, so it is drawn once here
-(Amendment 16).
-
-The layout is a pure function in `layout.go`: given the lines, the page
-geometry and a Measurer, it answers the rows of each page. Nothing in it opens
-a file or knows what a PDF is, so what lands on which page is settled by tests
-that draw nothing. `sheet.go` is the renderer around it and owns no layout
-decisions beyond turning a row into ink. Two rules are worth stating because
-they are what a browser could not be made to keep: an event is never split
-across two sheets; every page says which page it is.
-
-### The setup program
-
-`installer/` is a second Wails application in the same module and is a facade,
-not a policy. What an install or a removal DOES lives in
-`internal/infrastructure/setup`: the paths, the payload fence, the version
-comparison, the shortcut writing and the ORDER those acts happen in.
-
-The order is the part that needed a seam. `setup.Machine` states every act an
-install or a removal performs on the computer it runs on, `setup.Real`
-implements it with one call per method and `setup.Install` and `setup.Remove`
-state the sequences over it. That is what makes it checkable that a removal
-takes the shortcuts before the registry entry, that it refuses outright while
-the application is open and that the record goes last and only when asked.
-`installer/app.go` holds a `Machine` and a progress reporter rather than
-reaching for either, so the facade's own decisions (the screen setup opens on,
-the choices it hands over) are testable too; what is left uncovered there is
-the Wails runtime itself.
-
 ### Application: `internal/application`
 
 One service per user-visible action, over the ports in `ports.go`.
@@ -120,7 +83,27 @@ One service per user-visible action, over the ports in `ports.go`.
 | `store` | The SQLite record, one transaction per write, plus `Unavailable`, which stands in when the file could not be opened so that every action still answers. |
 | `export` | The JSON export file: a versioned format, an atomic write and a distrustful read. |
 | `runlog` | The run log, plus pointing the process's error output at it before anything can fail. Ported from WhatDay. |
+| `pdf` | The document a reader takes to an appointment: a pure layout answering the rows of each page, then a renderer that turns a row into ink. |
 | `setup` | The per-user install policy: the paths, the fenced payload extraction, the version comparison, the registry entry, the shortcuts and the process work. The setup program is a facade over it and owns no install logic. |
+
+### The document: `internal/infrastructure/pdf`
+
+What a reader takes to an appointment. It is handed the receipt's lines and a
+path; it answers a file.
+
+SymChit used to hand the record to the window's browser engine to print. That
+engine is a different one on each desktop, so the same record came off the
+paper three different ways, with what the reader got depending also on a
+tickbox in their own print dialog. The record is the product, so it is drawn once here
+(Amendment 16).
+
+The layout is a pure function in `layout.go`: given the lines, the page
+geometry and a Measurer, it answers the rows of each page. Nothing in it opens
+a file or knows what a PDF is, so what lands on which page is settled by tests
+that draw nothing. `sheet.go` is the renderer around it and owns no layout
+decisions beyond turning a row into ink. Two rules are worth stating because
+they are what a browser could not be made to keep: an event is never split
+across two sheets; every page says which page it is.
 
 ### UI: the root package and `frontend/`
 
@@ -142,6 +125,17 @@ is its composition root and `installer/app.go` a facade over
 name of its own, because a page has no build step to catch a stale one. Its
 licence screen is filled the same way, sentence for sentence, from
 `internal/licence`.
+
+The facade owns no install policy. The ORDER of an install or a removal is
+policy too. `setup.Machine` states every act either one performs on the computer it
+runs on, `setup.Real` implements it with one call per method, while
+`setup.Install` and `setup.Remove` state the sequences over it. That is what
+makes it checkable that a removal takes the shortcuts before the registry
+entry, that it refuses outright while the application is open and that the
+record goes last and only when asked. `installer/app.go` holds a `Machine` and
+a progress reporter rather than reaching for either, so its own decisions (the
+screen setup opens on, the choices it hands over) are testable too; what is
+left uncovered there is the Wails runtime itself.
 
 That package is the one home for the licence: the published text plus a plain
 reading of what it permits and requires (FR-074). The text sits there as well
@@ -174,6 +168,7 @@ its own storage.
 | The receipt's lines are built in the domain, not the page. | The one thing SymChit must never do is add words to a medical record. A test asserts every line is a title, a range, a heading, a count, a recorded field or one of the two framing lines. | The page cannot reflow a line; it styles by kind. |
 | The saved document says what made it and what it is not. | A sheet outlives the window it came from: the reader is a doctor who has never seen SymChit and cannot be assumed to know that the notes are the patient's own. The framing is fixed text that names no event, so it says nothing about what was recorded. | Two more line kinds; the words become a promise once a sheet is in a filing cabinet. |
 | The line kinds are compared against the page's union by a test. | The wire test sees that a line carries a kind; it cannot see which kinds exist, while nothing in either build compares the two lists. A kind added in Go alone renders with a class no stylesheet knows, which reads correctly on screen and prints wrong. | A second scan; a new kind is two edits rather than one. |
+| The record is drawn as a PDF rather than printed by the browser. | A page belongs to whichever engine the desktop ships, so the same record came off the paper three different ways, with what the reader got depending also on a tickbox in their own print dialog. The record is the product. Drawing it ourselves also buys what no browser would keep: an event never split across two sheets, a page number on every page, a document the suite can measure rather than one only a printer can. | A PDF library, a typeface carried in the binary and a layout to maintain, in exchange for the print stylesheet and the page-margin tricks it replaces. |
 | The store resolves a symptom by key, creating it when absent. | Recording an event and creating its symptom is one transaction, so a failure leaves neither. | The store holds a key column the domain computes. |
 | An edit sends no time unless the user changed it. | An empty time means "keep what is held", so an edit cannot move an occurrence to the moment of the edit. The rule is structural rather than remembered. | The edit form compares before sending. |
 | A record that will not open becomes `store.Unavailable`. | The window opens and says what is wrong, instead of a program that never appears. Every action answers with the same reason. | Eleven one-line methods that refuse. |
@@ -182,7 +177,7 @@ its own storage.
 | SymChit opens dark and carries its own switch, rather than following Windows. | A window that changes under the reader because the desktop reached dusk is a surprise; a button in the bar is one press away and what it chooses is remembered. The palette is held to AA in both modes by a test either way. | The page owns a preference, so the tokens hang off an attribute rather than a media query; the setup program carries the same button so the two cannot disagree. |
 | The Guide and About read themselves down, gently, until the reader takes over. | Long help holds still on open, descends a pixel every second tick, holds at the tail and rewinds; any wheel, press, key or focus arrival suspends it for 2.5 seconds and it then resumes from wherever the reader left it. The pace belongs to the application rather than to either dialog. | A timer per open dialog, plus a pure state machine to keep the pacing testable without waiting. |
 | The focus ring is answered by the page, not left to the browser. | The browser has an opinion about Tab and none about the arrows, so the house model (Tab and Right forward, Shift+Tab and Left back, wrapping at both ends) has to be stated. It is split in two: the rules are a pure module under test; one listener drives them against the page. | One key listener at the shell, plus a text field that has to be asked for its arrows back rather than assumed. |
-| Three ring states and no more. | Nothing at rest, so the window is quiet until it is used; green while a control is hovered or focused, because both say "you can use this" and a reader should not have to learn two colours for one fact; permanently red while disabled, because the red IS the state and a ring that waited for the mouse would leave Print looking like a button nobody had pressed yet. The accent is data meaning and never a ring. | A disabled control has to give up its fill as well; otherwise the ring it is meant to show disappears into it. |
+| Three ring states and no more. | Nothing at rest, so the window is quiet until it is used; green while a control is hovered or focused, because both say "you can use this" and a reader should not have to learn two colours for one fact; permanently red while disabled, because the red IS the state and a ring that waited for the mouse would leave Save PDF looking like a button nobody had pressed yet. The accent is data meaning and never a ring. | A disabled control has to give up its fill as well; otherwise the ring it is meant to show disappears into it. |
 | Only the run log knows which platform it is on. | Everything else was already portable: the record's folder comes from `os.UserConfigDir`, the page is a page; SQLite is pure Go. The run log answers a Windows-only failure, a windowed run handed a standard error handle of 0, so that half sits behind a build tag; its folder rule is a pure function taking the platform as an argument, so all three answers are exercised wherever the suite runs. | Two small files instead of one, plus a rule stated rather than read from the machine it runs on. |
 | The Flatpak is given no network permission. | SymChit opens no connection; the sandbox is where that claim stops being a claim: an application that started talking to something would fail at run time rather than quietly working. The build gets the network, because it fetches Go modules and npm packages. | The manifest has two permission lists that must not be confused for each other. |
 | The donate address lives in Go and the page never names one. | The page asks for the donation page; Go holds the only copy of the address and hands it to the desktop. Nothing arrives from the page, so there is no address to validate before opening; the no-network guarantee is untouched because SymChit fetches nothing. | One more bound method, plus a seam over Wails' opener so no test opens a browser. |

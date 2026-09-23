@@ -11,7 +11,7 @@ A health tracker.  It doesn't diagnose.  It's just a little record of symptoms.
 When you notice a symptom, record it. When you see your doctor, take the record
 with you.
 
-SymChit is a local-first symptom recorder for Windows, Linux and macOS. It keeps what you
+SymChit is a local-first symptom recorder for Windows, macOS and Linux. It keeps what you
 observed and when you observed it, then saves a short factual record as a PDF
 you can take to an appointment. It is a recorder, not a diagnostician.
 
@@ -46,16 +46,18 @@ these:
 
 - It does not diagnose, suggest conditions or recommend treatment.
 - It does not interpret your observations, score them or claim that one event
-  led to another. The receipt counts your entries; that is the only arithmetic.
+  led to another. The record counts your entries; that is the only arithmetic.
 - It does not rewrite what you wrote into medical terminology.
 - It does not remind or nag you to record anything.
 - It opens no network connection at all. There is no account, no cloud service,
   no advertising and no telemetry. A test forbids the networking packages
   outright and the page carries a Content-Security-Policy of `connect-src
-  'none'`. The Donate button is not an exception: it hands an address to
-  Windows and your browser does the asking, so SymChit still fetches nothing.
-- It does not encrypt your record. The file is protected by your Windows
-  account, as your documents are.
+  'none'`. The Donate button is not an exception: it hands an address to the
+  desktop and your browser does the asking, so SymChit still fetches nothing.
+  On Linux the Flatpak is granted no network permission at all, so there the
+  claim is enforced by the sandbox rather than only by a test.
+- It does not encrypt your record. The file is protected by your user account,
+  as your documents are.
 
 ## What it does
 
@@ -77,23 +79,24 @@ these:
 | Piece | What |
 |---|---|
 | Language | Go 1.26, cgo disabled |
-| Window | Wails v2 with WebView2 |
+| Window | Wails v2: WebView2 on Windows, WebKit on macOS and Linux |
 | Page | React 18 and TypeScript, built by Vite |
 | Record | SQLite through `modernc.org/sqlite` (pure Go), WAL, synchronous FULL |
+| Document | `github.com/go-pdf/fpdf` (pure Go), set in the Go fonts, carried in the binary |
 | Layering | `internal/{domain,application,infrastructure,ui}`, enforced by tests |
 
 ## Running it
 
-Download the executable on Windows, the Flatpak bundle on Linux or the DMG on
-macOS. To build any of them from source, see [DEVELOPMENT.md](DEVELOPMENT.md).
+Download the executable on Windows, the DMG on macOS or the Flatpak bundle on
+Linux. To build any of them from source, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 Your record and the run log go wherever the platform keeps such things:
 
 | | The record | The run log |
 |---|---|---|
 | Windows | `%APPDATA%\SymChit\symchit.db` | `%LOCALAPPDATA%\SymChit\SymChit.log` |
-| Linux | `$XDG_CONFIG_HOME/SymChit/symchit.db` | `$XDG_STATE_HOME/SymChit/SymChit.log` |
 | macOS | `~/Library/Application Support/SymChit/symchit.db` | `~/Library/Logs/SymChit/SymChit.log` |
+| Linux | `$XDG_CONFIG_HOME/SymChit/symchit.db` | `$XDG_STATE_HOME/SymChit/SymChit.log` |
 
 Inside the Flatpak both land under `~/.var/app/uk.codecrafter.SymChit`.
 
@@ -136,9 +139,9 @@ SymChit is free and stays free. There is no paid tier, no licence key and no
 feature held back behind a donation. If it has saved you an afternoon or made an
 appointment go better, the Donate button at the right of the bar opens a
 contribution page in your browser. SymChit sends nothing itself: it hands the
-address to Windows and your browser does the rest.
+address to the desktop and your browser does the rest.
 
-<a href="https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC"><img src="frontend/src/assets/icons/donate.png" alt="Donate to SymChit" width="120"></a>
+<a href="https://www.paypal.com/ncp/payment/4XP3AYNMPQGUC"><img src="docs/donate.png" alt="Donate to SymChit" width="120"></a>
 
 ## What version 1 promises
 

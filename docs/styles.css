@@ -519,9 +519,18 @@ section .intro {
   flex-wrap: wrap;
 }
 
+/* The mark is 239 by 208, so a square box would squash it. It is scaled by
+   height alone and keeps its own width, exactly as the copy in the window's
+   bar is. */
+.donate-mark {
+  display: inline-flex;
+  align-items: center;
+}
+
 .donate img {
-  width: 96px;
+  display: block;
   height: 96px;
+  width: auto;
 }
 
 .donate-words {
