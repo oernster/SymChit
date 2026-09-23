@@ -56,11 +56,39 @@ writes it where it belongs, while the facade fills that struct from `product`.
 The domain stays pure, the words keep one home and the sheet still carries
 nothing the domain did not write.
 
+The sheet is laid out as a table, which is the one place in this repository a
+layout table is the right answer. The printed record carries no page margin at
+all, because a browser draws its own header and footer inside that margin and a
+page can reach them no other way. What then holds the record off the edges is
+the sheet's own doing: horizontal padding, which applies on every page, plus an
+empty `thead` and `tfoot`, which a print engine lays out again on every page
+while padding is applied once to the element. Take the table away and page two
+starts at the edge of the paper; that was measured on paper before it was
+fixed. `tests/structural/print_test.go` holds all three parts in place.
+
 The application's mark is drawn beside the opening framing line and nowhere
 else on the sheet (FR-045). It is the page's own decision, not the domain's: a
 picture is presentation, so the receipt stays a list of lines with a kind and
 the pane decides that the first line, where it is a provenance one, is a
 letterhead.
+
+### The setup program
+
+`installer/` is a second Wails application in the same module and is a facade,
+not a policy. What an install or a removal DOES lives in
+`internal/infrastructure/setup`: the paths, the payload fence, the version
+comparison, the shortcut writing and the ORDER those acts happen in.
+
+The order is the part that needed a seam. `setup.Machine` states every act an
+install or a removal performs on the computer it runs on, `setup.Real`
+implements it with one call per method and `setup.Install` and `setup.Remove`
+state the sequences over it. That is what makes it checkable that a removal
+takes the shortcuts before the registry entry, that it refuses outright while
+the application is open and that the record goes last and only when asked.
+`installer/app.go` holds a `Machine` and a progress reporter rather than
+reaching for either, so the facade's own decisions (the screen setup opens on,
+the choices it hands over) are testable too; what is left uncovered there is
+the Wails runtime itself.
 
 ### Application: `internal/application`
 

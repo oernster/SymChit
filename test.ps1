@@ -111,14 +111,22 @@ try {
 # disk. The setup package moved 56 to 59 when the Windows theme read went: setup
 # opens dark and carries its own toggle, so the registry lookup nothing could
 # exercise is gone rather than sitting there lowering the number. It moved 59
-# to 62 when what an uninstall takes became a function with tests of its own.
+# to 62 when what an uninstall takes became a function with tests of its own,
+# then 62 to 64 when the install and removal SEQUENCES moved into it behind a
+# Machine seam and got tests of their own. The setup program itself enters the
+# table at the same moment and for the same reason: it had no test files at all
+# while its facade owned the sequences; once they moved out what is left is
+# a facade with a seam, so what it decides (the route it opens on, the choices
+# it hands over) is reachable. What is not is the Wails runtime underneath:
+# emitting a progress event and quitting the window.
 # TESTING.md names each shortfall.
 $measured = [ordered]@{
     '.'                                      = 76
+    './installer'                            = 69
     './internal/infrastructure/store'        = 92
     './internal/infrastructure/export'       = 91
     './internal/infrastructure/runlog'       = 81
-    './internal/infrastructure/setup'        = 62
+    './internal/infrastructure/setup'        = 64
 }
 
 Write-Host 'Measuring the rest of the tree...'
@@ -138,8 +146,10 @@ foreach ($package in $measured.Keys) {
     Write-Host ("  {0,-42} {1,5}%  floor {2}%" -f $package, $reached, $floor)
 }
 
-# Not gated at all, deliberately: internal/product holds two constants and
-# tests/structural is itself the guard. A floor over either asserts nothing.
+# Not gated at all, deliberately: internal/product holds two constants,
+# tests/structural is itself the guard and setup/setuptest is the double the
+# other two suites are written against. A floor over any of them asserts
+# nothing.
 
 if ($SkipFrontend) {
     Write-Host 'All green (the front end was skipped).'

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -12,15 +11,15 @@ import (
 	"github.com/oernster/symchit/internal/licence"
 )
 
-// uninstallExeName is the copy of setup left inside the install directory, so
-// the Apps list has something to call after the downloaded setup file is gone.
-const uninstallExeName = "uninstall.exe"
-
 // App is the Wails facade for the setup program. Everything the page can do
 // goes through a method here; the install policy itself lives in
-// internal/infrastructure/setup, so this file owns none of it.
+// internal/infrastructure/setup, so this file owns none of it. The machine it
+// acts on is held rather than reached for, which is what lets the sequences be
+// tested against a recorder instead of a real computer.
 type App struct {
 	ctx           context.Context
+	machine       setup.Machine
+	report        setup.Report
 	payload       []byte
 	version       string
 	uninstallMode bool
@@ -30,7 +29,22 @@ type App struct {
 // it, setup opens on the removal screen rather than on the manage one.
 func NewApp(payload []byte, version string) *App {
 	uninstall := len(os.Args) > 1 && os.Args[1] == setup.UninstallFlag
+	app := newApp(setup.Real{}, payload, version, uninstall)
+	app.report = app.progress
+	return app
+}
+
+// newApp is the composition point NewApp and the tests share, so neither states
+// the shape of an App twice.
+//
+// It reports to nobody until a caller says otherwise. A facade with no window
+// behind it has nowhere to put a progress event; answering with something
+// that does nothing beats answering with nothing at all: every step can report
+// without first asking whether there is anyone listening.
+func newApp(machine setup.Machine, payload []byte, version string, uninstall bool) *App {
 	return &App{
+		machine:       machine,
+		report:        func(int, string) {},
 		payload:       payload,
 		version:       version,
 		uninstallMode: uninstall,
@@ -125,10 +139,10 @@ var relationNames = map[setup.Relation]string{
 // in. Reading it once is what keeps the screen, its heading, its options and
 // its buttons from drifting apart.
 func (a *App) DetectState() StateDTO {
-	dir, _ := setup.InstallDir()
-	record, _ := setup.RecordFile()
-	installedVersion, installed := setup.InstalledVersion()
-	shortcuts := setup.CurrentShortcuts()
+	dir, _ := a.machine.InstallDir()
+	record, _ := a.machine.RecordFile()
+	installedVersion, installed := a.machine.InstalledVersion()
+	shortcuts := a.machine.CurrentShortcuts()
 
 	mode := "install"
 	switch {
@@ -157,7 +171,7 @@ func (a *App) DetectState() StateDTO {
 
 // AppRunning reports whether SymChit is open, so the page can offer to close it
 // rather than failing later on a locked executable.
-func (a *App) AppRunning() bool { return setup.IsAppRunning() }
+func (a *App) AppRunning() bool { return a.machine.AppRunning() }
 
 // CloseRunningApp ends the running application so setup can proceed.
 func (a *App) CloseRunningApp() error { return setup.CloseRunningApp() }
@@ -170,66 +184,16 @@ func (a *App) Install(choices OptionsDTO) error { return a.write(choices) }
 // quick fix for a damaged install, as distinct from a reinstall, which puts the
 // choices back to those of a new install.
 func (a *App) Repair() error {
-	shortcuts := setup.CurrentShortcuts()
+	shortcuts := a.machine.CurrentShortcuts()
 	return a.write(OptionsDTO{StartMenu: shortcuts.StartMenu, Desktop: shortcuts.Desktop})
 }
 
 // write is the single install path behind Install and Repair.
 func (a *App) write(choices OptionsDTO) error {
-	if setup.IsAppRunning() {
-		return setup.ErrAppRunning
-	}
-	dir, err := setup.InstallDir()
-	if err != nil {
-		return err
-	}
-
-	// The weighting is measured rather than counted: extracting the payload is
-	// most of the work, so the bar sits in it rather than reaching the end in a
-	// twentieth of a second and waiting there.
-	a.progress(10, "Writing the files...")
-	if err := setup.ExtractZip(a.payload, dir); err != nil {
-		return fmt.Errorf("write the files: %w", err)
-	}
-	exePath := filepath.Join(dir, setup.ExeName)
-
-	a.progress(70, "Registering SymChit with Windows...")
-	if err := a.register(dir, exePath); err != nil {
-		return err
-	}
-
-	a.progress(90, "Applying your choices...")
-	setup.ApplyShortcuts(exePath, dir, setup.Shortcuts{
+	return setup.Install(a.machine, a.report, a.payload, a.version, setup.Shortcuts{
 		StartMenu: choices.StartMenu,
 		Desktop:   choices.Desktop,
 	})
-
-	a.progress(100, "Done.")
-	return nil
-}
-
-// register leaves a copy of setup beside the application and writes the Apps
-// list entry that points at it.
-func (a *App) register(dir, exePath string) error {
-	self, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("locate setup: %w", err)
-	}
-	uninstallExe := filepath.Join(dir, uninstallExeName)
-	if err := setup.CopyFile(self, uninstallExe); err != nil {
-		return fmt.Errorf("write the uninstaller: %w", err)
-	}
-	sizeKB, _ := setup.DirSizeKB(dir)
-	if err := setup.WriteUninstallEntry(setup.UninstallInfo{
-		Version:      a.version,
-		InstallDir:   dir,
-		UninstallExe: uninstallExe,
-		IconPath:     exePath,
-		EstimatedKB:  sizeKB,
-	}); err != nil {
-		return fmt.Errorf("register SymChit: %w", err)
-	}
-	return nil
 }
 
 // Uninstall removes the shortcuts, the registry entry, the log and the
@@ -240,37 +204,7 @@ func (a *App) register(dir, exePath string) error {
 // Removing the program is not a decision to throw away years of observations,
 // so the screen names the file and asks.
 func (a *App) Uninstall(removeRecord bool) error {
-	if setup.IsAppRunning() {
-		return setup.ErrAppRunning
-	}
-	dir, err := setup.InstallDir()
-	if err != nil {
-		return err
-	}
-
-	a.progress(20, "Removing shortcuts...")
-	setup.RemoveShortcuts()
-
-	a.progress(45, "Removing the registry entry...")
-	_ = setup.RemoveUninstallEntry()
-
-	a.progress(60, "Clearing what the window kept...")
-	for _, folder := range setup.Leftovers() {
-		_ = setup.RemoveTree(folder)
-	}
-
-	if removeRecord {
-		a.progress(75, "Deleting your symptom record...")
-		if record, recordErr := setup.RecordDir(); recordErr == nil {
-			_ = setup.RemoveTree(record)
-		}
-	}
-
-	a.progress(90, "Removing the files...")
-	setup.ScheduleDirDeletion(dir)
-
-	a.progress(100, "Done.")
-	return nil
+	return setup.Remove(a.machine, a.report, removeRecord)
 }
 
 // LaunchApp starts the installed application, backing the "start it when this
@@ -281,11 +215,11 @@ func (a *App) LaunchApp() error { return setup.LaunchApp() }
 // there is nothing to install, so a box that waited for a go-ahead would never
 // take effect at all.
 func (a *App) SetShortcuts(startMenu, desktop bool) error {
-	dir, err := setup.InstallDir()
+	dir, err := a.machine.InstallDir()
 	if err != nil {
 		return err
 	}
-	setup.ApplyShortcuts(filepath.Join(dir, setup.ExeName), dir, setup.Shortcuts{
+	a.machine.ApplyShortcuts(filepath.Join(dir, setup.ExeName), dir, setup.Shortcuts{
 		StartMenu: startMenu,
 		Desktop:   desktop,
 	})

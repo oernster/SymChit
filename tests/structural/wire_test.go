@@ -77,13 +77,22 @@ func facadeFieldNames(t *testing.T, path, name string, structure *ast.StructType
 	return fields
 }
 
-// facadeDTOs returns every wire struct the facade declares, by json field name.
-// Only the files at the repository root are read: that is where the facade is.
+// facadeDTOs returns every wire struct the application's facade declares, by
+// json field name. Only the files at the repository root are read: that is
+// where the facade is.
 func facadeDTOs(t *testing.T, root string) map[string][]string {
+	t.Helper()
+	return dtosIn(t, root, root)
+}
+
+// dtosIn reads the wire structs one directory declares. It takes the directory
+// rather than assuming the root because there are two facades: the
+// application's, at the root, plus the setup program's, under installer.
+func dtosIn(t *testing.T, root, dir string) map[string][]string {
 	t.Helper()
 	out := map[string][]string{}
 	for _, path := range goFiles(t) {
-		if filepath.Dir(path) != root || strings.HasSuffix(path, "_test.go") {
+		if filepath.Dir(path) != dir || strings.HasSuffix(path, "_test.go") {
 			continue
 		}
 		parsed, err := parser.ParseFile(token.NewFileSet(), path, nil, 0)
@@ -108,7 +117,7 @@ func facadeDTOs(t *testing.T, root string) map[string][]string {
 		}
 	}
 	if len(out) == 0 {
-		t.Fatal("no DTOs found at the repository root, the walk is wrong")
+		t.Fatalf("no DTOs found in %s, the walk is wrong", filepath.ToSlash(dir))
 	}
 	return out
 }
