@@ -138,9 +138,9 @@ rules land under `~/.var/app/uk.codecrafter.SymDiary`.
 
 | ID | Assumption | Owner | Status |
 |---|---|---|---|
-| A-1 | One person's record is small: under 20,000 events over ten years (about five a day). Performance targets (3.6) are set against 20,000. | Oliver | To confirm |
-| A-2 | Windows' clock is right; SymDiary trusts it for the default occurrence time. | Oliver | To confirm |
-| A-3 | Oliver supplies the application artwork as a master PNG with a transparent background. | Oliver | To confirm |
+| A-1 | One person's record is small: under 20,000 events over ten years (about five a day). | Oliver | Accepted 2026-09-23, untested. It sets the scale the design assumes rather than a threshold anything enforces; nothing in the product fails at a larger record and nothing measures one (NFR-PERF-002). |
+| A-2 | The desktop's clock is right; SymDiary trusts it for the default occurrence time. | Oliver | Accepted 2026-09-23. The application reads the clock and offers the instant as the default, which the user may replace (FR-003), so a wrong clock is corrected by the person rather than detected by the program. |
+| A-3 | Oliver supplies the application artwork as a master PNG with a transparent background. | Oliver | Satisfied. The masters are in `assets/` plus `donate.png` at the root; `tools/genicons.py` derives every shipped size from them. |
 | A-4 | A PDF the application draws itself opens on a machine that has never met SymDiary; it says the same thing on every desktop. | Claude | Measured and true (Appendix A, M-1) |
 
 ## 3. Requirements
@@ -669,7 +669,13 @@ that does not resolve is a requirement nobody can check.
 **NFR-USE-001 Recording speed**: With SymDiary's window open, recording an event
 of an existing symptom with no note shall take no more than 4 keystrokes after
 the first letters of the symptom: choose the suggestion, then press Enter to
-record. Verified by a frontend test driving the keys.
+record. The keystroke count itself is not instrumented. What the suite holds is
+the path those keys drive: `frontend/src/RecordPane.test.tsx` covers entering a
+symptom, recording it and the form clearing afterwards, while
+`useRing.test.tsx` and `ring.test.ts` hold the keyboard model that gets the
+focus there. Counting the keys would mean a test asserting a number that the
+layout could change without the behaviour changing, which is worth doing only
+if recording ever stops feeling quick.
 
 **NFR-USE-002 Keyboard**: Every action shall be reachable by keyboard alone
 (Amendment 8). Tab and Right shall step the focus ring forward and Shift+Tab and
@@ -703,12 +709,22 @@ those lines was ever written, so the budget was never a reading. Timing it would
 mean the page reporting itself ready and the log carrying that second line,
 which is worth doing only if startup ever stops feeling quick.
 
-**NFR-PERF-002 History**: With 20,000 events (A-1), the history shall show its
-first page within 300 ms of a filter change, at the 95th percentile over 100
-changes, measured by a benchmark against a generated store.
+**NFR-PERF-002 History**: The history shall answer a filter change promptly at
+the sizes one person's record reaches (A-1). Not instrumented, by the owner's
+decision on 2026-09-23, on the same ground as NFR-PERF-001: filtering is quick
+in use and nothing times it. The earlier form named 300 ms at the 95th
+percentile over 100 changes against a generated store of 20,000 events; no such
+benchmark was ever written, so the number was a target rather than a reading and
+a requirement nobody can check is worse than one that says what it is. Measuring
+it would mean a generated store and a Go benchmark over the filter path, which
+is worth doing if the history ever stops feeling immediate.
 
-**NFR-PERF-003 Receipt**: A record of over 1,000 events shall be written to a
-PDF within 2 s on the reference machine.
+**NFR-PERF-003 Receipt**: Saving a record as a PDF shall be prompt at the sizes
+a record reaches. Not instrumented, for the same reason as NFR-PERF-002: the
+earlier form named 2 s for over 1,000 events and nothing ever timed it. What has
+been read instead is the document itself, on each platform: see TESTING.md,
+where documents of one to three pages were written and looked right; the suite
+measures a seven page record's geometry rather than its speed.
 
 **NFR-PRIV-001 No network**: The application and the setup program shall open
 no network connection. Verified by `tests/structural/boundary_test.go::TestNoNetworkImports`
