@@ -394,18 +394,23 @@ that does not resolve is a requirement nobody can check.
   other, so a sheet lying on a desk says what produced it at a glance
   (Amendment 13). It identifies the producer; it adds nothing to what the notes
   say and nothing that reads as a finding.
-- The sheet shall print with no page margin, so that nothing the browser draws
-  of its own reaches the paper; it shall hold the record clear of every edge by
-  its own means (Amendment 14).
+- The sheet shall print with no page margin at the top or the sides, so that
+  nothing the browser draws of its own reaches the paper; it shall hold the
+  record clear of those edges by its own means (Amendment 14).
+- Every printed page shall say which page it is and how many there are
+  (Amendment 15). It sits in the sheet's own footer, which is the one page
+  margin there is; a record read in the wrong order is worse than one that is
+  hard to read; a sheaf of paper handed across a desk can be dropped.
 - Acceptance: a record long enough to run to several pages prints with its first
-  line clear of the top edge and its last clear of the foot on EVERY page; it
-  carries no date, window title, address or page number that the record itself
+  line clear of the top edge on EVERY page and each page reading `Page N of M`
+  at its foot, carrying no date, window title or address that the record itself
   does not hold.
 - Verified by `ReceiptPane.test.tsx`, which asserts exactly one mark, in the
   first line, carrying no alt text, plus that the sheet is drawn with a head and
   a foot a printer repeats; by
-  `tests/structural/print_test.go::TestThePrintedSheetKeepsTheRecordOffTheEdgeOfThePaper`
-  and `TestTheSheetIsDrawnWithARepeatingHeadAndFoot`, each proved to bite by
+  `tests/structural/print_test.go::TestThePrintedSheetKeepsTheRecordOffTheEdgeOfThePaper`,
+  `TestEveryPrintedPageSaysWhichOneItIs` and
+  `TestTheSheetIsDrawnWithARepeatingHeadAndFoot`, each proved to bite by
   planting a violation; and on paper, which is the only reading that settles it.
   MHRA guidance v1.10f treats software that provides information to help a
   healthcare professional reach a clinical decision as a separate category
@@ -888,6 +893,7 @@ named beside it.
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 15 | 2026-09-23 | FR-045 | Every printed page carries `Page N of M` at its foot. | Owner's request. A page counter can live nowhere but an @page margin box, so the foot of the sheet takes the one page margin there is while the top and sides keep none. Measured through the engine WebView2 runs, driving the print with the browser's own header and footer switched ON, which the command line cannot ask for and the devtools protocol can: a ten page record printed `Page 1 of 10` through `Page 10 of 10` and carried none of the browser's date, address or page count. Declaring a margin box is what suppresses them; the same record with no margin at all prints neither. Also measured: `counter(page)` resolves to 0 anywhere but a margin box, in the table foot and in a fixed element alike, so there is no way to number the pages of a sheet with no margin. The paper size is still left alone: that ten page print came off US Letter. |
 | 14 | 2026-09-23 | FR-045 | The line naming the program and its address prints once, above the title; the copy below the last event goes. The printed sheet carries nothing of the browser's: no page margin, with the band the paper needs reserved by the sheet's own repeating head and foot. The record is set across the full width of the page rather than the reading column the screen uses. | Owner's ruling after a real test print. The letterhead at the top already says what produced the sheet, so repeating it at the foot said nothing twice. The same print carried the date, the window title, `wails.localhost` and a page number, none of them ours; a browser draws that furniture inside the page margin and a page can reach it no other way, so the margin goes. Padding cannot replace it: padding is applied once to the element, not once per sheet; a print made that way came off with the first line of page two sliced through. A thead and a tfoot ARE laid out again on every page, so two empty rows hold the record clear of the top and bottom edges of every sheet. Measured against the engine WebView2 runs, by printing a record to PDF and reading back where the text landed: over ten pages the first baseline sits between 17.7mm and 18.3mm from the top of every one and the last no closer than 17.2mm to the foot. Proved by planting: with the gutter removed the same record prints 3.4mm from the top, which is the sliced line that was photographed; at 40mm it prints 43.4mm down on all three pages. |
 | 13 | 2026-09-23 | FR-045, FR-072, new FR-074, new FR-075 | The printed sheet carries the application's icon beside the first provenance line. The setup program's licence screen explains the licence in ordinary words before showing its text in full, in a pane that reads itself down. The licence text gets one home in `internal/licence`, guarded against the published LICENSE byte for byte. FR-072's promise is covered by tests rather than by a manual check alone. | Owner's request on all three. The licence screen named GPL-3.0 and left it there, which tells somebody installing a program nothing about what they may do with it. The mark on the sheet identifies the producer and presents no data, so it stays inside the reading Q-8 closed against. A copy of the licence now travels with the program on all three platforms, which it did not before this pass: the install folder held the executable alone; neither the Flatpak nor the bundle carried the text, so nothing conveyed gave the recipient the copy section 4 asks for. Showing it on a setup screen alone would not have answered that either, which is why the text is displayed and shipped rather than linked to. Measured: the pane's descent was timed at 4007ms of travel against the 50px the house pace owes; the pane drew no ring at rest, after Tab focus or after a click. |
 | 12 | 2026-09-22 | New FR-073, Q-9, 3.9, NFR-USE-003 | SymChit opens dark and carries a light or dark button in the bar, left of Guide between two rules; the setup program carries the same in its header. Neither reads the Windows app mode any more, so the Windows theme read and the `prefersDark` field on setup's state are gone. | Owner's request, superseding the Q-9 answer of the same day. The window following the desktop means it changes under the reader at dusk; a button is one press away and what it chooses is remembered. Dark is what it opens in because that is what the owner wants to see first. Measured: the setup package's coverage rose from 56.9% to 59.2% once the registry read no test could exercise was gone; the floor moved with it. |

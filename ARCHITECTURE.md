@@ -58,8 +58,11 @@ nothing the domain did not write.
 
 The sheet is laid out as a table, which is the one place in this repository a
 layout table is the right answer. The printed record carries no page margin at
-all, because a browser draws its own header and footer inside that margin and a
-page can reach them no other way. What then holds the record off the edges is
+the top or the sides, because a browser draws its own header and footer inside
+that margin and a page can reach them no other way. The foot is the exception:
+it carries the one margin there is, because a page counter can live nowhere but
+an @page margin box and a margin box needs a margin to sit in. Declaring one is
+also what stops the browser filling that margin with its own date and address. What then holds the record off the edges is
 the sheet's own doing: horizontal padding, which applies on every page, plus an
 empty `thead` and `tfoot`, which a print engine lays out again on every page
 while padding is applied once to the element. Take the table away and page two

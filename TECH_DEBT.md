@@ -20,7 +20,7 @@ There is no open technical debt.
 
 ## Not debt (do not "fix" these)
 
-**The printed sheet being laid out as a table.** A layout table is usually a defect. Here it is the mechanism: the sheet prints with no page margin, which is the only way to leave the browser nowhere to draw its own header and footer; a print engine lays a `thead` and a `tfoot` out again on every page while padding is applied once to the element. Two empty rows are therefore the whole of the page margin on every sheet after the first. Replacing the table with a div and padding reproduces a defect that was photographed on paper: the first line of page two sliced through by the edge of the paper.
+**The printed sheet being laid out as a table.** A layout table is usually a defect. Here it is the mechanism: the sheet prints with no page margin at the top or the sides, which is the only way to leave the browser nowhere to draw its own header and footer; a print engine lays a `thead` and a `tfoot` out again on every page while padding is applied once to the element. Two empty rows are therefore the whole of the page margin on every sheet after the first. Replacing the table with a div and padding reproduces a defect that was photographed on paper: the first line of page two sliced through by the edge of the paper.
 
 **`Unavailable` repeating the same refusal across every `Store` method.** It looks like a dozen copies of one line. Each one is a different method of the interface answering with the reason the record could not be opened, which is what keeps the window open and every action honest about why it cannot act (FR-062). Collapsing it would mean a smaller interface, not less code.
 

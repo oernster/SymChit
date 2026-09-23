@@ -4,14 +4,25 @@
 */
 
 /*
-  What the printed sheet leaves clear of the paper's edges. They are named
-  because two rules read them and because they are the whole of the page
-  margin: with @page at zero, nothing else stands between the record and the
-  edge of the sheet.
+  What the printed sheet leaves clear of the paper's edges.
+
+  They live on the root rather than on the receipt because the page context is
+  not inside the document: an @page rule inherits from the root element and
+  nothing else, which is where the foot is read from.
+
+  --print-gutter is the band at the top of every sheet, held open by the
+  sheet's own repeating head. --print-side is the left and right. --print-foot
+  is the one real page margin there is, at the bottom, holding the page number; see the print rules at the end of this file for why the
+  other three edges have none.
 */
-.receipt {
+:root {
   --print-gutter: 14mm;
   --print-side: 16mm;
+  --print-foot: 14mm;
+  --print-foot-gap: 6mm;
+}
+
+.receipt {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -128,7 +139,30 @@
     was photographed. At 40mm it prints 43.4mm down on all three pages.
   */
   @page {
-    margin: 0;
+    /*
+      No margin at the top or the sides, because a browser draws its own header
+      and footer inside the page margin and can reach nowhere else. The bottom
+      is the exception and is the sheet's own footer: a page counter can only
+      live in an @page margin box; a margin box needs a margin to sit in.
+
+      Measured through the engine WebView2 runs, driving the print with the
+      browser's own header and footer switched ON: with this bottom margin the
+      sheet prints "Page 1 of 2" and "Page 2 of 2" and none of the browser's
+      date, address or page count. Declaring a margin box is what suppresses
+      them. The same print with no margin at all prints neither.
+    */
+    margin: 0 0 var(--print-foot);
+
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      /*
+        A margin box inherits from the root element, not from the record, so
+        the sheet's own type has to be named again here rather than picked up.
+      */
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 9pt;
+      color: #000000;
+    }
   }
 
   /*
@@ -141,8 +175,17 @@
     padding: 0 var(--print-side);
   }
 
-  .receipt .gutter {
+  .receipt thead .gutter {
     height: var(--print-gutter);
+  }
+
+  /*
+    The foot needs less, because the page margin below it is already clear
+    paper. This is the gap between the last line of the record and the page
+    number, so that the two do not read as one.
+  */
+  .receipt tfoot .gutter {
+    height: var(--print-foot-gap);
   }
 
   .band,
