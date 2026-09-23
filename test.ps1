@@ -5,8 +5,9 @@
 #   ./test.ps1 -SkipFrontend   the Go half alone, while working on it
 #   ./test.ps1 -Floor 95       a different floor for the gated layers, for a deliberate check
 #
-# build.ps1 runs this before it builds and has no switch to skip it, because a
-# gate that can be skipped is skipped on the day it would have caught something.
+# build.ps1 runs this before it builds. Its one escape is -Fast, which is for a
+# working loop and prints that it took it, so a release is never cut from a tree
+# nobody verified.
 #
 # Floors are measured numbers, never targets. A floor picked from an aspiration
 # only teaches people to lower it; a floor at the measured number fails the

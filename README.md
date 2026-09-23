@@ -78,12 +78,12 @@ these:
 
 | Piece | What |
 |---|---|
-| Language | Go 1.26, cgo disabled |
+| Language | Go 1.26, no cgo: nothing in the build graph uses it |
 | Window | Wails v2: WebView2 on Windows, WebKit on macOS and Linux |
 | Page | React 18 and TypeScript, built by Vite |
 | Record | SQLite through `modernc.org/sqlite` (pure Go), WAL, synchronous FULL |
 | Document | `github.com/go-pdf/fpdf` (pure Go), set in the Go fonts, carried in the binary |
-| Layering | `internal/{domain,application,infrastructure,ui}`, enforced by tests |
+| Layering | `internal/{domain,application,infrastructure}`, with the UI in the root package and `frontend/`; enforced by tests |
 
 ## Running it
 

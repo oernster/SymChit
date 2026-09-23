@@ -23,6 +23,7 @@ planting a violation and reading the exit code.
 | 11 | A dialog body that scrolls pins its action row beneath it and wears the self-reading cycle. | `TestEveryScrollingDialogPinsItsActionsAndReadsItself` |
 | 12 | A control that rings while it is usable says so while it is not: the ring is green on hover or focus, permanently red while disabled. | `TestEveryRingedControlSaysWhenItIsInert` |
 | 13 | Each ring colour meets the 3:1 WCAG asks of a non-text indicator, in both modes. | `tests/structural/colours_test.go::TestEveryRingIsVisibleAgainstWhatItIsDrawnOn` |
+| 14 | Every place that writes to the log is declared, so FR-065's promise that the log holds no part of the record stays checkable. A new writer fails until it is declared, which is the moment to ask what it puts in the file. | `tests/structural/logscan_test.go::TestOnlyTheKnownPlacesWriteToTheLog` |
 
 ## The layers
 
@@ -171,7 +172,7 @@ its own storage.
 | The record is drawn as a PDF rather than printed by the browser. | A page belongs to whichever engine the desktop ships, so the same record came off the paper three different ways, with what the reader got depending also on a tickbox in their own print dialog. The record is the product. Drawing it ourselves also buys what no browser would keep: an event never split across two sheets, a page number on every page, a document the suite can measure rather than one only a printer can. | A PDF library, a typeface carried in the binary and a layout to maintain, in exchange for the print stylesheet and the page-margin tricks it replaces. |
 | The store resolves a symptom by key, creating it when absent. | Recording an event and creating its symptom is one transaction, so a failure leaves neither. | The store holds a key column the domain computes. |
 | An edit sends no time unless the user changed it. | An empty time means "keep what is held", so an edit cannot move an occurrence to the moment of the edit. The rule is structural rather than remembered. | The edit form compares before sending. |
-| A record that will not open becomes `store.Unavailable`. | The window opens and says what is wrong, instead of a program that never appears. Every action answers with the same reason. | Eleven one-line methods that refuse. |
+| A record that will not open becomes `store.Unavailable`. | The window opens and says what is wrong, instead of a program that never appears. Every action answers with the same reason. | Eight one-line methods that refuse. |
 | Times are stored as RFC 3339 with their offset. | The instant reads back as the same instant; an export carries the offset it was written in. | Ordering happens in Go rather than in SQL. |
 | No encryption at rest. | A passphrase is a thing to lose; the Windows account already guards the file. Stated in the README rather than assumed. | Anyone who can sign in as the user can read the record. |
 | SymDiary opens dark and carries its own switch, rather than following Windows. | A window that changes under the reader because the desktop reached dusk is a surprise; a button in the bar is one press away and what it chooses is remembered. The palette is held to AA in both modes by a test either way. | The page owns a preference, so the tokens hang off an attribute rather than a media query; the setup program carries the same button so the two cannot disagree. |

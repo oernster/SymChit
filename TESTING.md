@@ -21,6 +21,10 @@ It runs these in order, stopping at the first failure:
 7. Coverage of every other Go package against its measured floor.
 8. The front end: `eslint`, `tsc --noEmit` and `vite build`.
 9. The front-end suite: Vitest over jsdom.
+10. `node --check` over every script in `installer/frontend/dist`. The setup
+    page has no build step, so nothing else parses it and a typo there reaches a
+    user as a window that draws no screen at all. It is neither a lint nor a
+    type check; `TECH_DEBT.md` says what is still missing.
 
 `./test.ps1 -SkipFrontend` runs the Go half alone while working on it.
 

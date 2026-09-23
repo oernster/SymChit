@@ -121,11 +121,13 @@ rules land under `~/.var/app/uk.codecrafter.SymDiary`.
 
 ### 2.4 Constraints
 
-- C-1 Language: Go 1.26 with cgo disabled; frontend React with TypeScript on Vite.
+- C-1 Language: Go 1.26 with no cgo in the build graph; frontend React with
+  TypeScript on Vite.
 - C-2 Toolkit: Wails v2 (v2.12.0 measured on the reference machine).
 - C-3 Storage: SQLite through `modernc.org/sqlite` (pure Go).
-- C-4 Layering: `internal/{domain,application,infrastructure,ui}` with an
-  explicit composition root; enforced by a structural test.
+- C-4 Layering: `internal/{domain,application,infrastructure}` with the UI in
+  the root package and `frontend/`, plus an explicit composition root; enforced
+  by a structural test.
 - C-5 The setup program is ported from ED Voyage Companion's `installer/`.
 - C-6 Licence: GPL-3.0 (already in the repository).
 - C-7 `VERSION` at the repository root is the single source of the version.
@@ -611,8 +613,11 @@ that does not resolve is a requirement nobody can check.
 - Verified by `setup.TestTheRecordIsNeverClearedWithTheLeftovers`, which fails
   if the record's folder is among the folders an uninstall clears unasked or
   inside one of them; also by
-  `setup.TestTheRecordGoesOnlyWhenItIsAskedFor`. The tick reaching the flag,
-  plus the folders afterwards, stay a manual check.
+  `setup.TestTheRecordGoesOnlyWhenItIsAskedFor`. The tick reaching the flag was
+  settled by hand on 2026-09-23 against the built setup program, as a pair of
+  runs: with the box left alone the record survived, with it ticked the record
+  went. No test can cover that hop, because it runs through the setup page,
+  which has no build step to type check it.
 
 **FR-074 The licence is explained, not just named** (Amendment 13)
 - Priority: Should
