@@ -40,6 +40,24 @@ describe('the receipt', () => {
     expect(record.querySelectorAll('p.statement')).toHaveLength(1)
   })
 
+  it('lays the record out with a head and a foot that a printer repeats', async () => {
+    // The sheet prints with no page margin, so that the browser has nowhere to
+    // draw its own header and footer. What then holds the record off the top and
+    // bottom edges of every page is these two empty rows: a print engine lays a
+    // thead and a tfoot out again on each page, while padding is applied once to
+    // the element and leaves page two starting at the paper's edge.
+    installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
+    render(<ReceiptPane refused={vi.fn()} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
+
+    const record = await screen.findByLabelText('The symptom record')
+    expect(record.querySelectorAll('thead td.gutter')).toHaveLength(1)
+    expect(record.querySelectorAll('tfoot td.gutter')).toHaveLength(1)
+    // Every line of the record sits in the body, so none of it can be repeated
+    // onto a page it does not belong to.
+    expect(record.querySelectorAll('tbody p.line').length).toBe(aReceipt.length)
+  })
+
   it('marks the sheet once, beside the address at the top', async () => {
     // The letterhead: the application's own icon beside the line naming the
     // program and where it lives, so a sheet on a desk of paper says what

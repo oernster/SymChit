@@ -67,21 +67,50 @@ export function ReceiptPane({ refused }: Props) {
       </div>
       {lines.length > 0 && (
         <article className="receipt" aria-label="The symptom record">
-          {lines.map((line, index) => (
-            <p key={index} className={`line ${line.kind}`}>
-              {/*
-                The mark goes beside the provenance line, which is the one
-                naming the program and its address, so the sheet is identifiable
-                at a glance on a desk of paper. It sits with the words rather
-                than above them because the pair is the letterhead: a picture
-                and the address it belongs to. It is decorative, so it carries
-                no alt text; the line beside it already says what it is, so a
-                screen reader repeating the name twice helps nobody.
-              */}
-              {isLetterhead(line, index) && <img className="mark" src={crest} alt="" />}
-              {line.text}
-            </p>
-          ))}
+          {/*
+            The sheet is a table so that it can be printed with no page margin
+            at all, which is the only way to leave the browser nowhere to draw
+            its own header and footer (FR-045, Amendment 14). A print engine
+            repeats a thead and a tfoot on every page it lays out, so those two
+            empty rows reserve the band at the top and the foot of every sheet.
+            Padding cannot do it: padding applies once to the element, not once
+            per page, so it leaves page two starting at the edge of the paper.
+            It holds no data and announces nothing, hence the presentation role.
+          */}
+          <table className="sheet" role="presentation">
+            <thead>
+              <tr>
+                <td className="gutter" />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  {lines.map((line, index) => (
+                    <p key={index} className={`line ${line.kind}`}>
+                      {/*
+                        The mark sits with the words rather than above them,
+                        because the pair is the letterhead: a picture and the
+                        address it belongs to. It is decorative, so it carries
+                        no alt text; the line beside it already names the
+                        program; a screen reader saying it twice helps
+                        nobody.
+                      */}
+                      {isLetterhead(line, index) && (
+                        <img className="mark" src={crest} alt="" />
+                      )}
+                      {line.text}
+                    </p>
+                  ))}
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td className="gutter" />
+              </tr>
+            </tfoot>
+          </table>
         </article>
       )}
     </section>
