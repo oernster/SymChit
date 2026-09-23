@@ -26,6 +26,7 @@ export interface FakeBridge {
   Export: ReturnType<typeof vi.fn>
   Import: ReturnType<typeof vi.fn>
   Donate: ReturnType<typeof vi.fn>
+  Print: ReturnType<typeof vi.fn>
 }
 
 export const severities = ['Mild', 'Moderate', 'Severe']
@@ -88,6 +89,7 @@ export function installBridge(answers: Partial<FakeBridge> = {}): FakeBridge {
     Export: vi.fn(refuse),
     Import: vi.fn(refuse),
     Donate: vi.fn(refuse),
+    Print: vi.fn(refuse),
     ...answers,
   } as FakeBridge
   ;(window as unknown as { go: unknown }).go = { main: { App: bridge } }

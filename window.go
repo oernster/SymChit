@@ -55,6 +55,14 @@ func (c windowChooser) OpenPath() (string, error) {
 	})
 }
 
+// windowPrint asks the window for its print dialog, through its own runtime.
+type windowPrint struct{ app *App }
+
+// Print opens the print dialog.
+func (p windowPrint) Print() {
+	runtime.WindowPrint(p.app.ctx)
+}
+
 // windowOpener asks the desktop to open an address, through the window's own
 // runtime. Wails answers nothing, so a refusal by the desktop is invisible
 // here; there is no outcome to report and none is invented.

@@ -178,6 +178,14 @@ func (a *App) Donate() (err error) {
 	return nil
 }
 
+// Print opens the print dialog over the record the page is showing (FR-040).
+// The page draws the sheet; this only asks the window to print it.
+func (a *App) Print() (err error) {
+	defer guard(&err)
+	a.printer.Print()
+	return nil
+}
+
 // Import asks for an export file, then adds what the record lacks (FR-053).
 func (a *App) Import() (result ImportResultDTO, err error) {
 	defer guard(&err)

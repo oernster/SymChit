@@ -44,6 +44,16 @@ type browserOpener interface {
 	Open(address string)
 }
 
+// windowPrinter opens the print dialog over the page as it stands.
+//
+// The page cannot ask for this itself on every desktop: WebKit on macOS does
+// nothing with window.print(), so there the button never answered. Wails' own
+// print call reaches the platform's print panel on macOS and runs
+// window.print() on Windows, so going through it is one path for both.
+type windowPrinter interface {
+	Print()
+}
+
 // Services is what the facade drives: one application service per concern.
 type Services struct {
 	Recorder application.Recorder
@@ -63,6 +73,7 @@ type App struct {
 	services Services
 	chooser  fileChooser
 	opener   browserOpener
+	printer  windowPrinter
 	focuser  windowFocuser
 	close    func() error
 }

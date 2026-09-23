@@ -82,17 +82,23 @@ describe('the receipt', () => {
   })
 
   it('cannot be printed until there is something to print', async () => {
-    installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
+    const bridge = installBridge({
+      Receipt: vi.fn(() => Promise.resolve(aReceipt)),
+      Print: vi.fn(() => Promise.resolve()),
+    })
     render(<ReceiptPane refused={vi.fn()} />)
     expect(screen.getByRole('button', { name: 'Print' })).toBeDisabled()
 
     fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
     await waitFor(() => expect(screen.getByRole('button', { name: 'Print' })).toBeEnabled())
 
+    // The window prints, not the page: WebKit on macOS does nothing with
+    // window.print(), so a page that called it had a button that never answered.
     const print = vi.fn()
     window.print = print
     fireEvent.click(screen.getByRole('button', { name: 'Print' }))
-    expect(print).toHaveBeenCalled()
+    await waitFor(() => expect(bridge.Print).toHaveBeenCalledTimes(1))
+    expect(print).not.toHaveBeenCalled()
   })
 
   it('shows nothing when the range holds no events', async () => {

@@ -1,5 +1,5 @@
 // The receipt: the factual record for a date range, printed through the
-// Windows print dialog, which also offers saving as PDF (FR-040 to FR-044).
+// system's print dialog, which also offers saving as PDF (FR-040 to FR-044).
 // Every word on it comes from the backend's receipt; the page only lays it out.
 
 import { useEffect, useState } from 'react'
@@ -61,7 +61,7 @@ export function ReceiptPane({ refused }: Props) {
         </label>
         <button type="button" onClick={show}>Show the record</button>
         <button type="button" className="primary" disabled={lines.length === 0}
-          onClick={() => window.print()}>
+          onClick={() => void api.print(refused)}>
           Print
         </button>
       </div>
