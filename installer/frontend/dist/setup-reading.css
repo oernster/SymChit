@@ -24,9 +24,9 @@
 #screen-licence.active {
     display: flex;
     flex-direction: column;
-    /* Basis zero, for the reason the columns take it below: the screen takes
-       exactly the body's height rather than growing from its own content and
-       rounding a fraction of a pixel into a scrollbar. */
+    /* Basis zero: the screen takes exactly the body's height rather than
+       growing from its own content, where a fraction of a pixel rounds up into
+       a scrollbar down the whole window. */
     flex: 1 1 0%;
     min-height: 0;
     /* The screen fills the body, so without this its heading begins exactly on
@@ -37,39 +37,16 @@
 }
 
 /*
-  The plain reading and the licence itself sit side by side. Stacked, the two
-  together were taller than a window that cannot be resized: the body scrolled,
-  the heading went up under the header's rule and the pane was left with about
-  five lines to show a licence in. The window is wide and the two halves are
-  read independently, so the width is where the room was.
-*/
-.licence-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* The row is stated rather than left implicit. An implicit row is sized to
-       its tallest item, so it grows past the height the grid was given and the
-       fraction rounds up into a scrollbar down the whole window. minmax with a
-       zero floor says the opposite: take the height given, then let what
-       is inside shrink to it. */
-    grid-template-rows: minmax(0, 1fr);
-    gap: 22px;
-    /* A basis of zero rather than of its own content: the columns take exactly
-       what the heading and the lead leave, whatever that is. Growing from the
-       content instead left the screen a fraction of a pixel too tall, which
-       rounds up into a scrollbar down the whole window. */
-    flex: 1 1 0%;
-    min-height: 0;
-}
+  The plain reading and the licence are stacked, one after the other, with
+  the whole width going to the licence.
 
-/* Each column is its own little stack: a lead of fixed height, then the thing
-   it introduces taking the rest. The pane can only flex if every box between
-   it and the screen can shrink, which is what min-height zero says. */
-.licence-plain,
-.licence-formal {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
+  Side by side was tried and both halves suffered. The licence's own lines run
+  to 78 characters and a half-width pane cannot hold them, so every line wrapped
+  a second time and the text came out ragged; the statements wrapped to two
+  lines apiece as well, which made the left column tall enough to be cut off at
+  the foot of a real window. Full width fixes both: the licence sits as it was
+  written and each statement is one line.
+*/
 
 .reading-lead {
     margin: 18px 0 8px;

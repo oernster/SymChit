@@ -34,13 +34,19 @@ var appVersion = "dev"
 
 const (
 	windowTitle = product.Name + " Setup"
-	// The window is fixed, so its height has to clear the tallest screen: the
-	// install one, which carries the path box and three options. Both figures
-	// are measured against that screen at the shipped type sizes; text that
-	// grows without the window growing with it turns a fixed dialog into a
-	// scrolling one.
+	// The window is fixed, so its height has to clear the tallest screen, which
+	// is the licence one: a heading, what the licence means in five statements
+	// and then the licence itself. Text that grows without the window growing
+	// with it turns a fixed dialog into a scrolling one.
+	//
+	// 720 was measured against the install screen in a browser, where there is
+	// no title bar. A real window spends about forty pixels of this on its
+	// frame before the page sees any of it, which is why the licence screen
+	// arrived with its last statement cut off and a scrollbar down the side.
+	// The height is stated against the REAL client area now, with the frame
+	// counted and slack left over.
 	windowWidth  = 860
-	windowHeight = 720
+	windowHeight = 870
 	// webviewFolder holds the setup window's own WebView2 cache, pinned under
 	// TEMP rather than left to default into %APPDATA%, so running setup leaves
 	// no folder beside the application's own.
