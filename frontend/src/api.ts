@@ -107,7 +107,7 @@ interface Bridge {
   Export(): Promise<string>
   Import(): Promise<ImportResult>
   Donate(): Promise<void>
-  Print(): Promise<void>
+  SavePDF(from: string, to: string): Promise<string>
 }
 
 interface WailsWindow {
@@ -173,7 +173,9 @@ export const api = {
   // home for that address is Go's product package, so there is nothing here to
   // keep in step with it.
   donate: (refused: Refused) => act((b) => b.Donate(), refused),
-  // The window prints rather than the page: WebKit on macOS ignores
-  // window.print(), so only Go can reach the print dialog there.
-  print: (refused: Refused) => act((b) => b.Print(), refused),
+  // The record is drawn by Go, not printed by the browser. Three engines print
+  // a page three different ways; one of them draws a PDF the same way every
+  // time; that is the document a reader hands to a doctor.
+  savePDF: (from: string, to: string, refused: Refused) =>
+    ask((b) => b.SavePDF(from, to), refused),
 }

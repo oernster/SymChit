@@ -323,13 +323,22 @@ that does not resolve is a requirement nobody can check.
 
 ### 3.4 Functional requirements: the receipt
 
-**FR-040 Print a receipt**
+**FR-040 Save a receipt as a PDF**
 - Priority: Must
 - Requirement: When the user asks for a receipt over a local date range, the
-  receipt service shall produce a page for the Windows print dialog, which
-  also offers saving as PDF.
-- Verified by: `internal/application/history_test.go::TestReceiptFromTheStore` plus a
-  manual print on the reference machine (A-4, measured).
+  application shall show it and shall, on request, write it to a PDF file at a
+  location the user chooses (Amendment 16).
+- The document shall be drawn by the application itself rather than by the
+  window's browser engine, so that a record reads the same whichever desktop
+  produced it.
+- Acceptance: the saved document is a PDF; it holds the receipt of FR-041 with
+  the framing of FR-045; every page carries `Page N of M`; no page begins with
+  what was observed at an event whose time was on the page before; cancelling
+  the dialog writes nothing and says nothing.
+- Verified by: `internal/application/history_test.go::TestReceiptFromTheStore`,
+  `pdf_test.go`, `internal/infrastructure/pdf/layout_test.go` and
+  `internal/infrastructure/pdf/sheet_test.go`, plus opening a saved document on
+  the reference machine (A-4).
 
 **FR-041 Receipt contents**
 - Priority: Must
@@ -394,24 +403,19 @@ that does not resolve is a requirement nobody can check.
   other, so a sheet lying on a desk says what produced it at a glance
   (Amendment 13). It identifies the producer; it adds nothing to what the notes
   say and nothing that reads as a finding.
-- The sheet shall print with no page margin at the top or the sides, so that
-  nothing the browser draws of its own reaches the paper; it shall hold the
-  record clear of those edges by its own means (Amendment 14).
-- Every printed page shall say which page it is and how many there are
-  (Amendment 15). It sits in the sheet's own footer, which is the one page
-  margin there is; a record read in the wrong order is worse than one that is
+- Every page of the document shall say which page it is and how many there are
+  (Amendment 15). A record read in the wrong order is worse than one that is
   hard to read; a sheaf of paper handed across a desk can be dropped.
-- Acceptance: a record long enough to run to several pages prints with its first
-  line clear of the top edge on EVERY page and each page reading `Page N of M`
-  at its foot, carrying no date, window title or address that the record itself
-  does not hold.
-- Verified by `ReceiptPane.test.tsx`, which asserts exactly one mark, in the
-  first line, carrying no alt text, plus that the sheet is drawn with a head and
-  a foot a printer repeats; by
-  `tests/structural/print_test.go::TestThePrintedSheetKeepsTheRecordOffTheEdgeOfThePaper`,
-  `TestEveryPrintedPageSaysWhichOneItIs` and
-  `TestTheSheetIsDrawnWithARepeatingHeadAndFoot`, each proved to bite by
-  planting a violation; and on paper, which is the only reading that settles it.
+- The document shall carry nothing the record does not hold: no date of
+  printing, no window title, no address of its own (Amendment 16).
+- Verified by `ReceiptPane.test.tsx`, which asserts exactly one mark on screen,
+  in the first line, carrying no alt text; by
+  `internal/infrastructure/pdf/sheet_test.go`, which asserts the mark is drawn
+  on the document and that a record with none is still written; and by
+  `tests/structural/linekind_test.go::TestEveryLineKindIsDrawnInTheDocument`,
+  which holds the document's styles to the domain's own line kinds so a kind
+  cannot reach the paper with no style at all. Proved to bite by planting a
+  missing style.
   MHRA guidance v1.10f treats software that provides information to help a
   healthcare professional reach a clinical decision as a separate category
   (page 12); a printed sheet that calls itself an input to that decision is
@@ -893,6 +897,7 @@ named beside it.
 
 | No. | Date | Requirement | Change | Reason |
 |---|---|---|---|---|
+| 16 | 2026-09-23 | FR-040, FR-045 | The record is no longer printed through the window's browser. The application draws it as a PDF and the reader chooses where it goes; the button reads Save PDF. | Owner's decision after the browser path was measured on all three desktops and gave three different answers. A page belongs to whichever engine the desktop ships, so what came off the paper depended on that engine, on whether the reader had "Headers and footers" ticked in their print dialog and on which of the CSS the sheet leaned on that engine had implemented. Windows was made correct and measured; Linux and macOS were, in the owner's words, a mess. The record is the product, so it is drawn once, in Go, where the same bytes reach every reader. What that buys beyond consistency: pagination that never splits an event across two sheets, a page number on every page, a document the suite can measure rather than one only a printer can. The typeface is the Go fonts, carried inside the binary, because a PDF's built-in fonts can say nothing outside Latin-1 and a note holding a curly quote or an accented name would have reached a doctor with the user's own words mangled. |
 | 15 | 2026-09-23 | FR-045 | Every printed page carries `Page N of M` at its foot. | Owner's request. A page counter can live nowhere but an @page margin box, so the foot of the sheet takes the one page margin there is while the top and sides keep none. Measured through the engine WebView2 runs, driving the print with the browser's own header and footer switched ON, which the command line cannot ask for and the devtools protocol can: a ten page record printed `Page 1 of 10` through `Page 10 of 10` and carried none of the browser's date, address or page count. Declaring a margin box is what suppresses them; the same record with no margin at all prints neither. Also measured: `counter(page)` resolves to 0 anywhere but a margin box, in the table foot and in a fixed element alike, so there is no way to number the pages of a sheet with no margin. The paper size is still left alone: that ten page print came off US Letter. |
 | 14 | 2026-09-23 | FR-045 | The line naming the program and its address prints once, above the title; the copy below the last event goes. The printed sheet carries nothing of the browser's: no page margin, with the band the paper needs reserved by the sheet's own repeating head and foot. The record is set across the full width of the page rather than the reading column the screen uses. | Owner's ruling after a real test print. The letterhead at the top already says what produced the sheet, so repeating it at the foot said nothing twice. The same print carried the date, the window title, `wails.localhost` and a page number, none of them ours; a browser draws that furniture inside the page margin and a page can reach it no other way, so the margin goes. Padding cannot replace it: padding is applied once to the element, not once per sheet; a print made that way came off with the first line of page two sliced through. A thead and a tfoot ARE laid out again on every page, so two empty rows hold the record clear of the top and bottom edges of every sheet. Measured against the engine WebView2 runs, by printing a record to PDF and reading back where the text landed: over ten pages the first baseline sits between 17.7mm and 18.3mm from the top of every one and the last no closer than 17.2mm to the foot. Proved by planting: with the gutter removed the same record prints 3.4mm from the top, which is the sliced line that was photographed; at 40mm it prints 43.4mm down on all three pages. |
 | 13 | 2026-09-23 | FR-045, FR-072, new FR-074, new FR-075 | The printed sheet carries the application's icon beside the first provenance line. The setup program's licence screen explains the licence in ordinary words before showing its text in full, in a pane that reads itself down. The licence text gets one home in `internal/licence`, guarded against the published LICENSE byte for byte. FR-072's promise is covered by tests rather than by a manual check alone. | Owner's request on all three. The licence screen named GPL-3.0 and left it there, which tells somebody installing a program nothing about what they may do with it. The mark on the sheet identifies the producer and presents no data, so it stays inside the reading Q-8 closed against. A copy of the licence now travels with the program on all three platforms, which it did not before this pass: the install folder held the executable alone; neither the Flatpak nor the bundle carried the text, so nothing conveyed gave the recipient the copy section 4 asks for. Showing it on a setup screen alone would not have answered that either, which is why the text is displayed and shipped rather than linked to. Measured: the pane's descent was timed at 4007ms of travel against the 50px the house pace owes; the pane drew no ring at rest, after Tab focus or after a click. |

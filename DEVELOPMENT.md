@@ -134,7 +134,7 @@ it; nothing else holds one.
 1. Clear `TECH_DEBT.md` if one is open.
 2. Bump `VERSION` if a bump is owed against the newest tag.
 3. `./build.ps1` and check the gate is green.
-4. Launch the built executable and use it: record, print, export, import.
+4. Launch the built executable and use it: record, save a PDF, export, import.
 5. Run `dist-installer/SymChitSetup.exe` and walk each route: install, reopen
    for manage, repair, then uninstall. The checks only a person can settle are
    listed in [TESTING.md](TESTING.md).

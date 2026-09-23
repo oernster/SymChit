@@ -178,12 +178,39 @@ func (a *App) Donate() (err error) {
 	return nil
 }
 
-// Print opens the print dialog over the record the page is showing (FR-040).
-// The page draws the sheet; this only asks the window to print it.
-func (a *App) Print() (err error) {
+// pdfNameLayout is the file name the save dialog suggests for a record.
+const pdfNameLayout = "%s symptom record %s.pdf"
+
+// SavePDF writes the record for a range to a file the reader chooses,
+// answering the path written; empty when they cancelled (FR-040).
+//
+// The page shows the same record on screen and the two are built from one
+// source: both ask the history for the receipt and both draw the framing of
+// FR-045 around it. What the page cannot do is decide where a page ends, which
+// is why the document is drawn rather than printed.
+func (a *App) SavePDF(from, to string) (path string, err error) {
 	defer guard(&err)
-	a.printer.Print()
-	return nil
+	start, err := optionalDate(from)
+	if err != nil {
+		return "", err
+	}
+	end, err := optionalDate(to)
+	if err != nil {
+		return "", err
+	}
+	receipt, err := a.services.History.Receipt(start, end)
+	if err != nil {
+		return "", err
+	}
+	today := domain.DateOf(a.clock.Now(), a.zone)
+	path, err = a.chooser.SavePath(fmt.Sprintf(pdfNameLayout, product.Name, today))
+	if err != nil || path == "" {
+		return "", err
+	}
+	if _, err := a.sheet.Write(path, receipt.Lines(printFraming)); err != nil {
+		return "", err
+	}
+	return path, nil
 }
 
 // Import asks for an export file, then adds what the record lacks (FR-053).

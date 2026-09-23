@@ -13,6 +13,7 @@ import (
 
 	"github.com/oernster/symchit/internal/application"
 	"github.com/oernster/symchit/internal/infrastructure/export"
+	"github.com/oernster/symchit/internal/infrastructure/pdf"
 	"github.com/oernster/symchit/internal/infrastructure/runlog"
 	"github.com/oernster/symchit/internal/infrastructure/store"
 	"github.com/oernster/symchit/internal/product"
@@ -23,6 +24,13 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
+
+// mark is the application's own icon, drawn beside the line naming the program
+// on the printed record (FR-045). It is embedded from the one copy the window
+// already ships rather than from a second file kept in step by hand.
+//
+//go:embed frontend/src/assets/icons/application-icon.png
+var mark []byte
 
 // appVersion is set from VERSION by build.ps1 through -ldflags -X, which only
 // reaches a var.
@@ -78,7 +86,7 @@ func main() {
 	app := newApp(services, clock, zone, appVersion, problem, nil, closeRecord)
 	app.chooser = windowChooser{app: app}
 	app.opener = windowOpener{app: app}
-	app.printer = windowPrint{app: app}
+	app.sheet = pdf.Sheet{Mark: mark}
 	app.focuser = windowFocus{}
 
 	err = wails.Run(&options.App{

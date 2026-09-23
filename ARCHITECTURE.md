@@ -42,7 +42,7 @@ The rules, as pure types and functions. No IO, no clock, no framework.
 | `definition.go` | Reusable symptoms: matching, suggestion order and the rename checks. |
 | `dates.go` | Civil dates, the two wire time formats and the display format. |
 | `filter.go` | The history filter and the newest-first order. |
-| `receipt.go` | The receipt: grouping, ordering and the exact lines that print. |
+| `receipt.go` | The receipt: grouping, ordering and the exact lines it holds. |
 
 The receipt is domain code because its wording is a rule, not decoration: it is
 what stops a printed record saying anything the user did not record. The page
@@ -56,24 +56,30 @@ writes it where it belongs, while the facade fills that struct from `product`.
 The domain stays pure, the words keep one home and the sheet still carries
 nothing the domain did not write.
 
-The sheet is laid out as a table, which is the one place in this repository a
-layout table is the right answer. The printed record carries no page margin at
-the top or the sides, because a browser draws its own header and footer inside
-that margin and a page can reach them no other way. The foot is the exception:
-it carries the one margin there is, because a page counter can live nowhere but
-an @page margin box and a margin box needs a margin to sit in. Declaring one is
-also what stops the browser filling that margin with its own date and address. What then holds the record off the edges is
-the sheet's own doing: horizontal padding, which applies on every page, plus an
-empty `thead` and `tfoot`, which a print engine lays out again on every page
-while padding is applied once to the element. Take the table away and page two
-starts at the edge of the paper; that was measured on paper before it was
-fixed. `tests/structural/print_test.go` holds all three parts in place.
-
 The application's mark is drawn beside the opening framing line and nowhere
-else on the sheet (FR-045). It is the page's own decision, not the domain's: a
-picture is presentation, so the receipt stays a list of lines with a kind and
-the pane decides that the first line, where it is a provenance one, is a
+else (FR-045). It is a presentation decision, not the domain's: the receipt
+stays a list of lines with a kind; both the window and the document decide
+for themselves that the first line, where it is a provenance one, is a
 letterhead.
+
+### Infrastructure: `internal/infrastructure/pdf`
+
+What a reader takes to an appointment. It is handed the receipt's lines and a
+path; it answers a file.
+
+SymChit used to hand the record to the window's browser engine to print. That
+engine is a different one on each desktop, so the same record came off the
+paper three different ways, with what the reader got depending also on a
+tickbox in their own print dialog. The record is the product, so it is drawn once here
+(Amendment 16).
+
+The layout is a pure function in `layout.go`: given the lines, the page
+geometry and a Measurer, it answers the rows of each page. Nothing in it opens
+a file or knows what a PDF is, so what lands on which page is settled by tests
+that draw nothing. `sheet.go` is the renderer around it and owns no layout
+decisions beyond turning a row into ink. Two rules are worth stating because
+they are what a browser could not be made to keep: an event is never split
+across two sheets; every page says which page it is.
 
 ### The setup program
 
@@ -166,7 +172,7 @@ its own storage.
 | Decision | Why | What it costs |
 |---|---|---|
 | The receipt's lines are built in the domain, not the page. | The one thing SymChit must never do is add words to a medical record. A test asserts every line is a title, a range, a heading, a count, a recorded field or one of the two framing lines. | The page cannot reflow a line; it styles by kind. |
-| The printed sheet says what made it and what it is not. | A sheet outlives the window it came from: the reader is a doctor who has never seen SymChit and cannot be assumed to know that the notes are the patient's own. The framing is fixed text that names no event, so it says nothing about what was recorded. | Two more line kinds; the words become a promise once a sheet is in a filing cabinet. |
+| The saved document says what made it and what it is not. | A sheet outlives the window it came from: the reader is a doctor who has never seen SymChit and cannot be assumed to know that the notes are the patient's own. The framing is fixed text that names no event, so it says nothing about what was recorded. | Two more line kinds; the words become a promise once a sheet is in a filing cabinet. |
 | The line kinds are compared against the page's union by a test. | The wire test sees that a line carries a kind; it cannot see which kinds exist, while nothing in either build compares the two lists. A kind added in Go alone renders with a class no stylesheet knows, which reads correctly on screen and prints wrong. | A second scan; a new kind is two edits rather than one. |
 | The store resolves a symptom by key, creating it when absent. | Recording an event and creating its symptom is one transaction, so a failure leaves neither. | The store holds a key column the domain computes. |
 | An edit sends no time unless the user changed it. | An empty time means "keep what is held", so an edit cannot move an occurrence to the moment of the edit. The rule is structural rather than remembered. | The edit form compares before sending. |

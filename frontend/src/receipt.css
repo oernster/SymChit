@@ -1,26 +1,9 @@
 /*
-  The receipt on screen and on paper. Printing takes the receipt alone: the
-  band, the status line and the controls are the application, not the record.
+  The receipt on screen. What a reader takes to an appointment is the PDF Go
+  draws (FR-040, Amendment 16); these rules are the same record laid out for a
+  window, plus the small courtesy at the end of the file for anyone who presses
+  Ctrl+P.
 */
-
-/*
-  What the printed sheet leaves clear of the paper's edges.
-
-  They live on the root rather than on the receipt because the page context is
-  not inside the document: an @page rule inherits from the root element and
-  nothing else, which is where the foot is read from.
-
-  --print-gutter is the band at the top of every sheet, held open by the
-  sheet's own repeating head. --print-side is the left and right. --print-foot
-  is the one real page margin there is, at the bottom, holding the page number; see the print rules at the end of this file for why the
-  other three edges have none.
-*/
-:root {
-  --print-gutter: 14mm;
-  --print-side: 16mm;
-  --print-foot: 14mm;
-  --print-foot-gap: 6mm;
-}
 
 .receipt {
   background: var(--surface);
@@ -33,26 +16,6 @@
 .receipt .line {
   margin: 0;
   white-space: pre-wrap;
-}
-
-/*
-  The sheet is laid out as a table for one reason: printing. A print engine
-  repeats a thead and a tfoot on every page, which is the only way to reserve a
-  band at the top and foot of EVERY sheet. On screen it draws nothing: the
-  gutter rows have no height and the cell no padding, so the lines sit exactly
-  where they did before.
-*/
-.receipt .sheet {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.receipt .sheet td {
-  padding: 0;
-}
-
-.receipt .gutter {
-  height: 0;
 }
 
 .receipt .title {
@@ -121,73 +84,15 @@
 
 @media print {
   /*
-    The printed sheet carries the record and nothing else, which includes
-    nothing of the browser's (FR-045, Amendment 14).
+    Nothing in SymChit prints through the browser any more: the record is drawn
+    as a PDF by Go, so that it reads the same on every desktop rather than
+    differently on each of three engines (FR-040, Amendment 16).
 
-    The browser draws its own header and footer (the date, the window title, the
-    address, the page number) inside the page margin; a page can reach them no
-    other way, so there is no page margin. The band the paper still needs is
-    reserved by the sheet's own repeating head and foot instead, because they
-    are laid out again on every page while padding is applied once to the
-    element and leaves page two starting at the edge of the paper.
-
-    Measured against the print engine WebView2 runs, by printing a 120 line
-    record to PDF and reading back where the text landed: with the gutter at
-    14mm the first baseline sits 17.5mm from the top of page one AND of page
-    two; the last sits 17.1mm from the foot. With the gutter taken away the
-    same record prints 3.4mm from the top, which is the sliced first line that
-    was photographed. At 40mm it prints 43.4mm down on all three pages.
+    These rules are the courtesy for a reader who presses Ctrl+P anyway. They
+    take the application off the paper and leave the record black on white.
+    They make no attempt at page margins or page numbers; that is what the
+    document is for.
   */
-  @page {
-    /*
-      No margin at the top or the sides, because a browser draws its own header
-      and footer inside the page margin and can reach nowhere else. The bottom
-      is the exception and is the sheet's own footer: a page counter can only
-      live in an @page margin box; a margin box needs a margin to sit in.
-
-      Measured through the engine WebView2 runs, driving the print with the
-      browser's own header and footer switched ON: with this bottom margin the
-      sheet prints "Page 1 of 2" and "Page 2 of 2" and none of the browser's
-      date, address or page count. Declaring a margin box is what suppresses
-      them. The same print with no margin at all prints neither.
-    */
-    margin: 0 0 var(--print-foot);
-
-    @bottom-center {
-      content: "Page " counter(page) " of " counter(pages);
-      /*
-        A margin box inherits from the root element, not from the record, so
-        the sheet's own type has to be named again here rather than picked up.
-      */
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      font-size: 9pt;
-      color: #000000;
-    }
-  }
-
-  /*
-    The screen keeps the record to a column that is comfortable to read. Paper
-    is not a screen: a sheet that uses a third of its width just runs to more
-    pages; a doctor reads it once.
-  */
-  .receipt {
-    max-width: none;
-    padding: 0 var(--print-side);
-  }
-
-  .receipt thead .gutter {
-    height: var(--print-gutter);
-  }
-
-  /*
-    The foot needs less, because the page margin below it is already clear
-    paper. This is the gap between the last line of the record and the page
-    number, so that the two do not read as one.
-  */
-  .receipt tfoot .gutter {
-    height: var(--print-foot-gap);
-  }
-
   .band,
   .status,
   .problem,

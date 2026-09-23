@@ -6,7 +6,7 @@ import { aReceipt, installBridge } from './bridge-fake'
 describe('the receipt', () => {
   it('opens on the last thirty days, ending today', async () => {
     const bridge = installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
-    render(<ReceiptPane refused={vi.fn()} />)
+    render(<ReceiptPane refused={vi.fn()} saved={vi.fn()} />)
 
     await waitFor(() => expect(screen.getByLabelText(/To/)).toHaveValue('2026-09-22'))
     expect(screen.getByLabelText(/From/)).toHaveValue('2026-08-23')
@@ -17,7 +17,7 @@ describe('the receipt', () => {
 
   it('shows every line the backend gave it; nothing else', async () => {
     installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
-    render(<ReceiptPane refused={vi.fn()} />)
+    render(<ReceiptPane refused={vi.fn()} saved={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
 
     const record = await screen.findByLabelText('The symptom record')
@@ -29,7 +29,7 @@ describe('the receipt', () => {
     // The framing (FR-045) is styled by its kind, so a line that loses its kind
     // loses the separation on paper while still reading correctly here.
     installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
-    render(<ReceiptPane refused={vi.fn()} />)
+    render(<ReceiptPane refused={vi.fn()} saved={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
 
     const record = await screen.findByLabelText('The symptom record')
@@ -40,31 +40,13 @@ describe('the receipt', () => {
     expect(record.querySelectorAll('p.statement')).toHaveLength(1)
   })
 
-  it('lays the record out with a head and a foot that a printer repeats', async () => {
-    // The sheet prints with no page margin, so that the browser has nowhere to
-    // draw its own header and footer. What then holds the record off the top and
-    // bottom edges of every page is these two empty rows: a print engine lays a
-    // thead and a tfoot out again on each page, while padding is applied once to
-    // the element and leaves page two starting at the paper's edge.
-    installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
-    render(<ReceiptPane refused={vi.fn()} />)
-    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
-
-    const record = await screen.findByLabelText('The symptom record')
-    expect(record.querySelectorAll('thead td.gutter')).toHaveLength(1)
-    expect(record.querySelectorAll('tfoot td.gutter')).toHaveLength(1)
-    // Every line of the record sits in the body, so none of it can be repeated
-    // onto a page it does not belong to.
-    expect(record.querySelectorAll('tbody p.line').length).toBe(aReceipt.length)
-  })
-
   it('marks the sheet once, beside the address at the top', async () => {
     // The letterhead: the application's own icon beside the line naming the
     // program and where it lives, so a sheet on a desk of paper says what
     // produced it. It belongs to the opening line alone, so its place is
     // asserted rather than only its presence.
     installBridge({ Receipt: vi.fn(() => Promise.resolve(aReceipt)) })
-    render(<ReceiptPane refused={vi.fn()} />)
+    render(<ReceiptPane refused={vi.fn()} saved={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
 
     const record = await screen.findByLabelText('The symptom record')
@@ -81,24 +63,42 @@ describe('the receipt', () => {
     expect(marks[0]).toHaveAttribute('alt', '')
   })
 
-  it('cannot be printed until there is something to print', async () => {
+  it('cannot be saved until there is something to save', async () => {
     const bridge = installBridge({
       Receipt: vi.fn(() => Promise.resolve(aReceipt)),
-      Print: vi.fn(() => Promise.resolve()),
+      SavePDF: vi.fn(() => Promise.resolve('C:/Users/x/Downloads/record.pdf')),
     })
-    render(<ReceiptPane refused={vi.fn()} />)
-    expect(screen.getByRole('button', { name: 'Print' })).toBeDisabled()
+    const saved = vi.fn()
+    render(<ReceiptPane refused={vi.fn()} saved={saved} />)
+    expect(screen.getByRole('button', { name: 'Save PDF' })).toBeDisabled()
 
     fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Print' })).toBeEnabled())
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save PDF' })).toBeEnabled())
 
-    // The window prints, not the page: WebKit on macOS does nothing with
-    // window.print(), so a page that called it had a button that never answered.
-    const print = vi.fn()
-    window.print = print
-    fireEvent.click(screen.getByRole('button', { name: 'Print' }))
-    await waitFor(() => expect(bridge.Print).toHaveBeenCalledTimes(1))
-    expect(print).not.toHaveBeenCalled()
+    // Go draws the document, not the browser: three engines print a page three
+    // different ways; the record is what the product is for.
+    fireEvent.click(screen.getByRole('button', { name: 'Save PDF' }))
+    await waitFor(() =>
+      expect(bridge.SavePDF).toHaveBeenCalledWith('2026-08-23', '2026-09-22'))
+    await waitFor(() =>
+      expect(saved).toHaveBeenCalledWith(
+        'Your symptom record was saved to C:/Users/x/Downloads/record.pdf.'))
+  })
+
+  it('says nothing when the reader cancels the save dialog', async () => {
+    // An empty path is a cancelled dialog. Announcing it would tell the reader
+    // something happened when they had just decided it should not.
+    installBridge({
+      Receipt: vi.fn(() => Promise.resolve(aReceipt)),
+      SavePDF: vi.fn(() => Promise.resolve('')),
+    })
+    const saved = vi.fn()
+    render(<ReceiptPane refused={vi.fn()} saved={saved} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save PDF' })).toBeEnabled())
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save PDF' }))
+    await waitFor(() => expect(saved).not.toHaveBeenCalled())
   })
 
   it('shows nothing when the range holds no events', async () => {
@@ -106,7 +106,7 @@ describe('the receipt', () => {
     installBridge({
       Receipt: vi.fn(() => Promise.reject(new Error('no events were recorded in that range'))),
     })
-    render(<ReceiptPane refused={refused} />)
+    render(<ReceiptPane refused={refused} saved={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: 'Show the record' }))
 
     await waitFor(() => expect(refused).toHaveBeenCalledWith('No events were recorded in that range'))

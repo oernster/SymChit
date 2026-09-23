@@ -10,6 +10,7 @@ import (
 	"github.com/oernster/symchit/internal/application"
 	"github.com/oernster/symchit/internal/domain"
 	"github.com/oernster/symchit/internal/infrastructure/export"
+	"github.com/oernster/symchit/internal/infrastructure/pdf"
 	"github.com/oernster/symchit/internal/infrastructure/store"
 )
 
@@ -63,6 +64,9 @@ func facadeOver(t *testing.T, record application.Store, folder string) (*App, *s
 		Transfer: application.NewTransfer(record, export.File{}),
 	}
 	app := newApp(services, clock, zone, "1.2.3", "", chooser, func() error { return nil })
+	// The real renderer, writing into the test's own folder. A double would
+	// assert that the double was called; this asserts that a file arrives.
+	app.sheet = pdf.Sheet{}
 	return app, clock, chooser
 }
 

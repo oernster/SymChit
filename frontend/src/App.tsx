@@ -161,7 +161,7 @@ export function App() {
       <main>
         {pane === 'record' && <RecordPane severities={severities} refused={refused} tell={tell} />}
         {pane === 'history' && <HistoryPane severities={severities} refused={refused} tell={tell} />}
-        {pane === 'receipt' && <ReceiptPane refused={refused} />}
+        {pane === 'receipt' && <ReceiptPane refused={refused} saved={tell} />}
         {pane === 'symptoms' && <SymptomsPane refused={refused} tell={tell} />}
       </main>
 

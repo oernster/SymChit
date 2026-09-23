@@ -12,8 +12,8 @@ When you notice a symptom, record it. When you see your doctor, take the record
 with you.
 
 SymChit is a local-first symptom recorder for Windows, Linux and macOS. It keeps what you
-observed and when you observed it, then prints a short factual record for an
-appointment. It is a recorder, not a diagnostician.
+observed and when you observed it, then saves a short factual record as a PDF
+you can take to an appointment. It is a recorder, not a diagnostician.
 
 Instead of telling a doctor "I have been tired a lot recently", you can show
 them:
@@ -64,10 +64,10 @@ these:
 - Keeps each symptom you name, exactly as you typed it, then offers it next time.
 - Shows the history newest first, filtered by dates, symptom or severity.
 - Corrects and deletes entries, asking first and naming what will go.
-- Prints a symptom record for a date range, which is also a PDF if you choose
-  Save as PDF. The sheet names the program that produced it and says, above the
-  first entry, that it is not a diagnosis: it is your own notes, printed for a
-  healthcare professional to read.
+- Saves a symptom record for a date range as a PDF, numbered page by page, with
+  no event ever split across two sheets. The document names the program that
+  produced it and says, above the first entry, that it is not a diagnosis: it is
+  your own notes, printed for a healthcare professional to read.
 - Exports the whole record to a JSON file you own; reads one back too.
 - Opens dark, with a button in the bar that moves it to light and remembers
   which you chose.
@@ -150,7 +150,7 @@ readers are kept beside new ones, with each old version's real bytes frozen in
 the test suite. A file you own is worth nothing if next year's version refuses
 it.
 
-The printed sheet's wording is a public claim, not decoration. The line saying
+The document's wording is a public claim, not decoration. The line saying
 the record is not a diagnosis is held by a test that asserts it whole.
 
 What is not promised: the window's layout, the wording on screen, the log or

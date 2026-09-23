@@ -44,14 +44,18 @@ type browserOpener interface {
 	Open(address string)
 }
 
-// windowPrinter opens the print dialog over the page as it stands.
+// recordSheet writes a record out as a document the reader keeps, answering how
+// many pages it came to.
 //
-// The page cannot ask for this itself on every desktop: WebKit on macOS does
-// nothing with window.print(), so there the button never answered. Wails' own
-// print call reaches the platform's print panel on macOS and runs
-// window.print() on Windows, so going through it is one path for both.
-type windowPrinter interface {
-	Print()
+// SymChit used to hand the record to the browser's own print path instead. That
+// path belongs to three different engines: what came off the paper depended on
+// which desktop the reader was using, on whether their print dialog had
+// "Headers and footers" ticked and on which of the CSS the sheet leaned on
+// their engine had implemented. Measured on Windows, Linux and macOS: three
+// different answers. The record is the product, so it is drawn once, here
+// (FR-040, Amendment 16).
+type recordSheet interface {
+	Write(path string, lines []domain.Line) (int, error)
 }
 
 // Services is what the facade drives: one application service per concern.
@@ -73,7 +77,7 @@ type App struct {
 	services Services
 	chooser  fileChooser
 	opener   browserOpener
-	printer  windowPrinter
+	sheet    recordSheet
 	focuser  windowFocuser
 	close    func() error
 }

@@ -3,7 +3,9 @@ module github.com/oernster/symchit
 go 1.26.3
 
 require (
+	github.com/go-pdf/fpdf v0.9.0
 	github.com/wailsapp/wails/v2 v2.12.0
+	golang.org/x/image v0.12.0
 	golang.org/x/sys v0.48.0
 	modernc.org/sqlite v1.59.0
 )

@@ -64,7 +64,7 @@ export const guideSections: GuideSection[] = [
       {
         icon: receiptIcon,
         name: 'Receipt',
-        text: 'the printable record for a range of dates, to take to an appointment. Print offers your printer and Save as PDF.',
+        text: 'the record for a range of dates, to take to an appointment. Save PDF writes it to a file, numbered page by page, which you can print or email.',
       },
       {
         icon: symptomsIcon,

@@ -1,6 +1,7 @@
-// The receipt: the factual record for a date range, printed through the
-// system's print dialog, which also offers saving as PDF (FR-040 to FR-044).
-// Every word on it comes from the backend's receipt; the page only lays it out.
+// The receipt: the factual record for a date range, shown here and saved as a
+// PDF the reader keeps (FR-040 to FR-044). Every word on it comes from the
+// backend's receipt; the page only lays it out on screen, while the document
+// itself is drawn by Go so that it reads the same on every desktop.
 
 import { useEffect, useState } from 'react'
 import { api, type ReceiptLine, type Refused } from './api'
@@ -8,6 +9,8 @@ import crest from './assets/icons/application-icon.png'
 
 interface Props {
   refused: Refused
+  /** saved says where the document went, once it has gone there. */
+  saved: (message: string) => void
 }
 
 /** defaultDays is how far back the range starts when the pane opens. */
@@ -29,7 +32,7 @@ function isLetterhead(line: ReceiptLine, index: number): boolean {
   return index === 0 && line.kind === 'provenance'
 }
 
-export function ReceiptPane({ refused }: Props) {
+export function ReceiptPane({ refused, saved }: Props) {
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [lines, setLines] = useState<ReceiptLine[]>([])
@@ -49,6 +52,12 @@ export function ReceiptPane({ refused }: Props) {
     if (found) setLines(found)
   }
 
+  const savePDF = async () => {
+    const path = await api.savePDF(from, to, refused)
+    // An empty path is a cancelled dialog, which is not worth announcing.
+    if (path) saved(`Your symptom record was saved to ${path}.`)
+  }
+
   return (
     <section className="pane receipt-pane" aria-labelledby="receipt-title">
       <h1 id="receipt-title">Symptom record</h1>
@@ -61,56 +70,24 @@ export function ReceiptPane({ refused }: Props) {
         </label>
         <button type="button" onClick={show}>Show the record</button>
         <button type="button" className="primary" disabled={lines.length === 0}
-          onClick={() => void api.print(refused)}>
-          Print
+          onClick={() => void savePDF()}>
+          Save PDF
         </button>
       </div>
       {lines.length > 0 && (
         <article className="receipt" aria-label="The symptom record">
-          {/*
-            The sheet is a table so that it can be printed with no page margin
-            at all, which is the only way to leave the browser nowhere to draw
-            its own header and footer (FR-045, Amendment 14). A print engine
-            repeats a thead and a tfoot on every page it lays out, so those two
-            empty rows reserve the band at the top and the foot of every sheet.
-            Padding cannot do it: padding applies once to the element, not once
-            per page, so it leaves page two starting at the edge of the paper.
-            It holds no data and announces nothing, hence the presentation role.
-          */}
-          <table className="sheet" role="presentation">
-            <thead>
-              <tr>
-                <td className="gutter" />
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  {lines.map((line, index) => (
-                    <p key={index} className={`line ${line.kind}`}>
-                      {/*
-                        The mark sits with the words rather than above them,
-                        because the pair is the letterhead: a picture and the
-                        address it belongs to. It is decorative, so it carries
-                        no alt text; the line beside it already names the
-                        program; a screen reader saying it twice helps
-                        nobody.
-                      */}
-                      {isLetterhead(line, index) && (
-                        <img className="mark" src={crest} alt="" />
-                      )}
-                      {line.text}
-                    </p>
-                  ))}
-                </td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td className="gutter" />
-              </tr>
-            </tfoot>
-          </table>
+          {lines.map((line, index) => (
+            <p key={index} className={`line ${line.kind}`}>
+              {/*
+                The mark sits with the words rather than above them, because
+                the pair is the letterhead: a picture and the address it
+                belongs to. It is decorative, so it carries no alt text; the
+                line beside it already names the program.
+              */}
+              {isLetterhead(line, index) && <img className="mark" src={crest} alt="" />}
+              {line.text}
+            </p>
+          ))}
         </article>
       )}
     </section>

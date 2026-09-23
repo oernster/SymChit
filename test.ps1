@@ -102,6 +102,9 @@ try {
 # donate button landed: the opener is one more line of Wails runtime that no
 # test can reach, of exactly the same kind as the file dialogs beside it, so the
 # blend fell rather than the facade going untested. Re-measured, not estimated.
+# It moved 76 to 77 when printing through the window was replaced by saving a
+# PDF: the bound method now decides something (the range, the name it suggests,
+# the order it asks in) where before it forwarded one call to the runtime.
 # The run log moved the other way, 74 to 81, when its folder rule became a pure
 # function taking the platform as an argument: all three platforms' answers are
 # now exercised on whichever platform the suite runs on. The run log needs a windowed process with no error output, so
@@ -119,13 +122,19 @@ try {
 # a facade with a seam, so what it decides (the route it opens on, the choices
 # it hands over) is reachable. What is not is the Wails runtime underneath:
 # emitting a progress event and quitting the window.
+# The document the reader takes away is drawn in internal/infrastructure/pdf,
+# which needs no window, no clock and no device: it is handed a record and a
+# path and answers a file, so it is gated at what it actually reaches. The one
+# statement it does not cover is a font the library refuses to load, which
+# cannot happen to a font compiled into the binary.
 # TESTING.md names each shortfall.
 $measured = [ordered]@{
-    '.'                                      = 76
+    '.'                                      = 77
     './installer'                            = 69
     './internal/infrastructure/store'        = 92
     './internal/infrastructure/export'       = 91
     './internal/infrastructure/runlog'       = 81
+    './internal/infrastructure/pdf'          = 99
     './internal/infrastructure/setup'        = 64
 }
 
