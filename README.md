@@ -1,4 +1,4 @@
-# <img width="128" height="128" alt="application-icon" src="https://github.com/user-attachments/assets/6558296b-5218-4165-8a3a-0ca71ea7f0e7" /> SymChit
+# <img width="128" height="128" alt="application-icon" src="https://github.com/user-attachments/assets/6558296b-5218-4165-8a3a-0ca71ea7f0e7" /> SymDiary
 
 A health tracker.  It doesn't diagnose.  It's just a little record of symptoms.
 
